@@ -18,12 +18,13 @@ function MainScreen.new()
     local commits;
     local curCommit = 0;
     local files = {};
+    local curDate = '';
 
     local function writeLog()
         -- Write the git log to love's save directory.
         os.execute([[
     cd love
-    git log --reverse --date=short --pretty=format:'author: %an%ndate: %ad%n' --name-only > /Users/Robert//Library/Application\ Support/LOVE/rmcode_LoGiVi/tmpLog.txt
+    git log --reverse --date=iso --pretty=format:'author: %an%ndate: %ad%n' --name-only > /Users/Robert//Library/Application\ Support/LOVE/rmcode_LoGiVi/tmpLog.txt
     ]]);
     end
 
@@ -36,6 +37,9 @@ function MainScreen.new()
         for i = 1, #commits[curCommit] do
             local line = commits[curCommit][i];
 
+            if line:find('date') then
+                curDate = line;
+            end
             if not line:find('author') and not line:find('date') then
                 files[line] = files[line] or 1;
                 files[line] = files[line] + 1;
@@ -56,6 +60,7 @@ function MainScreen.new()
 
     local posX, posY;
     function self:draw()
+        love.graphics.print(curDate, 20, 20);
         posX, posY = 40, 40;
         for i, v in pairs(files) do
             posX, posY = posX + 40, posY + 40;
