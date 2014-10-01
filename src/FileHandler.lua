@@ -1,0 +1,52 @@
+-- ------------------------------------------------
+-- Module
+-- ------------------------------------------------
+
+local FileHandler = {};
+
+---
+-- Loads the file and stores it line for line in a lua table.
+-- @param name
+--
+function FileHandler.loadFile(name)
+    local file = {};
+    for line in love.filesystem.lines(name) do
+        file[#file + 1] = line;
+    end
+    return file;
+end
+
+---
+-- Split up the log table into commits. Each commit is a new
+-- nested table.
+-- @param log
+--
+function FileHandler.splitCommits(log)
+    local commits = {};
+    local index = 0;
+    for i = 1, #log do
+        local line = log[i];
+
+        -- New commit.
+        if line:find('author') then
+            index = index + 1;
+            commits[index] = {};
+        end
+
+        if line:len() ~= 0 then
+            commits[index][#commits[index] + 1] = line;
+        end
+    end
+
+    return commits;
+end
+
+-- ------------------------------------------------
+-- Return Module
+-- ------------------------------------------------
+
+return FileHandler;
+
+--==================================================================================================
+-- Created 01.10.14 - 12:34                                                                        =
+--==================================================================================================
