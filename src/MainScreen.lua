@@ -23,9 +23,9 @@ function MainScreen.new()
     local function writeLog()
         -- Write the git log to love's save directory.
         os.execute([[
-    cd love
-    git log --reverse --date=iso --pretty=format:'author: %an%ndate: %ad%n' --name-only > /Users/Robert//Library/Application\ Support/LOVE/rmcode_LoGiVi/tmpLog.txt
-    ]]);
+            cd /Users/Robert//Library/Application\ Support/LOVE/rmcode_LoGiVi/
+            git log --reverse --date=iso --pretty=format:'author: %an%ndate: %ad%n' --name-only > /Users/Robert//Library/Application\ Support/LOVE/rmcode_LoGiVi/tmpLog.txt
+        ]]);
     end
 
     local function nextCommit()
