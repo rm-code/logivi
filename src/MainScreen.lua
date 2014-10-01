@@ -35,8 +35,11 @@ function MainScreen.new()
         curCommit = curCommit + 1;
         for i = 1, #commits[curCommit] do
             local line = commits[curCommit][i];
-            files[line] = files[line] or 1;
-            files[line] = files[line] + 1;
+
+            if not line:find('author') and not line:find('date') then
+                files[line] = files[line] or 1;
+                files[line] = files[line] + 1;
+            end
         end
     end
 
