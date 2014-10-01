@@ -41,6 +41,10 @@ function MainScreen.new()
     end
 
     function self:init()
+        -- Create empty file to also set up the löve save folder.
+        love.filesystem.newFile('tmplog.txt', 'w'):close();
+
+        -- Write the git log to the tmp file.
         writeLog();
 
         log = FileHandler.loadFile('tmplog.txt');
