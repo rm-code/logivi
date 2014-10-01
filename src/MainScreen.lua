@@ -1,5 +1,6 @@
 local Screen = require('lib/Screen');
 local FileHandler = require('src/FileHandler');
+local FileObject = require('src/FileObject');
 
 -- ------------------------------------------------
 -- Module
@@ -19,6 +20,7 @@ function MainScreen.new()
     local curCommit = 0;
     local files = {};
     local curDate = '';
+    local ww, wh = love.window.getDimensions();
 
     local function writeLog()
         -- Write the git log to love's save directory.
@@ -28,6 +30,8 @@ function MainScreen.new()
         ]]);
     end
 
+    local spawnX = 20;
+    local spawnY = 40;
     local function nextCommit()
         if curCommit == #commits then
             return;
@@ -40,9 +44,13 @@ function MainScreen.new()
             if line:find('date') then
                 curDate = line;
             end
-            if not line:find('author') and not line:find('date') then
-                files[line] = files[line] or 1;
-                files[line] = files[line] + 1;
+            if not line:find('author') and not line:find('date') and not files[line] then
+                spawnY = spawnY + 15;
+                if spawnY > wh - 30 then
+                    spawnY = 55;
+                    spawnX = spawnX + 400;
+                end
+                files[line] = FileObject.new(line, spawnX, spawnY);
             end
         end
     end
@@ -58,14 +66,10 @@ function MainScreen.new()
         commits = FileHandler.splitCommits(log);
     end
 
-    local posX, posY;
     function self:draw()
         love.graphics.print(curDate, 20, 20);
-        posX, posY = 40, 40;
-        for i, v in pairs(files) do
-            posX, posY = posX + 40, posY + 40;
-            love.graphics.circle('fill', posX, posY, v * 5);
-            love.graphics.print(i, posX + 200, posY);
+        for _, file in pairs(files) do
+            file:draw()
         end
     end
 
@@ -75,6 +79,10 @@ function MainScreen.new()
         if timer > 0.5 then
             nextCommit();
             timer = 0;
+        end
+
+        for _, file in pairs(files) do
+            file:update(dt)
         end
     end
 
