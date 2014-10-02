@@ -50,7 +50,7 @@ function FileHandler.splitCommits(log)
             local modifier = line:sub(1, 1);
             local path = line:sub(2);
             path = trim(path);
-            commits[index][#commits[index] + 1] = { mod = modifier, path = path };
+            commits[index][#commits[index] + 1] = { modifier = modifier, path = path };
         end
     end
 

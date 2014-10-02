@@ -63,16 +63,16 @@ function MainScreen.new()
 
     ---
     -- @param target
-    -- @param file
+    -- @param fileName
     --
-    local function createFileNode(target, file)
-        if not target:getNode(file) then
+    local function modifyFileNodes(target, fileName, modifier)
+        if modifier == 'A' then -- Add file
             spawnY = spawnY + 15;
             if spawnY > love.graphics.getHeight() - 30 then
                 spawnY = 55;
                 spawnX = spawnX + 400;
             end
-            target:append(file, FileNode.new(file, spawnX, spawnY));
+            target:append(fileName, FileNode.new(fileName, spawnX, spawnY));
         end
     end
 
@@ -91,7 +91,7 @@ function MainScreen.new()
             print('-----------------------------------------------');
 
             local change = commits[index][i];
-            print(change.mod .. " - " .. change.path);
+            print(change.modifier .. " - " .. change.path);
 
             -- Split up the file path into subfolders.
             local subfolders, file = splitFilePath(change.path);
@@ -102,7 +102,7 @@ function MainScreen.new()
             local target = createSubFolders(root, subfolders);
 
             -- Create the file node at the bottom of the current path tree.
-            createFileNode(target, file);
+            modifyFileNodes(target, file, change.modifier);
         end
     end
 
