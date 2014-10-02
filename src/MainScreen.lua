@@ -15,20 +15,11 @@ local MainScreen = {};
 function MainScreen.new()
     local self = Screen.new();
 
-    local log;
     local commits;
     local curCommit = 0;
     local files = {};
     local curDate = '';
     local ww, wh = love.window.getDimensions();
-
-    local function writeLog()
-        -- Write the git log to love's save directory.
-        os.execute([[
-            cd /Users/Robert//Library/Application\ Support/LOVE/rmcode_LoGiVi/
-            git log --reverse --date=iso --pretty=format:'author: %an%ndate: %ad%n' --name-only > /Users/Robert//Library/Application\ Support/LOVE/rmcode_LoGiVi/tmpLog.txt
-        ]]);
-    end
 
     local spawnX = 20;
     local spawnY = 40;
@@ -56,13 +47,7 @@ function MainScreen.new()
     end
 
     function self:init()
-        -- Create empty file to also set up the löve save folder.
-        love.filesystem.newFile('tmplog.txt', 'w'):close();
-
-        -- Write the git log to the tmp file.
-        writeLog();
-
-        log = FileHandler.loadFile('tmplog.txt');
+        local log = FileHandler.loadFile('tmplog.txt');
         commits = FileHandler.splitCommits(log);
     end
 

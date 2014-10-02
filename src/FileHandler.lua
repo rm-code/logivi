@@ -28,12 +28,14 @@ function FileHandler.splitCommits(log)
         local line = log[i];
 
         -- New commit.
-        if line:find('author') then
+        if line:find('commit') then
             index = index + 1;
             commits[index] = {};
-        end
-
-        if line:len() ~= 0 then
+        elseif line:find('author') then
+            commits[index].author = line;
+        elseif line:find('date') then
+            commits[index].date = line;
+        elseif line:len() ~= 0 then
             commits[index][#commits[index] + 1] = line;
         end
     end
