@@ -1,6 +1,7 @@
 local Screen = require('lib/Screen');
 local FileHandler = require('src/FileHandler');
-local FileObject = require('src/FileObject');
+local FolderNode = require('src/FolderNode');
+local FileNode = require('src/FileNode');
 
 -- ------------------------------------------------
 -- Module
@@ -16,32 +17,36 @@ function MainScreen.new()
     local self = Screen.new();
 
     local commits;
-    local curCommit = 0;
-    local files = {};
-    local curDate = '';
-    local ww, wh = love.window.getDimensions();
+    local index = 0;
+    local root = FolderNode.new();
+    local author = '';
+    local date = '';
 
     local spawnX = 20;
     local spawnY = 40;
+
     local function nextCommit()
-        if curCommit == #commits then
+        if index == #commits then
             return;
         end
+        index = index + 1;
 
-        curCommit = curCommit + 1;
-        for i = 1, #commits[curCommit] do
-            local line = commits[curCommit][i];
+        author = commits[index].author;
+        date = commits[index].date;
 
-            if line.path:find('date') then
-                curDate = line;
-            end
-            if not line.path:find('author') and not line.path:find('date') and not files[line.path] then
+        print('===============================================');
+        print(author .. '-' .. date);
+        for i = 1, #commits[index] do
+            local change = commits[index][i];
+
+            print(change.mod .. " - " .. change.path);
+            if not root:getNode(change.path) then
                 spawnY = spawnY + 15;
-                if spawnY > wh - 30 then
+                if spawnY > love.graphics.getHeight() - 30 then
                     spawnY = 55;
                     spawnX = spawnX + 400;
                 end
-                files[line.path] = FileObject.new(line.path, spawnX, spawnY);
+                root:append(change.path, FileNode.new(change.path, spawnX, spawnY));
             end
         end
     end
@@ -52,10 +57,9 @@ function MainScreen.new()
     end
 
     function self:draw()
-        love.graphics.print(curDate, 20, 20);
-        for _, file in pairs(files) do
-            file:draw()
-        end
+        love.graphics.print(date, 20, 20);
+        love.graphics.print(author, 400, 20);
+        root:draw();
     end
 
     local timer = 0;
@@ -66,9 +70,7 @@ function MainScreen.new()
             timer = 0;
         end
 
-        for _, file in pairs(files) do
-            file:update(dt)
-        end
+        root:update(dt);
     end
 
     return self;

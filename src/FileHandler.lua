@@ -44,6 +44,9 @@ function FileHandler.splitCommits(log)
         elseif line:find('date') then
             commits[index].date = line;
         elseif line:len() ~= 0 then
+            -- Split the file information into the modifier, which determines
+            -- what has happened to the file since the last commit and the actual
+            -- filepath / name.
             local modifier = line:sub(1, 1);
             local path = line:sub(2);
             path = trim(path);

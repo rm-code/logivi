@@ -2,7 +2,7 @@
 -- Module
 -- ------------------------------------------------
 
-local FileObject = {};
+local FileNode = {};
 
 -- ------------------------------------------------
 -- Local Variables
@@ -14,7 +14,7 @@ local img = love.graphics.newImage('res/fileNode.png');
 -- Constructor
 -- ------------------------------------------------
 
-function FileObject.new(name, x, y)
+function FileNode.new(name, x, y)
     local self = {};
 
     local posX, posY = x, y;
@@ -35,7 +35,7 @@ end
 -- Return Module
 -- ------------------------------------------------
 
-return FileObject;
+return FileNode;
 
 --==================================================================================================
 -- Created 01.10.14 - 14:41                                                                        =
