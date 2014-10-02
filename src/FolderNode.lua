@@ -30,7 +30,9 @@ function FolderNode.new()
     end
 
     function self:append(name, node)
-        children[name] = node;
+        if not children[name] then
+            children[name] = node;
+        end
     end
 
     return self;
