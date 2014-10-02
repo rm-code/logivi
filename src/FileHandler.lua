@@ -5,6 +5,14 @@
 local FileHandler = {};
 
 ---
+-- Remove leading and trailing whitespace.
+-- @param str
+--
+local function trim(str)
+    return str:match("^%s*(.-)%s*$");
+end
+
+---
 -- Loads the file and stores it line for line in a lua table.
 -- @param name
 --
@@ -36,7 +44,10 @@ function FileHandler.splitCommits(log)
         elseif line:find('date') then
             commits[index].date = line;
         elseif line:len() ~= 0 then
-            commits[index][#commits[index] + 1] = line;
+            local modifier = line:sub(1, 1);
+            local path = line:sub(2);
+            path = trim(path);
+            commits[index][#commits[index] + 1] = { mod = modifier, path = path };
         end
     end
 

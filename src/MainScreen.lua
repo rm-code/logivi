@@ -32,16 +32,16 @@ function MainScreen.new()
         for i = 1, #commits[curCommit] do
             local line = commits[curCommit][i];
 
-            if line:find('date') then
+            if line.path:find('date') then
                 curDate = line;
             end
-            if not line:find('author') and not line:find('date') and not files[line] then
+            if not line.path:find('author') and not line.path:find('date') and not files[line.path] then
                 spawnY = spawnY + 15;
                 if spawnY > wh - 30 then
                     spawnY = 55;
                     spawnX = spawnX + 400;
                 end
-                files[line] = FileObject.new(line, spawnX, spawnY);
+                files[line.path] = FileObject.new(line.path, spawnX, spawnY);
             end
         end
     end
