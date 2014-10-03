@@ -63,6 +63,8 @@ function MainScreen.new()
     local function modifyFileNodes(target, fileName, modifier)
         if modifier == 'A' then -- Add file
             target:append(fileName, FileNode.new(fileName));
+        elseif modifier == 'D' then
+            target:remove(fileName);
         end
     end
 
@@ -107,7 +109,7 @@ function MainScreen.new()
     local timer = 0;
     function self:update(dt)
         timer = timer + dt;
-        if timer > 0.0 then
+        if timer > 0.2 then
             nextCommit();
             timer = 0;
         end

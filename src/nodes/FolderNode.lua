@@ -52,6 +52,10 @@ function FolderNode.new(name)
         end
     end
 
+    function self:remove(name)
+        children[name] = nil;
+    end
+
     function self:getType()
         return 'folder';
     end
