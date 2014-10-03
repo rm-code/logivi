@@ -23,8 +23,7 @@ function FileNode.new(name)
     function self:draw()
         if x and y then
             love.graphics.draw(img, x - 8, y - 8);
-            -- love.graphics.rectangle('line', posX, posY, 16, 16);
-            -- love.graphics.print(name, x, y);
+            love.graphics.print(name, x + 10, y);
         end
     end
 
@@ -37,6 +36,13 @@ function FileNode.new(name)
 
     function self:getType()
         return 'file';
+    end
+    function self:getX()
+        return x;
+    end
+
+    function self:getY()
+        return y;
     end
 
     return self;

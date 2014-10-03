@@ -22,17 +22,11 @@ function FolderNode.new(name)
     local amountOfChildren = 0;
 
     function self:draw()
-        love.graphics.circle('line', x, y, 40);
-        -- love.graphics.print(name, x + 20, y);
-
         for _, node in pairs(children) do
-            if node:getType() == 'folder' then
-                love.graphics.line(x, y, node:getX(), node:getY());
-                node:draw();
-            else
-                node:draw();
-            end
+            love.graphics.line(x, y, node:getX(), node:getY());
+            node:draw();
         end
+        love.graphics.print(name, x + 10, y);
         love.graphics.draw(img, x - 8, y - 8);
     end
 
@@ -50,7 +44,7 @@ function FolderNode.new(name)
         if not children[name] then
             children[name] = node;
             if children[name]:getType() == 'file' then
-                children[name]:setPosition(x, y, 40, amountOfChildren * 40);
+                children[name]:setPosition(x, y, 80, amountOfChildren * 40);
             else
                 children[name]:setPosition(x, y, 200, amountOfChildren * 40);
             end
