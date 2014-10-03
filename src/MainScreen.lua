@@ -18,12 +18,9 @@ function MainScreen.new()
 
     local commits;
     local index = 0;
-    local root = FolderNode.new();
+    local root = FolderNode.new('root');
     local author = '';
     local date = '';
-
-    local spawnX = 20;
-    local spawnY = 40;
 
     ---
     -- @param path
@@ -35,12 +32,10 @@ function MainScreen.new()
 
             -- Store the subfolder name.
             subfolders[#subfolders + 1] = path:sub(1, pos - 1);
-            print(subfolders[#subfolders]);
 
             -- Restart the loop with the path minus the previous folder.
             path = path:sub(pos + 1);
         end
-        print(path);
         return subfolders, path;
     end
 
@@ -52,7 +47,7 @@ function MainScreen.new()
         for i = 1, #subfolders do
             -- Append a new folder node to the parent if there isn't a node
             -- for that folder yet.
-            target:append(subfolders[i], FolderNode.new());
+            target:append(subfolders[i], FolderNode.new(subfolders[i]));
 
             -- Make the newly added node the new target.
             target = target:getNode(subfolders[i]);
@@ -67,12 +62,7 @@ function MainScreen.new()
     --
     local function modifyFileNodes(target, fileName, modifier)
         if modifier == 'A' then -- Add file
-            spawnY = spawnY + 15;
-            if spawnY > love.graphics.getHeight() - 30 then
-                spawnY = 55;
-                spawnX = spawnX + 400;
-            end
-            target:append(fileName, FileNode.new(fileName, spawnX, spawnY));
+            target:append(fileName, FileNode.new(fileName));
         end
     end
 
@@ -85,13 +75,8 @@ function MainScreen.new()
         author = commits[index].author;
         date = commits[index].date;
 
-        print('===============================================');
-        print(author .. '-' .. date);
         for i = 1, #commits[index] do
-            print('-----------------------------------------------');
-
             local change = commits[index][i];
-            print(change.modifier .. " - " .. change.path);
 
             -- Split up the file path into subfolders.
             local subfolders, file = splitFilePath(change.path);
@@ -109,6 +94,8 @@ function MainScreen.new()
     function self:init()
         local log = FileHandler.loadFile('tmplog.txt');
         commits = FileHandler.splitCommits(log);
+
+        root:setPosition(love.graphics.getWidth() * 0.5, love.graphics.getHeight() * 0.5);
     end
 
     function self:draw()
@@ -120,7 +107,7 @@ function MainScreen.new()
     local timer = 0;
     function self:update(dt)
         timer = timer + dt;
-        if timer > 0.5 then
+        if timer > 0.0 then
             nextCommit();
             timer = 0;
         end
