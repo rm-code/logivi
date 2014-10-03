@@ -1,7 +1,7 @@
 local Screen = require('lib/Screen');
 local FileHandler = require('src/FileHandler');
-local FolderNode = require('src/FolderNode');
-local FileNode = require('src/FileNode');
+local FolderNode = require('src/nodes/FolderNode');
+local FileNode = require('src/nodes/FileNode');
 
 -- ------------------------------------------------
 -- Module
