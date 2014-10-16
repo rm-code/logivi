@@ -1,3 +1,5 @@
+local Node = require('src/nodes/Node');
+
 -- ------------------------------------------------
 -- Module
 -- ------------------------------------------------
@@ -15,35 +17,59 @@ local img = love.graphics.newImage('res/folderNode.png');
 -- ------------------------------------------------
 
 function FolderNode.new(name)
-    local self = {};
+    local self = Node.new('folder', name);
 
-    local px, py = love.math.random(60, 1200), love.math.random(60, 700);
     local children = {};
 
-    local function plotCircle(children, radius)
+    ---
+    -- Counts the amount of children nodes that represent files.
+    --
+    -- @param children
+    --
+    local function countFileNodes(children)
         local count = 0;
-        for _, _ in pairs(children) do
-            count = count + 1;
+        for _, node in pairs(children) do
+            if node:getType() == 'file' then
+                count = count + 1;
+            end
         end
+        return count;
+    end
 
-        local angle = 360 / count;
+    ---
+    -- Distributes files nodes evenly on a circle around the parent node.
+    -- @param children
+    -- @param radius
+    --
+    -- TODO radius based on amount of files?
+    -- TODO multiple circles if they get too big
+    local function plotCircle(children, radius)
+        local angle = 360 / countFileNodes(children);
 
-        count = 0;
-        for i, node in pairs(children) do
-            count = count + 1;
-            local x = (radius * math.cos((angle * (count - 1)) * (math.pi / 180)));
-            local y = (radius * math.sin((angle * (count - 1)) * (math.pi / 180)));
-            node:setPosition(x + px , y + py);
+        local count = 0;
+        for _, node in pairs(children) do
+            if node:getType() == 'file' then
+                count = count + 1;
+                local x = (radius * math.cos((angle * (count - 1)) * (math.pi / 180)));
+                local y = (radius * math.sin((angle * (count - 1)) * (math.pi / 180)));
+                node:setPosition(x + self:getX(), y + self:getY());
+            elseif not node:getX() or not node:getY() then
+                node:setPosition(love.math.random(60, 1200), love.math.random(60, 700));
+            end
         end
     end
 
     function self:draw()
         for _, node in pairs(children) do
-            love.graphics.line(px, py, node:getX(), node:getY());
+            if node:getType() == 'folder' then
+                love.graphics.setColor(50, 50, 50);
+                love.graphics.line(self:getX(), self:getY(), node:getX(), node:getY());
+                love.graphics.setColor(255, 255, 255);
+            end
             node:draw();
         end
-        love.graphics.print(name, px + 10, py);
-        love.graphics.draw(img, px - 8, py - 8);
+        love.graphics.print(name, self:getX() + 10, self:getY());
+        love.graphics.draw(img, self:getX() - 8, self:getY() - 8);
     end
 
     function self:update(dt)
@@ -65,27 +91,6 @@ function FolderNode.new(name)
 
     function self:remove(name)
         children[name] = nil;
-    end
-
-    function self:getType()
-        return 'folder';
-    end
-
-    function self:setPosition(nx, ny, r, an)
-        if not r and not an then
-            px, py = px, py;
-        else
-            px = px + r * math.cos(math.rad(an));
-            py = py + r * math.sin(math.rad(an));
-        end
-    end
-
-    function self:getX()
-        return px;
-    end
-
-    function self:getY()
-        return py;
     end
 
     return self;

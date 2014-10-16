@@ -1,26 +1,40 @@
-local Node = require('src/nodes/Node');
-
 -- ------------------------------------------------
 -- Module
 -- ------------------------------------------------
 
-local FileNode = {};
-
--- ------------------------------------------------
--- Local Variables
--- ------------------------------------------------
-
-local img = love.graphics.newImage('res/fileNode.png');
+local Node = {};
 
 -- ------------------------------------------------
 -- Constructor
 -- ------------------------------------------------
 
-function FileNode.new(name)
-    local self = Node.new('file', name);
+function Node.new(type, name, x, y)
+    local self = {};
 
-    function self:draw()
-        love.graphics.draw(img, self:getX() - 8, self:getY() - 8);
+    local x, y = x, y;
+
+    function self:update(dt) end
+
+    function self:draw() end
+
+    function self:setPosition(nx, ny)
+        x, y = nx, ny;
+    end
+
+    function self:getX()
+        return x;
+    end
+
+    function self:getY()
+        return y;
+    end
+
+    function self:getName()
+        return name;
+    end
+
+    function self:getType()
+        return type;
     end
 
     return self;
@@ -30,8 +44,8 @@ end
 -- Return Module
 -- ------------------------------------------------
 
-return FileNode;
+return Node;
 
 --==================================================================================================
--- Created 01.10.14 - 14:41                                                                        =
+-- Created 16.10.14 - 14:47                                                                        =
 --==================================================================================================
