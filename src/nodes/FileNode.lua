@@ -23,20 +23,20 @@ function FileNode.new(name)
     function self:draw()
         if x and y then
             love.graphics.draw(img, x - 8, y - 8);
-            love.graphics.print(name, x + 10, y);
+            --  love.graphics.print(name, x + 10, y);
         end
     end
 
     function self:update(dt) end
 
-    function self:setPosition(px, py, r, an)
-        x = px + r * math.cos(math.rad(an));
-        y = py + r * math.sin(math.rad(an));
+    function self:setPosition(nx, ny)
+        x, y = nx, ny;
     end
 
     function self:getType()
         return 'file';
     end
+
     function self:getX()
         return x;
     end

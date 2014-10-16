@@ -17,17 +17,33 @@ local img = love.graphics.newImage('res/folderNode.png');
 function FolderNode.new(name)
     local self = {};
 
-    local x, y = love.math.random(60, 1200), love.math.random(60, 700);
+    local px, py = love.math.random(60, 1200), love.math.random(60, 700);
     local children = {};
-    local amountOfChildren = 0;
+
+    local function plotCircle(children, radius)
+        local count = 0;
+        for _, _ in pairs(children) do
+            count = count + 1;
+        end
+
+        local angle = 360 / count;
+
+        count = 0;
+        for i, node in pairs(children) do
+            count = count + 1;
+            local x = (radius * math.cos((angle * (count - 1)) * (math.pi / 180)));
+            local y = (radius * math.sin((angle * (count - 1)) * (math.pi / 180)));
+            node:setPosition(x + px , y + py);
+        end
+    end
 
     function self:draw()
         for _, node in pairs(children) do
-            love.graphics.line(x, y, node:getX(), node:getY());
+            love.graphics.line(px, py, node:getX(), node:getY());
             node:draw();
         end
-        love.graphics.print(name, x + 10, y);
-        love.graphics.draw(img, x - 8, y - 8);
+        love.graphics.print(name, px + 10, py);
+        love.graphics.draw(img, px - 8, py - 8);
     end
 
     function self:update(dt)
@@ -43,12 +59,7 @@ function FolderNode.new(name)
     function self:append(name, node)
         if not children[name] then
             children[name] = node;
-            if children[name]:getType() == 'file' then
-                children[name]:setPosition(x, y, 80, amountOfChildren * 40);
-            else
-                children[name]:setPosition(x, y, 200, amountOfChildren * 40);
-            end
-            amountOfChildren = amountOfChildren + 1;
+            plotCircle(children, 50);
         end
     end
 
@@ -60,21 +71,21 @@ function FolderNode.new(name)
         return 'folder';
     end
 
-    function self:setPosition(px, py, r, an)
+    function self:setPosition(nx, ny, r, an)
         if not r and not an then
-            x, y = px, py;
+            px, py = px, py;
         else
-            x = px + r * math.cos(math.rad(an));
-            y = py + r * math.sin(math.rad(an));
+            px = px + r * math.cos(math.rad(an));
+            py = py + r * math.sin(math.rad(an));
         end
     end
 
     function self:getX()
-        return x;
+        return px;
     end
 
     function self:getY()
-        return y;
+        return py;
     end
 
     return self;
