@@ -36,6 +36,10 @@ function FolderNode.new(name)
         return count;
     end
 
+    local function calcArc(radius, angle)
+        return math.pi * radius * (angle / 180);
+    end
+
     ---
     -- Distributes files nodes evenly on a circle around the parent node.
     -- @param children
@@ -43,10 +47,18 @@ function FolderNode.new(name)
     --
     -- TODO radius based on amount of files?
     -- TODO multiple circles if they get too big
-    local function plotCircle(children, radius)
+    local function plotCircle(children)
         local angle = 360 / countFileNodes(children);
 
         local count = 0;
+        local radius = 15;
+        local arc = calcArc(radius, angle);
+
+        while arc < 20 do
+            radius = radius * 2;
+            arc = calcArc(radius, angle);
+        end
+
         for _, node in pairs(children) do
             if node:getType() == 'file' then
                 count = count + 1;
@@ -85,7 +97,7 @@ function FolderNode.new(name)
     function self:append(name, node)
         if not children[name] then
             children[name] = node;
-            plotCircle(children, 50);
+            plotCircle(children);
         end
     end
 
