@@ -85,7 +85,10 @@ function FolderNode.new(name)
     end
 
     function self:update(dt)
-        for _, node in pairs(children) do
+        for name, node in pairs(children) do
+            if node:getType() == 'folder' and node:getChildrenCount() == 0 then
+                children[name] = nil;
+            end
             node:update(dt);
         end
     end
@@ -103,6 +106,14 @@ function FolderNode.new(name)
 
     function self:remove(name)
         children[name] = nil;
+    end
+
+    function self:getChildrenCount()
+        local count = 0;
+        for _, _ in pairs(children) do
+            count = count + 1;
+        end
+        return count;
     end
 
     return self;
