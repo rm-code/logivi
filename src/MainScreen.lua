@@ -17,10 +17,11 @@ function MainScreen.new()
     local self = Screen.new();
 
     local commits;
+    local root;
     local index = 0;
-    local root = FolderNode.new('root');
     local author = '';
     local date = '';
+    local world;
 
     ---
     -- @param path
@@ -47,7 +48,7 @@ function MainScreen.new()
         for i = 1, #subfolders do
             -- Append a new folder node to the parent if there isn't a node
             -- for that folder yet.
-            target:append(subfolders[i], FolderNode.new(subfolders[i]));
+            target:append(subfolders[i], FolderNode.new(subfolders[i], world, false, target));
 
             -- Make the newly added node the new target.
             target = target:getNode(subfolders[i]);
@@ -94,10 +95,13 @@ function MainScreen.new()
     end
 
     function self:init()
-        local log = FileHandler.loadFile('tmplog.txt');
+        local log = FileHandler.loadFile('foo.txt');
         commits = FileHandler.splitCommits(log);
 
-        root:setPosition(love.graphics.getWidth() * 0.5, love.graphics.getHeight() * 0.5);
+        world = love.physics.newWorld(0.0, 0.0, true);
+        love.physics.setMeter(8); -- In our world 1m == 8px
+
+        root = FolderNode.new('root', world, true);
     end
 
     function self:draw()
@@ -108,6 +112,8 @@ function MainScreen.new()
 
     local timer = 0;
     function self:update(dt)
+        world:update(dt) --this puts the world into motion
+
         timer = timer + dt;
         if timer > 0.2 then
             nextCommit();
