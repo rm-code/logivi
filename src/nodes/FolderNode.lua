@@ -36,7 +36,6 @@ function FolderNode.new(name, world, static, parent)
         love.physics.newRopeJoint(parentBody, collider.body, parentBody:getX(), parentBody:getY(), collider.body:getX(), collider.body:getY(), 150, true);
     end
 
-
     ---
     -- Counts the amount of children nodes that represent files.
     --
@@ -58,38 +57,66 @@ function FolderNode.new(name, world, static, parent)
 
     ---
     -- Distributes files nodes evenly on a circle around the parent node.
+    -- 
     -- @param children
-    -- @param radius
-    --
-    -- TODO radius based on amount of files?
-    -- TODO multiple circles if they get too big
     local function plotCircle(children)
-        local angle = 360 / countFileNodes(children);
+        local MIN_ARC_SIZE = 15;
 
-        local count = 0;
-        local r = 15;
-        local arc = calcArc(r, angle);
+        -- Calculate the radius of each circle around the folder node.
+        -- Increase the radius if the arc between files becomes too small.
+        local noNodes = 0;
+        local layer_radius = 15; -- Radius of the circle around the folder node.
+        local layers = { { r = layer_radius, n = noNodes } };
 
-        while arc < 20 do
-            r = r * 2;
-            arc = calcArc(r, angle);
-        end
+        local arc;
+        local angle;
 
-        -- Only update the position of the file nodes based on the position of their parent folder node.
         for _, node in pairs(children) do
             if node:getType() == 'file' then
-                count = count + 1;
-                local x = (r * math.cos((angle * (count - 1)) * (math.pi / 180)));
-                local y = (r * math.sin((angle * (count - 1)) * (math.pi / 180)));
-                node:setPosition(x + collider.body:getX(), y + collider.body:getY());
+                noNodes = noNodes + 1;
+
+                -- Calculate the arc between nodes.
+                angle = 360 / noNodes;
+                arc = calcArc(layers[#layers].r, angle);
+
+                -- If arc is smaller than the minimum arc size we store the radius
+                -- of that circle and the number of nodes on that circle.
+                if arc < MIN_ARC_SIZE then
+                    layers[#layers + 1] = { r = layer_radius, n = noNodes - 1};
+                    noNodes = 0;
+                    layer_radius = layer_radius + 15;
+                else
+                    layers[#layers].n = noNodes;
+                end
             end
         end
 
-        if r ~= radius then
-            collider.shape = love.physics.newCircleShape(r);
+        -- Only update the position of the file nodes based on the position of their parent folder node.
+        local count = 0;
+        local layer = 1;
+        for _, node in pairs(children) do
+            if node:getType() == 'file' then
+                count = count + 1;
+
+                if count <= layers[layer].n then
+                    angle = 360 / layers[layer].n;
+
+                    local x = (layers[layer].r * math.cos((angle * (count - 1)) * (math.pi / 180)));
+                    local y = (layers[layer].r * math.sin((angle * (count - 1)) * (math.pi / 180)));
+                    node:setPosition(x + collider.body:getX(), y + collider.body:getY());
+                else
+                    layer = layer + 1;
+                    count = 0;
+                end
+            end
+        end
+
+        -- Adjust box2d collision body.
+        if layers[#layers].r ~= radius then
+            collider.shape = love.physics.newCircleShape(layers[#layers].r);
             collider.fixture = love.physics.newFixture(collider.body, collider.shape, 1);
             collider.body:setMass(1.0);
-            radius = r;
+            radius = layers[#layers].r;
         end
     end
 
@@ -174,7 +201,3 @@ end
 -- ------------------------------------------------
 
 return FolderNode;
-
---==================================================================================================
--- Created 02.10.14 - 16:49                                                                        =
---==================================================================================================
