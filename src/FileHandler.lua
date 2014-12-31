@@ -1,4 +1,12 @@
 -- ------------------------------------------------
+-- Constants
+-- ------------------------------------------------
+
+local TAG_SEPARATOR = 'logivi_commit';
+local TAG_AUTHOR = 'author';
+local TAG_DATE = 'date';
+
+-- ------------------------------------------------
 -- Module
 -- ------------------------------------------------
 
@@ -35,13 +43,12 @@ function FileHandler.splitCommits(log)
     for i = 1, #log do
         local line = log[i];
 
-        -- New commit.
-        if line:find('commit') then
+        if line:find(TAG_SEPARATOR) then -- Commit separator. 
             index = index + 1;
             commits[index] = {};
-        elseif line:find('author') then
+        elseif line:find(TAG_AUTHOR) then
             commits[index].author = line;
-        elseif line:find('date') then
+        elseif line:find(TAG_DATE) then
             commits[index].date = line;
         elseif line:len() ~= 0 then
             -- Split the file information into the modifier, which determines
