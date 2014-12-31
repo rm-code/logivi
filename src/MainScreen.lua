@@ -4,6 +4,21 @@ local FolderNode = require('src/nodes/FolderNode');
 local FileNode = require('src/nodes/FileNode');
 
 -- ------------------------------------------------
+-- Constants
+-- ------------------------------------------------
+
+local LOG_FILE = 'log.txt'; 
+local MODIFIER_ADD = 'A';
+local MODIFIER_COPY = 'C';
+local MODIFIER_DELETE = 'D';
+local MODIFIER_MODIFY = 'M';
+local MODIFIER_RENAME = 'R';
+local MODIFIER_CHANGE = 'T';
+local MODIFIER_UNMERGE = 'U';
+local MODIFIER_UNKNOWN = 'X';
+local MODIFIER_BROKEN_PAIRING = 'B';
+
+-- ------------------------------------------------
 -- Module
 -- ------------------------------------------------
 
@@ -62,9 +77,9 @@ function MainScreen.new()
     -- @param fileName
     --
     local function modifyFileNodes(target, fileName, modifier)
-        if modifier == 'A' then -- Add file
+        if modifier == MODIFIER_ADD then -- Add file
             target:append(fileName, FileNode.new(fileName));
-        elseif modifier == 'D' then
+        elseif modifier == MODIFIER_DELETE then
             target:remove(fileName);
         end
     end
@@ -95,7 +110,7 @@ function MainScreen.new()
     end
 
     function self:init()
-        local log = FileHandler.loadFile('foo.txt');
+        local log = FileHandler.loadFile(LOG_FILE);
         commits = FileHandler.splitCommits(log);
 
         world = love.physics.newWorld(0.0, 0.0, true);
