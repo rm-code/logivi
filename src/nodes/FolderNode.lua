@@ -30,6 +30,7 @@ function FolderNode.new(name, world, static, parent)
     end
     collider.shape = love.physics.newCircleShape(radius);
     collider.fixture = love.physics.newFixture(collider.body, collider.shape, 1);
+    collider.fixture:setGroupIndex(-1);
     collider.body:setMass(1.0);
     if parent then
         local parentBody = parent:getColliderBody();
@@ -136,6 +137,7 @@ function FolderNode.new(name, world, static, parent)
         if layers[#layers].radius ~= radius then
             collider.shape = love.physics.newCircleShape(layers[#layers].radius);
             collider.fixture = love.physics.newFixture(collider.body, collider.shape, 1);
+            collider.fixture:setGroupIndex(-1);
             collider.body:setMass(1.0);
             radius = layers[#layers].radius;
         end
