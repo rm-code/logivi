@@ -51,58 +51,79 @@ function FolderNode.new(name, world, static, parent)
         return count;
     end
 
+    ---
+    -- Calculates the arc for a certain angle.
+    -- @param radius
+    -- @param angle
+    --
     local function calcArc(radius, angle)
         return math.pi * radius * (angle / 180);
     end
 
     ---
-    -- Distributes files nodes evenly on a circle around the parent node.
-    -- 
-    -- @param children
-    local function plotCircle(children)
+    -- Calculates how many layers we need and how many file nodes
+    -- can be placed on each layer.
+    --
+    local function createOnionLayers()
         local MIN_ARC_SIZE = 15;
 
-        -- Calculate the radius of each circle around the folder node.
-        -- Increase the radius if the arc between files becomes too small.
-        local noNodes = 0;
-        local layer_radius = 15; -- Radius of the circle around the folder node.
-        local layers = { { r = layer_radius, n = noNodes } };
+        local amount = 0;
+        local radius = 15; -- Radius of the circle around the folder node.
+        local layers = {
+            { radius = radius, amount = amount }
+        };
+        local angle, arc;
 
-        local arc;
-        local angle;
-
+        -- Go through all child nodes of type 'file'.
         for _, node in pairs(children) do
             if node:getType() == 'file' then
-                noNodes = noNodes + 1;
+                amount = amount + 1;
 
-                -- Calculate the arc between nodes.
-                angle = 360 / noNodes;
-                arc = calcArc(layers[#layers].r, angle);
+                -- Calculate the arc between the file nodes on the current layer.
+                -- The more files are on it the smaller it gets.
+                angle = 360 / amount;
+                arc = calcArc(layers[#layers].radius, angle);
 
-                -- If arc is smaller than the minimum arc size we store the radius
-                -- of that circle and the number of nodes on that circle.
+                -- If the arc is smaller than the minimum arc size we store the radius
+                -- of the current layer and the number of nodes that can be placed
+                -- on that layer.
                 if arc < MIN_ARC_SIZE then
-                    layers[#layers + 1] = { r = layer_radius, n = noNodes - 1};
-                    noNodes = 0;
-                    layer_radius = layer_radius + 15;
+                    layers[#layers + 1] = { radius = radius, amount = amount - 1};
+                    amount = 0;
+                    radius = radius + 15;
                 else
-                    layers[#layers].n = noNodes;
+                    layers[#layers].amount = amount;
                 end
             end
         end
 
-        -- Only update the position of the file nodes based on the position of their parent folder node.
+        return layers;
+    end
+
+    ---
+    -- Distributes files nodes evenly on a circle around the parent node.
+    --
+    -- @param children
+    --
+    local function plotCircle(children)
+        -- Determine how the file nodes need to be distributed amongst different layers.
+        local layers = createOnionLayers();
+
+        -- Update the position of the file nodes based on the onion-layers.
         local count = 0;
         local layer = 1;
         for _, node in pairs(children) do
             if node:getType() == 'file' then
                 count = count + 1;
 
-                if count <= layers[layer].n then
-                    angle = 360 / layers[layer].n;
+                -- As long as the amount of nodes on the current layer is smaller or 
+                -- the calculated amount we keep adding them to this layer.
+                -- If we pass this threshold we add a new layer and reset the counter. 
+                if count <= layers[layer].amount then
+                    local angle = 360 / layers[layer].amount;
 
-                    local x = (layers[layer].r * math.cos((angle * (count - 1)) * (math.pi / 180)));
-                    local y = (layers[layer].r * math.sin((angle * (count - 1)) * (math.pi / 180)));
+                    local x = (layers[layer].radius * math.cos((angle * (count - 1)) * (math.pi / 180)));
+                    local y = (layers[layer].radius * math.sin((angle * (count - 1)) * (math.pi / 180)));
                     node:setPosition(x + collider.body:getX(), y + collider.body:getY());
                 else
                     layer = layer + 1;
@@ -112,11 +133,11 @@ function FolderNode.new(name, world, static, parent)
         end
 
         -- Adjust box2d collision body.
-        if layers[#layers].r ~= radius then
+        if layers[#layers].radius ~= radius then
             collider.shape = love.physics.newCircleShape(layers[#layers].r);
             collider.fixture = love.physics.newFixture(collider.body, collider.shape, 1);
             collider.body:setMass(1.0);
-            radius = layers[#layers].r;
+            radius = layers[#layers].radius;
         end
     end
 
