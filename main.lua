@@ -1,8 +1,11 @@
 local ScreenManager = require('lib/ScreenManager');
-local MainScreen = require('src/MainScreen');
 
 function love.load()
-    ScreenManager.init(MainScreen.new());
+    local screens = {
+        main = require('src/screens/MainScreen');
+    };
+
+    ScreenManager.init(screens, 'main');
 end
 
 function love.draw()

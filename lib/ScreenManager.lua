@@ -1,21 +1,47 @@
---==================================================================================================
--- Copyright (C) 2014 by Robert Machmer                                                            =
---==================================================================================================
+--===============================================================================--
+--                                                                               --
+-- Copyright (c) 2014 Robert Machmer                                             --
+--                                                                               --
+-- This software is provided 'as-is', without any express or implied             --
+-- warranty. In no event will the authors be held liable for any damages         --
+-- arising from the use of this software.                                        --
+--                                                                               --
+-- Permission is granted to anyone to use this software for any purpose,         --
+-- including commercial applications, and to alter it and redistribute it        --
+-- freely, subject to the following restrictions:                                --
+--                                                                               --
+--  1. The origin of this software must not be misrepresented; you must not      --
+--      claim that you wrote the original software. If you use this software     --
+--      in a product, an acknowledgment in the product documentation would be    --
+--      appreciated but is not required.                                         --
+--  2. Altered source versions must be plainly marked as such, and must not be   --
+--      misrepresented as being the original software.                           --
+--  3. This notice may not be removed or altered from any source distribution.   --
+--                                                                               --
+--===============================================================================--
 
 local ScreenManager = {};
 
+-- ------------------------------------------------
+-- Local Variables
+-- ------------------------------------------------
+
 local stack = {};
+local screens = {};
 
 -- ------------------------------------------------
 -- Module Functions
 -- ------------------------------------------------
 
 ---
--- Initialise the ScreenManager and
--- @param screen
+-- Initialise the ScreenManager. This pushes the first
+-- screen to the stack.
+-- @param nscreens - The list of possible screens.
+-- @param screen - The first screen to push to the stack.
 --
-function ScreenManager.init(screen)
+function ScreenManager.init(nscreens, screen)
     stack = {};
+    ScreenManager.setScreens(nscreens);
     ScreenManager.push(screen);
 end
 
@@ -35,19 +61,28 @@ end
 -- it will overlay all the other screens.
 -- Screens below the this new screen will be set inactive.
 --
--- @param nscreen
+-- @param screen - The name of the screen to push on the stack.
 --
-function ScreenManager.push(nscreen)
+function ScreenManager.push(screen)
     -- Deactivate the previous screen if there is one.
     if ScreenManager.peek() then
         ScreenManager.peek():setActive(false);
     end
 
     -- Push the new screen onto the stack.
-    stack[#stack + 1] = nscreen;
+    if screens[screen] then
+        stack[#stack + 1] = screens[screen].new();
+    else
+        local str = "{";
+        for i, v in pairs(screens) do
+            str = str .. i .. ', ';
+        end
+        str = str .. "}";
+        error('"' .. screen .. '" is not a valid screen. You will have to add a new one to your screen list or use one of the existing screens: ' .. str);
+    end
 
     -- Create the new screen and initialise it.
-    nscreen:init();
+    stack[#stack]:init();
 end
 
 ---
@@ -58,7 +93,7 @@ function ScreenManager.peek()
 end
 
 ---
--- Removes the topmost screen of the stack
+-- Removes the topmost screen of the stack.
 --
 function ScreenManager.pop()
     if #stack > 1 then
@@ -74,7 +109,7 @@ function ScreenManager.pop()
         -- Activate next screen on the stack.
         ScreenManager.peek():setActive(true);
     else
-        error("Can't close the last screen. Use switch() to clear the screen manager and add a new screen");
+        error("Can't close the last screen. Use switch() to clear the screen manager and add a new screen.");
     end
 end
 
@@ -121,21 +156,21 @@ end
 ---
 -- Update all screens on the stack whenever the game window gains or
 -- loses focus.
--- @param dfocus
+-- @param nfocus
 --
-function ScreenManager.focus(dfocus)
+function ScreenManager.focus(nfocus)
     for i = 1, #stack do
-        stack[i]:focus(dfocus);
+        stack[i]:focus(nfocus);
     end
 end
 
 ---
 -- Update all screens on the stack whenever the game window is minimized.
--- @param dvisible
+-- @param nvisible
 --
-function ScreenManager.visible(dvisible)
+function ScreenManager.visible(nvisible)
     for i = 1, #stack do
-        stack[i]:visible(dvisible);
+        stack[i]:visible(nvisible);
     end
 end
 
@@ -191,6 +226,19 @@ end
 --
 function ScreenManager.mousefocus(focus)
     ScreenManager.peek():mousefocus(focus);
+end
+
+-- ------------------------------------------------
+-- Setters
+-- ------------------------------------------------
+
+---
+-- Set a new table of screens from which to pick a new screen when
+-- pushing / switching.
+-- @param nscreens
+--
+function ScreenManager.setScreens(nscreens)
+    screens = nscreens;
 end
 
 -- ------------------------------------------------
