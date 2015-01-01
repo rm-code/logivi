@@ -134,7 +134,7 @@ function FolderNode.new(name, world, static, parent)
 
         -- Adjust box2d collision body.
         if layers[#layers].radius ~= radius then
-            collider.shape = love.physics.newCircleShape(layers[#layers].r);
+            collider.shape = love.physics.newCircleShape(layers[#layers].radius);
             collider.fixture = love.physics.newFixture(collider.body, collider.shape, 1);
             collider.body:setMass(1.0);
             radius = layers[#layers].radius;
