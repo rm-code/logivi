@@ -36,6 +36,7 @@ function FolderNode.new(name, world, static, parent)
         local parentBody = parent:getColliderBody();
         love.physics.newRopeJoint(parentBody, collider.body, parentBody:getX(), parentBody:getY(), collider.body:getX(), collider.body:getY(), 150, true);
     end
+    self:setPosition(collider.body:getX(), collider.body:getY());
 
     ---
     -- Counts the amount of children nodes that represent files.
@@ -187,6 +188,8 @@ function FolderNode.new(name, world, static, parent)
             end
             node:update(dt);
         end
+        
+        self:setPosition(collider.body:getX(), collider.body:getY());
     end
 
     function self:getNode(name)
@@ -214,6 +217,10 @@ function FolderNode.new(name, world, static, parent)
             count = count + 1;
         end
         return count;
+    end
+    
+    function self:getChildren()
+        return children;
     end
 
     return self;

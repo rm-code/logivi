@@ -21,6 +21,10 @@ function Node.new(type, name, x, y)
         x, y = nx, ny;
     end
 
+    function self:getPosition()
+        return x, y;
+    end
+
     function self:getX()
         return x;
     end

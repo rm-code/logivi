@@ -2,12 +2,13 @@ local Screen = require('lib/Screen');
 local FileHandler = require('src/FileHandler');
 local FolderNode = require('src/nodes/FolderNode');
 local FileNode = require('src/nodes/FileNode');
+local Camera = require('lib/Camera');
 
 -- ------------------------------------------------
 -- Constants
 -- ------------------------------------------------
 
-local LOG_FILE = 'log.txt'; 
+local LOG_FILE = 'log.txt';
 local MODIFIER_ADD = 'A';
 local MODIFIER_COPY = 'C';
 local MODIFIER_DELETE = 'D';
@@ -31,6 +32,7 @@ local MainScreen = {};
 function MainScreen.new()
     local self = Screen.new();
 
+    local camera = Camera.new();
     local commits;
     local root;
     local index = 0;
@@ -122,12 +124,18 @@ function MainScreen.new()
     function self:draw()
         love.graphics.print(date, 20, 20);
         love.graphics.print(author, 400, 20);
+
+        camera:set();
         root:draw();
+        camera:unset();
     end
 
     local timer = 0;
     function self:update(dt)
         world:update(dt) --this puts the world into motion
+
+        camera:checkEdges(root);
+        camera:update(dt);
 
         timer = timer + dt;
         if timer > 0.2 then
