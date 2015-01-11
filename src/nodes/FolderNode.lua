@@ -21,10 +21,11 @@ function FolderNode.new(name, world, static, parent)
 
     local children = {};
     local radius = 8;
-    local collider = {}
+    local collider = {};
+    local ropeLength = 150;
     if parent then
         local parentBody = parent:getColliderBody();
-        collider.body = love.physics.newBody(world, parentBody:getX() + love.math.random(-10, 10), parentBody:getY() + love.math.random(-10, 10), static and 'static' or 'dynamic');
+        collider.body = love.physics.newBody(world, parentBody:getX() + love.math.random(-20, 20), parentBody:getY() + love.math.random(-20, 20), static and 'static' or 'dynamic');
     else
         collider.body = love.physics.newBody(world, love.graphics.getWidth() * 0.5, love.graphics.getHeight() * 0.5, static and 'static' or 'dynamic');
     end
@@ -34,7 +35,7 @@ function FolderNode.new(name, world, static, parent)
     collider.body:setMass(1.0);
     if parent then
         local parentBody = parent:getColliderBody();
-        love.physics.newRopeJoint(parentBody, collider.body, parentBody:getX(), parentBody:getY(), collider.body:getX(), collider.body:getY(), 150, true);
+        love.physics.newRopeJoint(parentBody, collider.body, parentBody:getX(), parentBody:getY(), collider.body:getX(), collider.body:getY(), ropeLength, true);
     end
     self:setPosition(collider.body:getX(), collider.body:getY());
 
@@ -158,6 +159,24 @@ function FolderNode.new(name, world, static, parent)
 
                 collider.body:applyForce(-force * dx, -force * dy);
                 body:applyForce(force * dx, force * dy);
+            end
+        end
+
+        if parent then
+            local siblings = parent:getChildren();
+
+            for _, sibling in pairs(siblings) do
+                if sibling:getType() == 'folder' and sibling ~= self then
+                    local body = sibling:getColliderBody();
+
+                    local dx = body:getX() - collider.body:getX();
+                    local dy = body:getY() - collider.body:getY();
+                    local len = math.sqrt(dx * dx + dy * dy);
+                    local force = 400 * mass * mass / (len * len);
+
+                    collider.body:applyForce(-force * dx, -force * dy);
+                    body:applyForce(force * dx, force * dy);
+                end
             end
         end
     end
