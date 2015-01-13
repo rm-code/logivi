@@ -91,7 +91,7 @@ function FolderNode.new(name, world, static, parent)
                 -- of the current layer and the number of nodes that can be placed
                 -- on that layer.
                 if arc < MIN_ARC_SIZE then
-                    layers[#layers + 1] = { radius = radius, amount = amount - 1};
+                    layers[#layers + 1] = { radius = radius, amount = amount - 1 };
                     amount = 0;
                     radius = radius + 15;
                 else
@@ -207,7 +207,7 @@ function FolderNode.new(name, world, static, parent)
             end
             node:update(dt);
         end
-        
+
         self:setPosition(collider.body:getX(), collider.body:getY());
     end
 
@@ -237,7 +237,7 @@ function FolderNode.new(name, world, static, parent)
         end
         return count;
     end
-    
+
     function self:getChildren()
         return children;
     end
