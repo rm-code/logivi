@@ -3,6 +3,7 @@ local FileHandler = require('src/FileHandler');
 local FolderNode = require('src/nodes/FolderNode');
 local FileNode = require('src/nodes/FileNode');
 local Camera = require('lib/Camera');
+local Authors = require('src/Authors');
 
 -- ------------------------------------------------
 -- Constants
@@ -93,6 +94,8 @@ function MainScreen.new()
         index = index + 1;
 
         author = commits[index].author;
+        Authors.add(author);
+
         date = commits[index].date;
 
         for i = 1, #commits[index] do
@@ -124,6 +127,7 @@ function MainScreen.new()
     function self:draw()
         love.graphics.print(date, 20, 20);
         love.graphics.print(author, 400, 20);
+        Authors.draw();
 
         camera:set();
         root:draw();

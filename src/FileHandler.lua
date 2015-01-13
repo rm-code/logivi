@@ -3,7 +3,7 @@
 -- ------------------------------------------------
 
 local TAG_SEPARATOR = 'logivi_commit';
-local TAG_AUTHOR = 'author';
+local TAG_AUTHOR = 'author: ';
 local TAG_DATE = 'date';
 
 -- ------------------------------------------------
@@ -18,6 +18,15 @@ local FileHandler = {};
 --
 local function trim(str)
     return str:match("^%s*(.-)%s*$");
+end
+
+---
+-- Remove the specified tag from the line.
+-- @param line
+-- @param tag
+--
+local function removeTag(line, tag)
+    return line:gsub(tag, '');
 end
 
 ---
@@ -47,7 +56,7 @@ function FileHandler.splitCommits(log)
             index = index + 1;
             commits[index] = {};
         elseif line:find(TAG_AUTHOR) then
-            commits[index].author = line;
+            commits[index].author = removeTag(line, TAG_AUTHOR);
         elseif line:find(TAG_DATE) then
             commits[index].date = line;
         elseif line:len() ~= 0 then
