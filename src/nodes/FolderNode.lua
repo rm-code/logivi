@@ -65,38 +65,38 @@ function FolderNode.new(name, world, static, parent)
 
     ---
     -- Calculates how many layers we need and how many file nodes
-    -- can be placed on each layer.
+    -- can be placed on each layer. This basically generates a
+    -- blueprint of how the nodes need to be arranged.
+    -- @param children
     --
-    local function createOnionLayers()
+    local function createOnionLayers(children)
         local MIN_ARC_SIZE = 15;
 
-        local amount = 0;
+        local nodes = 0;
         local radius = 15; -- Radius of the circle around the folder node.
         local layers = {
-            { radius = radius, amount = amount }
+            { radius = radius, amount = nodes }
         };
-        local angle, arc;
 
         -- Go through all child nodes of type 'file'.
-        for _, node in pairs(children) do
-            if node:getType() == 'file' then
-                amount = amount + 1;
+        for i = 1, countFileNodes(children) do
+            nodes = nodes + 1;
 
-                -- Calculate the arc between the file nodes on the current layer.
-                -- The more files are on it the smaller it gets.
-                angle = 360 / amount;
-                arc = calcArc(layers[#layers].radius, angle);
+            -- Calculate the arc between the file nodes on the current layer.
+            -- The more files are on it the smaller it gets.
+            local arc = calcArc(layers[#layers].radius, 360 / nodes);
 
-                -- If the arc is smaller than the minimum arc size we store the radius
-                -- of the current layer and the number of nodes that can be placed
-                -- on that layer.
-                if arc < MIN_ARC_SIZE then
-                    layers[#layers + 1] = { radius = radius, amount = amount - 1 };
-                    amount = 0;
-                    radius = radius + 15;
-                else
-                    layers[#layers].amount = amount;
-                end
+            -- If the arc is smaller than the allowed minimum we store the radius
+            -- of the current layer and the number of nodes that can be placed
+            -- on that layer and move to the next layer.
+            if arc < MIN_ARC_SIZE then
+                radius = radius + 15;
+
+                -- Create a new layer.
+                layers[#layers + 1] = { radius = radius, amount = 1 };
+                nodes = 1;
+            else
+                layers[#layers].amount = nodes;
             end
         end
 
@@ -105,33 +105,32 @@ function FolderNode.new(name, world, static, parent)
 
     ---
     -- Distributes files nodes evenly on a circle around the parent node.
-    --
     -- @param children
     --
     local function plotCircle(children)
-        -- Determine how the file nodes need to be distributed amongst different layers.
-        local layers = createOnionLayers();
+        -- Get a blueprint of how the file nodes need to be distributed amongst different layers.
+        local layers = createOnionLayers(children);
 
-        -- Update the position of the file nodes based on the onion-layers.
+        -- Update the position of the file nodes based on the previously calculated onion-layers.
         local count = 0;
         local layer = 1;
         for _, node in pairs(children) do
             if node:getType() == 'file' then
                 count = count + 1;
 
-                -- As long as the amount of nodes on the current layer is smaller or 
-                -- the calculated amount we keep adding them to this layer.
-                -- If we pass this threshold we add a new layer and reset the counter. 
-                if count <= layers[layer].amount then
-                    local angle = 360 / layers[layer].amount;
-
-                    local x = (layers[layer].radius * math.cos((angle * (count - 1)) * (math.pi / 180)));
-                    local y = (layers[layer].radius * math.sin((angle * (count - 1)) * (math.pi / 180)));
-                    node:setPosition(x + collider.body:getX(), y + collider.body:getY());
-                else
+                -- If we have more nodes on the current layer than allowed, we "move"
+                -- the node to the next layer (this is why we reset the counter to one
+                -- instead of zero).
+                if count > layers[layer].amount then
                     layer = layer + 1;
-                    count = 0;
+                    count = 1;
                 end
+
+                -- Calculate the new position of the node on its layer around the folder node.
+                local angle = 360 / layers[layer].amount;
+                local x = (layers[layer].radius * math.cos((angle * (count - 1)) * (math.pi / 180)));
+                local y = (layers[layer].radius * math.sin((angle * (count - 1)) * (math.pi / 180)));
+                node:setPosition(x + collider.body:getX(), y + collider.body:getY());
             end
         end
 
