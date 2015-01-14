@@ -30,29 +30,17 @@ local function removeTag(line, tag)
 end
 
 ---
--- Loads the file and stores it line for line in a lua table.
--- @param name
---
-function LogReader.loadFile(name)
-    local file = {};
-    for line in love.filesystem.lines(name) do
-        file[#file + 1] = line;
-    end
-    return file;
-end
-
----
 -- Split up the log table into commits. Each commit is a new
 -- nested table.
 -- @param log
 --
-function LogReader.splitCommits(log)
+local function splitCommits(log)
     local commits = {};
     local index = 0;
     for i = 1, #log do
         local line = log[i];
 
-        if line:find(TAG_SEPARATOR) then -- Commit separator. 
+        if line:find(TAG_SEPARATOR) then -- Commit separator.
             index = index + 1;
             commits[index] = {};
         elseif line:find(TAG_AUTHOR) then
@@ -71,6 +59,18 @@ function LogReader.splitCommits(log)
     end
 
     return commits;
+end
+
+---
+-- Loads the file and stores it line for line in a lua table.
+-- @param name
+--
+function LogReader.loadLog(name)
+    local log = {};
+    for line in love.filesystem.lines(name) do
+        log[#log + 1] = line;
+    end
+    return splitCommits(log);
 end
 
 -- ------------------------------------------------

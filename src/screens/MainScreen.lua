@@ -118,8 +118,7 @@ function MainScreen.new()
     end
 
     function self:init()
-        local log = LogReader.loadFile(LOG_FILE);
-        commits = LogReader.splitCommits(log);
+        commits = LogReader.loadLog(LOG_FILE);
 
         world = love.physics.newWorld(0.0, 0.0, true);
         love.physics.setMeter(8); -- In our world 1m == 8px
