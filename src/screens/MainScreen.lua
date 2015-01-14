@@ -1,5 +1,5 @@
 local Screen = require('lib/Screen');
-local FileHandler = require('src/FileHandler');
+local LogReader = require('src/LogReader');
 local FolderNode = require('src/nodes/FolderNode');
 local FileNode = require('src/nodes/FileNode');
 local Camera = require('lib/Camera');
@@ -118,8 +118,8 @@ function MainScreen.new()
     end
 
     function self:init()
-        local log = FileHandler.loadFile(LOG_FILE);
-        commits = FileHandler.splitCommits(log);
+        local log = LogReader.loadFile(LOG_FILE);
+        commits = LogReader.splitCommits(log);
 
         world = love.physics.newWorld(0.0, 0.0, true);
         love.physics.setMeter(8); -- In our world 1m == 8px

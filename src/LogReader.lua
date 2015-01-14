@@ -10,7 +10,7 @@ local TAG_DATE = 'date';
 -- Module
 -- ------------------------------------------------
 
-local FileHandler = {};
+local LogReader = {};
 
 ---
 -- Remove leading and trailing whitespace.
@@ -33,7 +33,7 @@ end
 -- Loads the file and stores it line for line in a lua table.
 -- @param name
 --
-function FileHandler.loadFile(name)
+function LogReader.loadFile(name)
     local file = {};
     for line in love.filesystem.lines(name) do
         file[#file + 1] = line;
@@ -46,7 +46,7 @@ end
 -- nested table.
 -- @param log
 --
-function FileHandler.splitCommits(log)
+function LogReader.splitCommits(log)
     local commits = {};
     local index = 0;
     for i = 1, #log do
@@ -77,7 +77,7 @@ end
 -- Return Module
 -- ------------------------------------------------
 
-return FileHandler;
+return LogReader;
 
 --==================================================================================================
 -- Created 01.10.14 - 12:34                                                                        =
