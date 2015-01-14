@@ -4,6 +4,7 @@ local FolderNode = require('src/nodes/FolderNode');
 local FileNode = require('src/nodes/FileNode');
 local Camera = require('lib/Camera');
 local Authors = require('src/Authors');
+local FileManager = require('src/FileManager');
 
 -- ------------------------------------------------
 -- Constants
@@ -81,8 +82,10 @@ function MainScreen.new()
     --
     local function modifyFileNodes(target, fileName, modifier)
         if modifier == MODIFIER_ADD then -- Add file
+            FileManager.add(fileName);
             target:append(fileName, FileNode.new(fileName));
         elseif modifier == MODIFIER_DELETE then
+            FileManager.remove(fileName);
             target:remove(fileName);
         end
     end
@@ -128,6 +131,7 @@ function MainScreen.new()
         love.graphics.print(date, 20, 20);
         love.graphics.print(author, 400, 20);
         Authors.draw();
+        FileManager.draw();
 
         camera:set();
         root:draw();
