@@ -33,10 +33,12 @@ end
 --
 function FileManager.draw()
     local count = 0;
-    for ext, amount in pairs(extensions) do
+    for ext, tbl in pairs(extensions) do
         count = count + 1;
+        love.graphics.setColor(tbl.color);
         love.graphics.print(ext, love.graphics.getWidth() - 80, 100 + count * 20);
-        love.graphics.print(amount, love.graphics.getWidth() - 120, 100 + count * 20);
+        love.graphics.print(tbl.amount, love.graphics.getWidth() - 120, 100 + count * 20);
+        love.graphics.setColor(255, 255, 255);
     end
 end
 
@@ -47,9 +49,13 @@ end
 function FileManager.add(fileName)
     local ext = splitExtension(fileName);
     if not extensions[ext] then
-        extensions[ext] = 0;
+        extensions[ext] = {};
+        extensions[ext].amount = 0;
+        extensions[ext].color = { love.math.random(0, 255), love.math.random(0, 255), love.math.random(0, 255) };
     end
-    extensions[ext] = extensions[ext] + 1;
+    extensions[ext].amount = extensions[ext].amount + 1;
+
+    return extensions[ext].color;
 end
 
 ---
@@ -64,10 +70,14 @@ function FileManager.remove(fileName)
         error('Tried to remove the non existing file extension "' .. ext .. '".');
     end
 
-    extensions[ext] = extensions[ext] - 1;
-    if extensions[ext] == 0 then
+    extensions[ext].amount = extensions[ext].amount - 1;
+    if extensions[ext].amount == 0 then
         extensions[ext] = nil;
     end
+end
+
+function FileManager.getColor(ext)
+    return extensions[ext].color;
 end
 
 return FileManager;
