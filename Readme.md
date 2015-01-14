@@ -5,7 +5,7 @@ LoGiVi is a git repository visualisation tool inspired by [Gource](https://code.
 ## Instructions
 LoGiVi (LÖVE Git Viewer) can't read from a .git repository directly. Instead you will have to create a git-log which needs to have a specific format. Please use this command to create the file:
 
-    git log --reverse --date=iso --pretty=format:'logivi_commit%nauthor: %an%ndate: %ad%n' --name-status > log.txt
+    git log --reverse --date=iso -m --pretty=format:'logivi_commit%nauthor: %an%ndate: %ad%n' --name-status > log.txt
 
 This will create a log file in the same directory as the .git repository (of course you can write the log to any other location if you want to).
 
