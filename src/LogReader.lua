@@ -62,10 +62,33 @@ local function splitCommits(log)
 end
 
 ---
+-- Checks if there is a log file LoGiVi can work with. If the file
+-- can't be found it will display a warning message and open the save
+-- folder.
+-- @param name
+--
+local function isLogFile(name)
+    if not love.filesystem.isFile(name) then
+        local msg = [[
+To use LoGiVi you will have to generate a git log first. See the readme for instructions on how to generate a proper log.
+
+LoGiVi now will open the file directory in which to place the log.
+]];
+        love.window.showMessageBox('No git log found.', msg, 'warning', false);
+        love.system.openURL('file://' .. love.filesystem.getSaveDirectory());
+        return false;
+    end
+end
+
+---
 -- Loads the file and stores it line for line in a lua table.
 -- @param name
 --
 function LogReader.loadLog(name)
+    if not isLogFile(name) then
+        return {};
+    end
+
     local log = {};
     for line in love.filesystem.lines(name) do
         log[#log + 1] = line;
