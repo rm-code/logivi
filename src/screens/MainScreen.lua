@@ -118,6 +118,8 @@ function MainScreen.new()
     end
 
     function self:init()
+        Authors.init();
+
         commits = LogReader.loadLog(LOG_FILE);
 
         world = love.physics.newWorld(0.0, 0.0, true);

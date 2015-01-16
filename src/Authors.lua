@@ -4,14 +4,31 @@ local Authors = {};
 -- Local Variables
 -- ------------------------------------------------
 
-local list = {};
-
-local aliases = love.filesystem.load('aliases.lua');
-aliases = aliases and aliases() or {};
+local list;
+local default;
+local aliases;
 
 -- ------------------------------------------------
 -- Public Functions
 -- ------------------------------------------------
+
+function Authors.init()
+    list = {};
+    default = [[
+return {
+    -- ['NameToReplace'] = 'ReplaceWith',
+};
+]];
+
+    if not love.filesystem.isFile('aliases.lua') then
+        local file = love.filesystem.newFile('aliases.lua');
+        file:open('w');
+        file:write(default);
+        file:close();
+    end
+
+    aliases = love.filesystem.load('aliases.lua')();
+end
 
 ---
 -- Draws a list of all authors working on the project.
