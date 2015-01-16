@@ -78,6 +78,7 @@ LoGiVi now will open the file directory in which to place the log.
         love.system.openURL('file://' .. love.filesystem.getSaveDirectory());
         return false;
     end
+    return true;
 end
 
 ---
