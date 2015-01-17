@@ -1,20 +1,19 @@
-local Authors = {};
+local AuthorManager = {};
 
 -- ------------------------------------------------
 -- Local Variables
 -- ------------------------------------------------
 
-local list;
-local default;
+local authors;
 local aliases;
 
 -- ------------------------------------------------
 -- Public Functions
 -- ------------------------------------------------
 
-function Authors.init()
-    list = {};
-    default = [[
+function AuthorManager.init()
+    authors = {};
+    local default = [[
 return {
     -- ['NameToReplace'] = 'ReplaceWith',
 };
@@ -33,9 +32,9 @@ end
 ---
 -- Draws a list of all authors working on the project.
 --
-function Authors.draw()
+function AuthorManager.draw()
     local count = 0;
-    for author, _ in pairs(list) do
+    for author, _ in pairs(authors) do
         count = count + 1;
         love.graphics.print(author, 20, 100 + count * 20);
     end
@@ -47,8 +46,8 @@ end
 -- This can be used to fix "faulty" authors in commits.
 -- @param nauthor
 --
-function Authors.add(nauthor)
-    list[aliases[nauthor] or nauthor] = true;
+function AuthorManager.add(nauthor)
+    authors[aliases[nauthor] or nauthor] = true;
 end
 
-return Authors;
+return AuthorManager;

@@ -3,7 +3,7 @@ local LogReader = require('src/LogReader');
 local FolderNode = require('src/nodes/FolderNode');
 local FileNode = require('src/nodes/FileNode');
 local Camera = require('lib/Camera');
-local Authors = require('src/Authors');
+local AuthorManager = require('src/AuthorManager');
 local FileManager = require('src/FileManager');
 
 -- ------------------------------------------------
@@ -97,7 +97,7 @@ function MainScreen.new()
         index = index + 1;
 
         author = commits[index].author;
-        Authors.add(author);
+        AuthorManager.add(author);
 
         date = commits[index].date;
 
@@ -118,7 +118,7 @@ function MainScreen.new()
     end
 
     function self:init()
-        Authors.init();
+        AuthorManager.init();
 
         commits = LogReader.loadLog(LOG_FILE);
 
@@ -131,7 +131,7 @@ function MainScreen.new()
     function self:draw()
         love.graphics.print(date, 20, 20);
         love.graphics.print(author, 400, 20);
-        Authors.draw();
+        AuthorManager.draw();
         FileManager.draw();
 
         camera:set();
