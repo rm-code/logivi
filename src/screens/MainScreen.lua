@@ -38,8 +38,8 @@ function MainScreen.new()
     local commits;
     local root;
     local index = 0;
-    local author = '';
     local date = '';
+    local previousAuthor;
     local world;
 
     ---
@@ -86,12 +86,17 @@ function MainScreen.new()
             target:append(fileName, FileNode.new(fileName, color));
             local file = target:getNode(fileName);
             file:setModified(true);
+            return file;
         elseif modifier == MODIFIER_MODIFY then
             local file = target:getNode(fileName);
             file:setModified(true);
+            return file;
         elseif modifier == MODIFIER_DELETE then
+            local file = target:getNode(fileName);
+            file:setModified(true);
             FileManager.remove(fileName);
             target:remove(fileName);
+            return file;
         end
     end
 
@@ -101,8 +106,8 @@ function MainScreen.new()
         end
         index = index + 1;
 
-        author = commits[index].author;
-        AuthorManager.add(author);
+        local commitAuthor = AuthorManager.add(commits[index].author);
+        previousAuthor = commitAuthor; -- Store author so we can reset him when the next commit is loaded.
 
         date = commits[index].date;
 
@@ -118,7 +123,10 @@ function MainScreen.new()
             local target = createSubFolders(root, subfolders);
 
             -- Create the file node at the bottom of the current path tree.
-            modifyFileNodes(target, file, change.modifier);
+            file = modifyFileNodes(target, file, change.modifier);
+
+            -- Add a link from the file to the author of the commit.
+            commitAuthor:addLink(file);
         end
     end
 
@@ -135,12 +143,12 @@ function MainScreen.new()
 
     function self:draw()
         love.graphics.print(date, 20, 20);
-        love.graphics.print(author, 400, 20);
-        AuthorManager.draw();
         FileManager.draw();
+        AuthorManager.drawList();
 
         camera:set();
         root:draw();
+        AuthorManager.drawLabels();
         camera:unset();
     end
 
@@ -153,11 +161,17 @@ function MainScreen.new()
 
         timer = timer + dt;
         if timer > 0.2 then
+            -- Reset links of the previous author.
+            if previousAuthor then
+                previousAuthor:resetLinks();
+            end
             nextCommit();
             timer = 0;
         end
 
         root:update(dt);
+
+        AuthorManager.update(dt);
     end
 
     return self;

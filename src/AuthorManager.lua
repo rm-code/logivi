@@ -1,3 +1,9 @@
+local Author = require('src/Author');
+
+-- ------------------------------------------------
+-- Module
+-- ------------------------------------------------
+
 local AuthorManager = {};
 
 -- ------------------------------------------------
@@ -32,11 +38,27 @@ end
 ---
 -- Draws a list of all authors working on the project.
 --
-function AuthorManager.draw()
+function AuthorManager.drawLabels()
+    for _, author in pairs(authors) do
+        author:draw();
+    end
+end
+
+function AuthorManager.drawList()
     local count = 0;
-    for author, _ in pairs(authors) do
+    for name, _ in pairs(authors) do
         count = count + 1;
-        love.graphics.print(author, 20, 100 + count * 20);
+        love.graphics.print(name, 20, 100 + count * 20);
+    end
+end
+
+---
+-- Updates all authors.
+-- @param dt
+--
+function AuthorManager.update(dt)
+    for name, author in pairs(authors) do
+        author:update(dt);
     end
 end
 
@@ -47,7 +69,12 @@ end
 -- @param nauthor
 --
 function AuthorManager.add(nauthor)
-    authors[aliases[nauthor] or nauthor] = true;
+    local nickname = aliases[nauthor] or nauthor;
+
+    if not authors[nickname] then
+        authors[nickname] = Author.new(nickname);
+    end
+    return authors[nickname];
 end
 
 return AuthorManager;
