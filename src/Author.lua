@@ -1,6 +1,17 @@
 local Author = {};
 
-function Author.new(name)
+
+-- ------------------------------------------------
+-- Constants
+-- ------------------------------------------------
+
+local AVATAR_SIZE = 48;
+
+-- ------------------------------------------------
+-- Constructor
+-- ------------------------------------------------
+
+function Author.new(name, avatar)
     local self = {};
 
     local name = name;
@@ -14,8 +25,7 @@ function Author.new(name)
             love.graphics.line(posX, posY, links[i]:getX(), links[i]:getY());
             love.graphics.setColor(255, 255, 255, 255);
         end
-        love.graphics.circle('fill', posX, posY, 20, 20);
-        love.graphics.print(name, posX + 10, posY + 10);
+        love.graphics.draw(avatar, posX - AVATAR_SIZE * 0.5, posY - AVATAR_SIZE * 0.5, 0, AVATAR_SIZE / avatar:getWidth(), AVATAR_SIZE / avatar:getHeight());
     end
 
     function self:update(dt)
