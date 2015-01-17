@@ -84,6 +84,9 @@ function MainScreen.new()
         if modifier == MODIFIER_ADD then -- Add file
             local color = FileManager.add(fileName);
             target:append(fileName, FileNode.new(fileName, color));
+        elseif modifier == MODIFIER_MODIFY then
+            local file = target:getNode(fileName);
+            file:setModified(true);
         elseif modifier == MODIFIER_DELETE then
             FileManager.remove(fileName);
             target:remove(fileName);
