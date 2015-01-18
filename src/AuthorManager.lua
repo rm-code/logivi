@@ -8,6 +8,25 @@ local http = require('socket.http');
 local AuthorManager = {};
 
 -- ------------------------------------------------
+-- Constants
+-- ------------------------------------------------
+
+local DEFAULT_ALIASES_FILE_CONTENT = [[
+return {
+    -- ['NameToReplace'] = 'ReplaceWith',
+};
+]];
+
+local DEFAULT_AVATARS_FILE_CONTENT = [[
+return {
+    -- ['user'] = 'UrlToAvatar',
+};
+]];
+
+local ALIASES_FILE_NAME = 'aliases.lua';
+local AVATARS_FILE_NAME = 'avatars.lua';
+
+-- ------------------------------------------------
 -- Local Variables
 -- ------------------------------------------------
 
@@ -16,24 +35,37 @@ local avatars;
 local aliases;
 
 -- ------------------------------------------------
--- Public Functions
+-- Private Functions
 -- ------------------------------------------------
 
-function AuthorManager.init()
-    authors = {};
-    local default = [[
-return {
-    -- ['NameToReplace'] = 'ReplaceWith',
-};
-]];
-
-    if not love.filesystem.isFile('aliases.lua') then
-        local file = love.filesystem.newFile('aliases.lua');
+---
+-- Checks if the file already exists. If it does it is
+-- loaded, executed and returned. If the file doesn't
+-- exist yet a default file will be written instead.
+-- This default file is then read and returned.
+-- @param name
+-- @param default
+--
+local function loadFile(name, default)
+    if not love.filesystem.isFile(name) then
+        local file = love.filesystem.newFile(name);
         file:open('w');
         file:write(default);
         file:close();
     end
-    aliases = love.filesystem.load('aliases.lua')();
+    return love.filesystem.load(name)();
+end
+
+-- ------------------------------------------------
+-- Public Functions
+-- ------------------------------------------------
+
+function AuthorManager.init()
+    -- Set up the table to store all authors.
+    authors = {};
+
+    -- Create an aliases default file or load an existing one.
+    aliases = loadFile(ALIASES_FILE_NAME, DEFAULT_ALIASES_FILE_CONTENT);
 
     avatars = {};
     -- Grab the default avatar online, write it to the save folder and load it as an image.
@@ -44,18 +76,7 @@ return {
     -- Read the avatars.lua file (if there is one) and use it to grab an avatar online, write it
     -- to the save folder and load it as an image to use in LoGiVi.
     local counter = 0;
-    if not love.filesystem.isFile('avatars.lua') then
-        local file = love.filesystem.newFile('avatars.lua');
-        local default = [[
-return {
-    -- ['user'] = 'UrlToAvatar',
-};
-]];
-        file:open('w');
-        file:write(default);
-        file:close();
-    end
-    local avatarFile = love.filesystem.load('avatars.lua')();
+    local avatarFile = loadFile(AVATARS_FILE_NAME, DEFAULT_AVATARS_FILE_CONTENT);
     for author, url in pairs(avatarFile) do
         local body = http.request(url);
         love.filesystem.write(string.format("tmp_%03d.png", counter), body);
