@@ -30,6 +30,12 @@ local http = require('socket.http');
 local AuthorManager = {};
 
 -- ------------------------------------------------
+-- Constants
+-- ------------------------------------------------
+
+local PATH_AVATARS = 'tmp/avatars/';
+
+-- ------------------------------------------------
 -- Local Variables
 -- ------------------------------------------------
 
@@ -49,10 +55,15 @@ function AuthorManager.init(naliases, avatarUrls)
     aliases = naliases;
 
     avatars = {};
+    -- Set up the folder.
+    if not love.filesystem.isDirectory(PATH_AVATARS) then
+        love.filesystem.createDirectory(PATH_AVATARS);
+    end
+
     -- Grab the default avatar online, write it to the save folder and load it as an image.
     local body = http.request('https://www.love2d.org/w/images/9/9b/Love-game-logo-256x256.png');
-    love.filesystem.write('tmp_default.png', body);
-    avatars['default'] = love.graphics.newImage('tmp_default.png');
+    love.filesystem.write(PATH_AVATARS .. 'tmp_default.png', body);
+    avatars['default'] = love.graphics.newImage(PATH_AVATARS .. 'tmp_default.png');
 
     -- Read the avatars.lua file (if there is one) and use it to grab an avatar online, write it
     -- to the save folder and load it as an image to use in LoGiVi.
@@ -60,8 +71,8 @@ function AuthorManager.init(naliases, avatarUrls)
     local avatarFile = avatarUrls
     for author, url in pairs(avatarFile) do
         local body = http.request(url);
-        love.filesystem.write(string.format("tmp_%03d.png", counter), body);
-        avatars[author] = love.graphics.newImage(string.format("tmp_%03d.png", counter));
+        love.filesystem.write(string.format(PATH_AVATARS .. "tmp_%03d.png", counter), body);
+        avatars[author] = love.graphics.newImage(string.format(PATH_AVATARS .. "tmp_%03d.png", counter));
         counter = counter + 1;
     end
 end
