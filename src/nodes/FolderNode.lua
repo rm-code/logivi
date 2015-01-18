@@ -93,7 +93,7 @@ function FolderNode.new(name, world, static, parent)
         local MIN_ARC_SIZE = 15;
 
         local nodes = 0;
-        local radius = 15; -- Radius of the circle around the folder node.
+        local radius = -15; -- Radius of the circle around the folder node.
         local layers = {
             { radius = radius, amount = nodes }
         };
