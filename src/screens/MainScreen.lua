@@ -226,6 +226,12 @@ function MainScreen.new()
         AuthorManager.update(dt);
     end
 
+    function self:quit()
+        if ConfigReader.getConfig('options').removeTmpFiles then
+            ConfigReader.removeTmpFiles();
+        end
+    end
+
     return self;
 end
 

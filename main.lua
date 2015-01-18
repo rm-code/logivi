@@ -82,3 +82,7 @@ end
 function love.update(dt)
     ScreenManager.update(dt);
 end
+
+function love.quit(q)
+    ScreenManager.quit(q);
+end
