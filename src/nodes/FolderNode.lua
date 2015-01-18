@@ -1,3 +1,25 @@
+--==================================================================================================
+-- Copyright (C) 2014 - 2015 by Robert Machmer                                                     =
+--                                                                                                 =
+-- Permission is hereby granted, free of charge, to any person obtaining a copy                    =
+-- of this software and associated documentation files (the "Software"), to deal                   =
+-- in the Software without restriction, including without limitation the rights                    =
+-- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell                       =
+-- copies of the Software, and to permit persons to whom the Software is                           =
+-- furnished to do so, subject to the following conditions:                                        =
+--                                                                                                 =
+-- The above copyright notice and this permission notice shall be included in                      =
+-- all copies or substantial portions of the Software.                                             =
+--                                                                                                 =
+-- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR                      =
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,                        =
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE                     =
+-- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER                          =
+-- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,                   =
+-- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN                       =
+-- THE SOFTWARE.                                                                                   =
+--==================================================================================================
+
 local Node = require('src/nodes/Node');
 
 -- ------------------------------------------------
@@ -38,6 +60,10 @@ function FolderNode.new(name, world, static, parent)
         love.physics.newRopeJoint(parentBody, collider.body, parentBody:getX(), parentBody:getY(), collider.body:getX(), collider.body:getY(), ropeLength, true);
     end
     self:setPosition(collider.body:getX(), collider.body:getY());
+
+    -- ------------------------------------------------
+    -- Private Functions
+    -- ------------------------------------------------
 
     ---
     -- Counts the amount of children nodes that represent files.
@@ -180,6 +206,10 @@ function FolderNode.new(name, world, static, parent)
         end
     end
 
+    -- ------------------------------------------------
+    -- Public Functions
+    -- ------------------------------------------------
+
     function self:draw()
         for _, node in pairs(children) do
             if node:getType() == 'folder' then
@@ -206,10 +236,6 @@ function FolderNode.new(name, world, static, parent)
         self:setPosition(collider.body:getX(), collider.body:getY());
     end
 
-    function self:getNode(name)
-        return children[name];
-    end
-
     function self:append(name, node)
         if not children[name] then
             children[name] = node;
@@ -219,6 +245,14 @@ function FolderNode.new(name, world, static, parent)
 
     function self:remove(name)
         children[name] = nil;
+    end
+
+    -- ------------------------------------------------
+    -- Getters
+    -- ------------------------------------------------
+
+    function self:getNode(name)
+        return children[name];
     end
 
     function self:getColliderBody()

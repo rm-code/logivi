@@ -1,3 +1,25 @@
+--==================================================================================================
+-- Copyright (C) 2014 - 2015 by Robert Machmer                                                     =
+--                                                                                                 =
+-- Permission is hereby granted, free of charge, to any person obtaining a copy                    =
+-- of this software and associated documentation files (the "Software"), to deal                   =
+-- in the Software without restriction, including without limitation the rights                    =
+-- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell                       =
+-- copies of the Software, and to permit persons to whom the Software is                           =
+-- furnished to do so, subject to the following conditions:                                        =
+--                                                                                                 =
+-- The above copyright notice and this permission notice shall be included in                      =
+-- all copies or substantial portions of the Software.                                             =
+--                                                                                                 =
+-- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR                      =
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,                        =
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE                     =
+-- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER                          =
+-- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,                   =
+-- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN                       =
+-- THE SOFTWARE.                                                                                   =
+--==================================================================================================
+
 local Screen = require('lib/Screen');
 local LogReader = require('src/LogReader');
 local FolderNode = require('src/nodes/FolderNode');
@@ -41,6 +63,11 @@ function MainScreen.new()
     local date = '';
     local previousAuthor;
     local world;
+    local commitTimer = 0;
+
+    -- ------------------------------------------------
+    -- Private Functions
+    -- ------------------------------------------------
 
     ---
     -- @param path
@@ -130,6 +157,10 @@ function MainScreen.new()
         end
     end
 
+    -- ------------------------------------------------
+    -- Public Functions
+    -- ------------------------------------------------
+
     function self:init()
         AuthorManager.init();
 
@@ -152,21 +183,20 @@ function MainScreen.new()
         camera:unset();
     end
 
-    local timer = 0;
     function self:update(dt)
         world:update(dt) --this puts the world into motion
 
         camera:checkEdges(root);
         camera:update(dt);
 
-        timer = timer + dt;
-        if timer > 0.2 then
+        commitTimer = commitTimer + dt;
+        if commitTimer > 0.2 then
             -- Reset links of the previous author.
             if previousAuthor then
                 previousAuthor:resetLinks();
             end
             nextCommit();
-            timer = 0;
+            commitTimer = 0;
         end
 
         root:update(dt);
@@ -182,7 +212,3 @@ end
 -- ------------------------------------------------
 
 return MainScreen;
-
---==================================================================================================
--- Created 01.10.14 - 13:18                                                                        =
---==================================================================================================
