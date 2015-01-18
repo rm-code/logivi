@@ -2,7 +2,7 @@ local GAME_TITLE = "LoGiVi";
 
 local LOVE_VERSION = "0.9.2";
 
-local GAME_VERSION = "0000";
+local GAME_VERSION = "0052";
 
 -- ------------------------------------------------
 -- Local variables
