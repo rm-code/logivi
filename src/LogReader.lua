@@ -20,7 +20,6 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
-local TAG_SEPARATOR = 'logivi_commit';
 local TAG_AUTHOR = 'author: ';
 local TAG_DATE = 'date: ';
 
@@ -72,16 +71,15 @@ local function splitCommits(log)
     for i = 1, #log do
         local line = log[i];
 
-        if line:find(TAG_SEPARATOR) then -- Commit separator.
+        if line:find(TAG_AUTHOR) then
             index = index + 1;
             commits[index] = {};
-        elseif line:find(TAG_AUTHOR) then
             commits[index].author = removeTag(line, TAG_AUTHOR);
         elseif line:find(TAG_DATE) then
             -- Transform unix timestamp to a table containing a human-readable date.
             local timestamp = removeTag(line, TAG_DATE);
             commits[index].date = os.date('*t', tonumber(timestamp));
-        elseif line:len() ~= 0 then
+        elseif line:len() ~= 0 and commits[index] then
             -- Split the file information into the modifier, which determines
             -- what has happened to the file since the last commit and the actual
             -- filepath / name.
