@@ -25,6 +25,7 @@ local LogReader = require('src/LogReader');
 local FolderNode = require('src/nodes/FolderNode');
 local FileNode = require('src/nodes/FileNode');
 local Camera = require('lib/Camera');
+local ConfigReader = require('src/ConfigReader');
 local AuthorManager = require('src/AuthorManager');
 local FileManager = require('src/FileManager');
 
@@ -178,7 +179,9 @@ function MainScreen.new()
     -- ------------------------------------------------
 
     function self:init()
-        AuthorManager.init();
+        ConfigReader.init();
+
+        AuthorManager.init(ConfigReader.getConfig('aliases'), ConfigReader.getConfig('avatars'));
 
         commits = LogReader.loadLog(LOG_FILE);
 
