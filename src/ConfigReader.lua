@@ -41,6 +41,9 @@ return {
     avatars = {
         -- ['author'] = 'urlToAvatar',
     },
+    options = {
+        backgroundColor = { 0, 0, 0 },
+    },
 };
 ]]
 

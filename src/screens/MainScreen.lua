@@ -181,6 +181,9 @@ function MainScreen.new()
     function self:init()
         ConfigReader.init();
 
+        -- Set the background color based on the option in the config file.
+        love.graphics.setBackgroundColor(ConfigReader.getConfig('options').backgroundColor);
+
         AuthorManager.init(ConfigReader.getConfig('aliases'), ConfigReader.getConfig('avatars'));
 
         commits = LogReader.loadLog(LOG_FILE);
