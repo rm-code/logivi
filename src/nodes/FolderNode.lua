@@ -181,10 +181,6 @@ function FolderNode.new(name, world, static, parent)
     end
 
     function self:draw()
-        love.graphics.setColor(0, 200, 0, 100);
-        love.graphics.circle("fill", collider.body:getX(), collider.body:getY(), collider.shape:getRadius());
-        love.graphics.setColor(255, 255, 255);
-
         for _, node in pairs(children) do
             if node:getType() == 'folder' then
                 love.graphics.setColor(50, 50, 50);
