@@ -29,12 +29,6 @@ local Node = require('src/nodes/Node');
 local FolderNode = {};
 
 -- ------------------------------------------------
--- Local Variables
--- ------------------------------------------------
-
-local img = love.graphics.newImage('res/folderNode.png');
-
--- ------------------------------------------------
 -- Constructor
 -- ------------------------------------------------
 
@@ -220,7 +214,6 @@ function FolderNode.new(name, world, static, parent)
             node:draw();
         end
         love.graphics.print(name, collider.body:getX() + 10, collider.body:getY());
-        love.graphics.draw(img, collider.body:getX() - 8, collider.body:getY() - 8);
     end
 
     function self:update(dt)
