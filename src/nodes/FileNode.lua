@@ -54,7 +54,7 @@ function FileNode.new(name, color)
     local timer = MOD_TIMER;
 
     -- ------------------------------------------------
-    -- Private Function
+    -- Private Functions
     -- ------------------------------------------------
 
     local function lerp(a, b, t)
@@ -62,7 +62,7 @@ function FileNode.new(name, color)
     end
 
     -- ------------------------------------------------
-    -- Public Function
+    -- Public Functions
     -- ------------------------------------------------
 
     ---

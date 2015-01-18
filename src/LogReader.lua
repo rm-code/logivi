@@ -30,6 +30,20 @@ local TAG_DATE = 'date';
 
 local LogReader = {};
 
+-- ------------------------------------------------
+-- Constants
+-- ------------------------------------------------
+
+local WARNING_MESSAGE = [[
+To use LoGiVi you will have to generate a git log first. See the readme for instructions on how to generate a proper log.
+
+LoGiVi now will open the file directory in which to place the log.
+]];
+
+-- ------------------------------------------------
+-- Local Functions
+-- ------------------------------------------------
+
 ---
 -- Remove leading and trailing whitespace.
 -- @param str
@@ -87,17 +101,16 @@ end
 --
 local function isLogFile(name)
     if not love.filesystem.isFile(name) then
-        local msg = [[
-To use LoGiVi you will have to generate a git log first. See the readme for instructions on how to generate a proper log.
-
-LoGiVi now will open the file directory in which to place the log.
-]];
-        love.window.showMessageBox('No git log found.', msg, 'warning', false);
+        love.window.showMessageBox('No git log found.', WARNING_MESSAGE, 'warning', false);
         love.system.openURL('file://' .. love.filesystem.getSaveDirectory());
         return false;
     end
     return true;
 end
+
+-- ------------------------------------------------
+-- Public Functions
+-- ------------------------------------------------
 
 ---
 -- Loads the file and stores it line for line in a lua table.
@@ -112,6 +125,7 @@ function LogReader.loadLog(name)
     for line in love.filesystem.lines(name) do
         log[#log + 1] = line;
     end
+
     return splitCommits(log);
 end
 

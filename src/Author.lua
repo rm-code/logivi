@@ -45,6 +45,19 @@ function Author.new(name, avatar)
     local inactivity = 0;
     local alpha = DEFAULT_ALPHA;
 
+    -- ------------------------------------------------
+    -- Private Functions
+    -- ------------------------------------------------
+
+    local function reactivate()
+        inactivity = 0;
+        alpha = DEFAULT_ALPHA;
+    end
+
+    -- ------------------------------------------------
+    -- Public Functions
+    -- ------------------------------------------------
+
     function self:draw()
         for i = 1, #links do
             love.graphics.setColor(255, 255, 255, 50);
@@ -72,11 +85,6 @@ function Author.new(name, avatar)
         end
     end
 
-    local function reactivate()
-        inactivity = 0;
-        alpha = DEFAULT_ALPHA;
-    end
-
     function self:addLink(file)
         reactivate();
         links[#links + 1] = file;
@@ -88,5 +96,9 @@ function Author.new(name, avatar)
 
     return self;
 end
+
+-- ------------------------------------------------
+-- Return Module
+-- ------------------------------------------------
 
 return Author;

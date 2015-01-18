@@ -61,6 +61,10 @@ function FolderNode.new(name, world, static, parent)
     end
     self:setPosition(collider.body:getX(), collider.body:getY());
 
+    -- ------------------------------------------------
+    -- Private Functions
+    -- ------------------------------------------------
+
     ---
     -- Counts the amount of children nodes that represent files.
     --
@@ -202,6 +206,10 @@ function FolderNode.new(name, world, static, parent)
         end
     end
 
+    -- ------------------------------------------------
+    -- Public Functions
+    -- ------------------------------------------------
+
     function self:draw()
         for _, node in pairs(children) do
             if node:getType() == 'folder' then
@@ -228,10 +236,6 @@ function FolderNode.new(name, world, static, parent)
         self:setPosition(collider.body:getX(), collider.body:getY());
     end
 
-    function self:getNode(name)
-        return children[name];
-    end
-
     function self:append(name, node)
         if not children[name] then
             children[name] = node;
@@ -241,6 +245,14 @@ function FolderNode.new(name, world, static, parent)
 
     function self:remove(name)
         children[name] = nil;
+    end
+
+    -- ------------------------------------------------
+    -- Getters
+    -- ------------------------------------------------
+
+    function self:getNode(name)
+        return children[name];
     end
 
     function self:getColliderBody()

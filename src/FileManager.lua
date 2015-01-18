@@ -98,8 +98,19 @@ function FileManager.remove(fileName)
     end
 end
 
+-- ------------------------------------------------
+-- Getters
+-- ------------------------------------------------
+
+---
+-- @param ext
+--
 function FileManager.getColor(ext)
     return extensions[ext].color;
 end
+
+-- ------------------------------------------------
+-- Return Module
+-- ------------------------------------------------
 
 return FileManager;

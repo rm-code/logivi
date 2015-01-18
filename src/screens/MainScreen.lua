@@ -63,6 +63,11 @@ function MainScreen.new()
     local date = '';
     local previousAuthor;
     local world;
+    local commitTimer = 0;
+
+    -- ------------------------------------------------
+    -- Private Functions
+    -- ------------------------------------------------
 
     ---
     -- @param path
@@ -152,6 +157,10 @@ function MainScreen.new()
         end
     end
 
+    -- ------------------------------------------------
+    -- Public Functions
+    -- ------------------------------------------------
+
     function self:init()
         AuthorManager.init();
 
@@ -174,21 +183,20 @@ function MainScreen.new()
         camera:unset();
     end
 
-    local timer = 0;
     function self:update(dt)
         world:update(dt) --this puts the world into motion
 
         camera:checkEdges(root);
         camera:update(dt);
 
-        timer = timer + dt;
-        if timer > 0.2 then
+        commitTimer = commitTimer + dt;
+        if commitTimer > 0.2 then
             -- Reset links of the previous author.
             if previousAuthor then
                 previousAuthor:resetLinks();
             end
             nextCommit();
-            timer = 0;
+            commitTimer = 0;
         end
 
         root:update(dt);

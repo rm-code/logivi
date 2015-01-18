@@ -149,4 +149,8 @@ function AuthorManager.add(nauthor)
     return authors[nickname];
 end
 
+-- ------------------------------------------------
+-- Return Module
+-- ------------------------------------------------
+
 return AuthorManager;

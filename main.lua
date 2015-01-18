@@ -22,6 +22,10 @@
 
 local ScreenManager = require('lib/ScreenManager');
 
+-- ------------------------------------------------
+-- Callbacks
+-- ------------------------------------------------
+
 function love.load()
     local screens = {
         main = require('src/screens/MainScreen');
