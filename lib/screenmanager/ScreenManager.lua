@@ -1,6 +1,6 @@
 --===============================================================================--
 --                                                                               --
--- Copyright (c) 2014 Robert Machmer                                             --
+-- Copyright (c) 2014 - 2015 Robert Machmer                                      --
 --                                                                               --
 -- This software is provided 'as-is', without any express or implied             --
 -- warranty. In no event will the authors be held liable for any damages         --
@@ -226,6 +226,14 @@ end
 --
 function ScreenManager.mousefocus(focus)
     ScreenManager.peek():mousefocus(focus);
+end
+
+---
+-- Reroute the quit callback to the currently active screen.
+-- @param dquit
+--
+function ScreenManager.quit(dquit)
+    ScreenManager.peek():quit(dquit);
 end
 
 -- ------------------------------------------------

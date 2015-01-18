@@ -20,7 +20,7 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
-local ScreenManager = require('lib/ScreenManager');
+local ScreenManager = require('lib/screenmanager/ScreenManager');
 
 -- ------------------------------------------------
 -- Local Functions
