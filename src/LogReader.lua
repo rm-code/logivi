@@ -22,7 +22,7 @@
 
 local TAG_SEPARATOR = 'logivi_commit';
 local TAG_AUTHOR = 'author: ';
-local TAG_DATE = 'date';
+local TAG_DATE = 'date: ';
 
 -- ------------------------------------------------
 -- Module
@@ -78,7 +78,9 @@ local function splitCommits(log)
         elseif line:find(TAG_AUTHOR) then
             commits[index].author = removeTag(line, TAG_AUTHOR);
         elseif line:find(TAG_DATE) then
-            commits[index].date = line;
+            -- Transform unix timestamp to a table containing a human-readable date.
+            local timestamp = removeTag(line, TAG_DATE);
+            commits[index].date = os.date('*t', tonumber(timestamp));
         elseif line:len() ~= 0 then
             -- Split the file information into the modifier, which determines
             -- what has happened to the file since the last commit and the actual
