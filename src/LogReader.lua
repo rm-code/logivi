@@ -61,6 +61,18 @@ local function removeTag(line, tag)
 end
 
 ---
+-- @param author
+--
+local function splitLine(line, delimiter)
+    local pos = line:find(delimiter);
+    if pos then
+        return line:sub(1, pos - 1), line:sub(pos + 1);
+    else
+        return line;
+    end
+end
+
+---
 -- Split up the log table into commits. Each commit is a new
 -- nested table.
 -- @param log
@@ -74,7 +86,7 @@ local function splitCommits(log)
         if line:find(TAG_AUTHOR) then
             index = index + 1;
             commits[index] = {};
-            commits[index].author = removeTag(line, TAG_AUTHOR);
+            commits[index].author, commits[index].email = splitLine(removeTag(line, TAG_AUTHOR), '|');
         elseif line:find(TAG_DATE) then
             -- Transform unix timestamp to a table containing a human-readable date.
             local timestamp = removeTag(line, TAG_DATE);

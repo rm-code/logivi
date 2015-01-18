@@ -42,6 +42,7 @@ local PATH_AVATARS = 'tmp/avatars/';
 local authors;
 local avatars;
 local aliases;
+local addresses;
 
 -- ------------------------------------------------
 -- Local Functions
@@ -96,7 +97,7 @@ function AuthorManager.init(naliases, avatarUrls)
     -- Set up the table to store all authors.
     authors = {};
 
-    -- Create an aliases default file or load an existing one.
+    addresses = {};
     aliases = naliases;
 
     -- Load avatars from the local filesystem or an online location.
@@ -131,19 +132,26 @@ function AuthorManager.update(dt)
 end
 
 ---
--- Adds a new author to the list. If a file for alternatives
--- was found, the function will use relapcements from that list.
--- This can be used to fix "faulty" authors in commits.
+-- Adds a new author to the list using his name as a key. Before storing the
+-- author the function checks the config file to see if an alias is associated
+-- with the specific email address. If it is, it will use the alias and ignore
+-- the name found in the log file.
+-- If there isn't an alias, it will check if there already is another nickname
+-- stored for that email address. If there isn't, it will use the nickname
+-- found in the log.
+-- @param nemail
 -- @param nauthor
 -- @param cx
 -- @param cy
 --
-function AuthorManager.add(nauthor, cx, cy)
-    local nickname = aliases[nauthor] or nauthor;
+function AuthorManager.add(nemail, nauthor, cx, cy)
+    local nickname = aliases[nemail] or addresses[nemail] or nauthor;
 
     if not authors[nickname] then
+        addresses[nemail] = nauthor; -- Store this name as the default for this email address.
         authors[nickname] = Author.new(nickname, avatars[nickname] or avatars['default'], cx, cy);
     end
+
     return authors[nickname];
 end
 

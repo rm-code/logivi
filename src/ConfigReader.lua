@@ -33,9 +33,10 @@ local FILE_TEMPLATE = [[
 -- ------------------------------- --
 
 return {
-    -- Replaces the name of the specified authors.
+    -- Associates an email address with a author. This name will
+    -- then be used instead of the one found in the git log.
     aliases = {
-        -- ['nameToReplace'] = 'replaceWith',
+        -- ['email'] = 'Author',
     },
     -- Assigns an avatar to an author.
     avatars = {
