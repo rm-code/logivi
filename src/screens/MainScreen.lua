@@ -104,6 +104,25 @@ function MainScreen.new()
     end
 
     ---
+    -- Checks if a folder contains a certain file. This is
+    -- to prevent crashes when trying to modify or delete a file
+    -- that hasn't been added yet. This might happen due to merge
+    -- commits.
+    -- @param target
+    -- @param fileName
+    -- @param modifier
+    --
+    local function setFileModifier(target, fileName, modifier)
+        local file = target:getNode(fileName);
+        if file then
+            file:setModified(true);
+        else
+            print(fileName .. ' could not be accessed with ' .. modifier .. '-Modifier.');
+        end
+        return file;
+    end
+
+    ---
     -- @param target
     -- @param fileName
     --
@@ -111,16 +130,11 @@ function MainScreen.new()
         if modifier == MODIFIER_ADD then -- Add file
             local color = FileManager.add(fileName);
             target:append(fileName, FileNode.new(fileName, color));
-            local file = target:getNode(fileName);
-            file:setModified(true);
-            return file;
+            return setFileModifier(target, fileName, modifier);
         elseif modifier == MODIFIER_MODIFY then
-            local file = target:getNode(fileName);
-            file:setModified(true);
-            return file;
+            return setFileModifier(target, fileName, modifier);
         elseif modifier == MODIFIER_DELETE then
-            local file = target:getNode(fileName);
-            file:setModified(true);
+            local file = setFileModifier(target, fileName, modifier);
             FileManager.remove(fileName);
             target:remove(fileName);
             return file;
