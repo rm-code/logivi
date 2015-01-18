@@ -95,3 +95,12 @@ function getVersion()
         return GAME_VERSION;
     end
 end
+
+---
+-- Returns the title.
+--
+function getTitle()
+    if GAME_TITLE then
+        return GAME_TITLE;
+    end
+end
