@@ -20,28 +20,50 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
-local ScreenManager = require('lib/ScreenManager');
+local Node = {};
 
 -- ------------------------------------------------
--- Callbacks
+-- Constructor
 -- ------------------------------------------------
 
-function love.load()
-    local screens = {
-        main = require('src/screens/MainScreen');
-    };
+function Node.new(type, name, x, y)
+    local self = {};
 
-    ScreenManager.init(screens, 'main');
+    local x, y = x, y;
+
+    function self:update(dt) end
+
+    function self:draw() end
+
+    function self:setPosition(nx, ny)
+        x, y = nx, ny;
+    end
+
+    function self:getPosition()
+        return x, y;
+    end
+
+    function self:getX()
+        return x;
+    end
+
+    function self:getY()
+        return y;
+    end
+
+    function self:getName()
+        return name;
+    end
+
+    function self:getType()
+        return type;
+    end
+
+    return self;
 end
 
-function love.draw()
-    ScreenManager.draw();
+-- ------------------------------------------------
+-- Return Module
+-- ------------------------------------------------
 
-    love.graphics.print(string.format("FT: %.3f ms", 1000 * love.timer.getAverageDelta()), 10, love.window.getHeight() - 60);
-    love.graphics.print(string.format("FPS: %.3f fps", love.timer.getFPS()), 10, love.window.getHeight() - 40);
-    love.graphics.print(string.format("MEM: %.3f kb", collectgarbage("count")), 10, love.window.getHeight() - 20);
-end
-
-function love.update(dt)
-    ScreenManager.update(dt);
-end
+return Node;

@@ -20,78 +20,85 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
-local GAME_TITLE = "LoGiVi";
-
-local LOVE_VERSION = "0.9.2";
-
-local GAME_VERSION = "0052";
+local Author = {};
 
 -- ------------------------------------------------
--- Local variables
+-- Constants
 -- ------------------------------------------------
 
-local config;
+local AVATAR_SIZE = 48;
+local INACTIVITY_TIMER = 10;
+local FADE_FACTOR = 2;
+local DEFAULT_ALPHA = 255;
 
 -- ------------------------------------------------
--- Global Functions
+-- Constructor
 -- ------------------------------------------------
 
----
--- Initialise löve's config file.
--- @param _conf
---
-function love.conf(t)
-    t.identity = 'rmcode_LoGiVi';
-    t.version = LOVE_VERSION;
-    t.console = true;
+function Author.new(name, avatar)
+    local self = {};
 
-    t.window.title = GAME_TITLE;
-    t.window.icon = nil;
-    t.window.width = 0;
-    t.window.height = 0;
-    t.window.borderless = false;
-    t.window.resizable = true;
-    t.window.minwidth = 800;
-    t.window.minheight = 600;
-    t.window.fullscreen = false;
-    t.window.fullscreentype = "normal";
-    t.window.vsync = true;
-    t.window.fsaa = 0;
-    t.window.display = 1;
-    t.window.highdpi = false;
-    t.window.srgb = false;
+    local name = name;
+    local posX, posY = love.math.random(100, 1000), love.math.random(100, 600);
+    local dX, dY = love.math.random(-50, 50), love.math.random(-50, 50);
+    local links = {};
+    local inactivity = 0;
+    local alpha = DEFAULT_ALPHA;
 
-    t.modules.audio = true;
-    t.modules.event = true;
-    t.modules.graphics = true;
-    t.modules.image = true;
-    t.modules.joystick = true;
-    t.modules.keyboard = true;
-    t.modules.math = true;
-    t.modules.mouse = true;
-    t.modules.physics = true;
-    t.modules.sound = true;
-    t.modules.system = true;
-    t.modules.timer = true;
-    t.modules.window = true;
+    -- ------------------------------------------------
+    -- Private Functions
+    -- ------------------------------------------------
 
-    config = t;
-end
-
----
--- Returns the config file.
---
-function getConfig()
-    if config then
-        return config;
+    local function reactivate()
+        inactivity = 0;
+        alpha = DEFAULT_ALPHA;
     end
+
+    -- ------------------------------------------------
+    -- Public Functions
+    -- ------------------------------------------------
+
+    function self:draw()
+        for i = 1, #links do
+            love.graphics.setColor(255, 255, 255, 50);
+            love.graphics.line(posX, posY, links[i]:getX(), links[i]:getY());
+            love.graphics.setColor(255, 255, 255, 255);
+        end
+        love.graphics.setColor(255, 255, 255, alpha);
+        love.graphics.draw(avatar, posX - AVATAR_SIZE * 0.5, posY - AVATAR_SIZE * 0.5, 0, AVATAR_SIZE / avatar:getWidth(), AVATAR_SIZE / avatar:getHeight());
+        love.graphics.setColor(255, 255, 255, 255);
+    end
+
+    function self:update(dt)
+        if posX < 200 or posX > love.graphics.getWidth() - 200 then
+            dX = -dX;
+        end
+        if posY < 200 or posY > love.graphics.getHeight() - 200 then
+            dY = -dY;
+        end
+        posX = posX + (dX * dt);
+        posY = posY + (dY * dt);
+
+        inactivity = inactivity + dt;
+        if inactivity > INACTIVITY_TIMER then
+            alpha = alpha - alpha * dt * FADE_FACTOR;
+        end
+    end
+
+    function self:addLink(file)
+        reactivate();
+        links[#links + 1] = file;
+    end
+
+    function self:resetLinks()
+        links = {};
+    end
+
+    return self;
 end
 
----
--- Returns the game's version.
---
-function getVersion()
-    if GAME_VERSION then
-        return GAME_VERSION;
-    end
-end
+-- ------------------------------------------------
+-- Return Module
+-- ------------------------------------------------
+
+return Author;
