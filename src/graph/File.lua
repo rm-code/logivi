@@ -20,13 +20,13 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
-local Node = require('src/nodes/Node');
+local FileManager = require('src/FileManager');
 
 -- ------------------------------------------------
 -- Module
 -- ------------------------------------------------
 
-local FileNode = {};
+local File = {};
 
 -- ------------------------------------------------
 -- Constants
@@ -39,16 +39,17 @@ local MOD_COLOR = { 255, 0, 0 };
 -- Local Variables
 -- ------------------------------------------------
 
-local img = love.graphics.newImage('res/fileNode.png');
+local img = love.graphics.newImage('res/file.png');
 
 -- ------------------------------------------------
 -- Constructor
 -- ------------------------------------------------
 
-function FileNode.new(name, color)
-    local self = Node.new('file', name);
+function File.new(name, x, y)
+    local self = {};
 
-    local fileColor = color;
+    local offsetX, offsetY = 0, 0;
+    local fileColor = FileManager.add(name);
     local currentColor = {};
     local modified = false;
     local timer = MOD_TIMER;
@@ -66,11 +67,11 @@ function FileNode.new(name, color)
     -- ------------------------------------------------
 
     ---
-    -- Draw the node with the current color modifier.
+    -- Draw the file with the current color modifier.
     --
     function self:draw()
         love.graphics.setColor(currentColor);
-        love.graphics.draw(img, self:getX() - 8, self:getY() - 8);
+        love.graphics.draw(img, x + offsetX - img:getWidth() * 0.5, y + offsetY - img:getWidth() * 0.5);
         love.graphics.setColor(255, 255, 255);
     end
 
@@ -107,6 +108,22 @@ function FileNode.new(name, color)
         currentColor[3] = MOD_COLOR[3];
     end
 
+    function self:remove()
+        FileManager.remove(name);
+    end
+
+    function self:getX()
+        return x + offsetX;
+    end
+
+    function self:getY()
+        return y + offsetY;
+    end
+
+    function self:setOffset(ox, oy)
+        offsetX, offsetY = ox, oy;
+    end
+
     return self;
 end
 
@@ -114,4 +131,4 @@ end
 -- Return Module
 -- ------------------------------------------------
 
-return FileNode;
+return File;

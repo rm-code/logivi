@@ -86,7 +86,23 @@ local function splitCommits(log)
             local modifier = line:sub(1, 1);
             local path = line:sub(2);
             path = trim(path);
-            commits[index][#commits[index] + 1] = { modifier = modifier, path = path };
+
+            if path:find('/') then
+                path = path:reverse();
+                local pos = path:find('/');
+
+                -- Reverse string and cut off the end to get the file's name.
+                local file = path:sub(1, pos - 1);
+                file = file:reverse();
+
+                -- Remove the file from the path and reverse it again.
+                path = path:sub(pos);
+                path = path:reverse();
+
+                commits[index][#commits[index] + 1] = { modifier = modifier, path = path, file = file };
+            else
+                commits[index][#commits[index] + 1] = { modifier = modifier, path = '', file = path };
+            end
         end
     end
 
