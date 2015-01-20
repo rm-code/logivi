@@ -44,6 +44,8 @@ return {
     options = {
         backgroundColor = { 0, 0, 0 },
         removeTmpFiles = false,
+        screenWidth = 800,
+        screenHeight = 600,
     },
 };
 ]]
