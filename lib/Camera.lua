@@ -31,27 +31,10 @@ function Camera.new()
 
     local x, y = 0, 0;
     local sx, sy = 1, 1;
-    local graphMinX, graphMaxX, graphMinY, graphMaxY;
-    
-    -- ------------------------------------------------
-    -- Private Methods
-    -- ------------------------------------------------
-    
-    local function debugDraw()
-        love.graphics.setColor(180, 180, 180, 50);
-        love.graphics.rectangle('fill', graphMinX, graphMinY, graphMaxX - graphMinX, graphMaxY - graphMinY);
-        love.graphics.setColor(255, 0, 0, 100);
-        love.graphics.circle('fill', graphMinX + (graphMaxX - graphMinX) * 0.5, graphMinY + (graphMaxY - graphMinY) * 0.5, 2);
-        love.graphics.setColor(255,255,255, 255);
-    end
-    
+
     -- ------------------------------------------------
     -- Public Methods
     -- ------------------------------------------------
-    
-    function self:update(dt)
-        self:track(graphMinX + (graphMaxX - graphMinX) * 0.5, graphMinY + (graphMaxY - graphMinY) * 0.5, 3, dt);
-    end
 
     function self:set()
         love.graphics.push();
@@ -67,36 +50,6 @@ function Camera.new()
     function self:track(tarX, tarY, speed, dt)
         x = x - (x - math.floor(tarX)) * dt * speed;
         y = y - (y - math.floor(tarY)) * dt * speed;
-    end
-
-    function self:checkEdges(tree)
-        local rootX = tree:getX();
-        local rootY = tree:getY();
-        graphMinX, graphMaxX, graphMinY, graphMaxY = rootX, rootX, rootY, rootY;
-
-        local function traverseNodes(node, depth)
-            if node:getType() == 'folder' then
-
-                -- Find the edges.
-                local x, y = node:getPosition();
-                if x < graphMinX then
-                    graphMinX = x;
-                elseif x > graphMaxX then
-                    graphMaxX = x;
-                end
-
-                if y < graphMinY then
-                    graphMinY = y;
-                elseif y > graphMaxY then
-                    graphMaxY = y;
-                end
-
-                for key, child in pairs(node:getChildren()) do
-                    traverseNodes(child, depth + 1);
-                end
-            end
-        end
-        traverseNodes(tree, 0);
     end
 
     return self;

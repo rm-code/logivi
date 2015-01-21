@@ -174,6 +174,39 @@ function MainScreen.new()
         end
     end
 
+    local function checkEdges(tree)
+        local rootX = tree:getX();
+        local rootY = tree:getY();
+        local minX, maxX, minY, maxY = rootX, rootX, rootY, rootY;
+
+        local function traverseNodes(node, depth)
+            if node:getType() == 'folder' then
+
+                -- Find the edges.
+                local x, y = node:getPosition();
+                if x < minX then
+                    minX = x;
+                elseif x > maxX then
+                    maxX = x;
+                end
+
+                if y < minY then
+                    minY = y;
+                elseif y > maxY then
+                    maxY = y;
+                end
+
+                for key, child in pairs(node:getChildren()) do
+                    traverseNodes(child, depth + 1);
+                end
+            end
+        end
+
+        traverseNodes(tree, 0);
+
+        return minX, maxX, minY, maxY;
+    end
+
     -- ------------------------------------------------
     -- Public Functions
     -- ------------------------------------------------
@@ -209,8 +242,8 @@ function MainScreen.new()
     function self:update(dt)
         world:update(dt) --this puts the world into motion
 
-        camera:checkEdges(root);
-        camera:update(dt);
+        local minX, maxX, minY, maxY = checkEdges(root);
+        camera:track(minX + (maxX - minX) * 0.5, minY + (maxY - minY) * 0.5, 3, dt);
 
         commitTimer = commitTimer + dt;
         if commitTimer > 0.2 then
