@@ -32,6 +32,10 @@ function Node.new(parent, name, x, y)
     local files = {};
     local count = 0;
 
+    local posX, posY = x, y;
+    local velX, velY = 0, 0;
+    local accX, accY = 0, 0;
+
     -- ------------------------------------------------
     -- Public Functions
     -- ------------------------------------------------
@@ -113,19 +117,34 @@ function Node.new(parent, name, x, y)
         end
     end
 
+    ---
+    -- Apply the calculated acceleration to the node.
+    --
+    local function move(dt)
+        velX = velX + accX;
+        velY = velY + accY;
+
+        posX = posX + velX;
+        posY = posY + velY;
+
+        accX, accY = 0, 0;
+    end
+
     -- ------------------------------------------------
     -- Public Functions
     -- ------------------------------------------------
 
     function self:update(dt)
+        move(dt);
+        -- Update files.
         for _, file in pairs(files) do
-            file:setPosition(x, y);
+            file:setPosition(posX, posY);
             file:update(dt);
         end
     end
 
     function self:draw()
-        -- love.graphics.print(name, x, y);
+        -- love.graphics.print(name, posX, posY);
         for _, file in pairs(files) do
             file:draw();
         end
@@ -167,6 +186,15 @@ function Node.new(parent, name, x, y)
         return files[name];
     end
 
+    function self:applyForce(fx, fy)
+        accX = accX + fx;
+        accY = accY + fy;
+    end
+
+    function self:damp(f)
+        velX, velY = velX * f, velY * f;
+    end
+
     -- ------------------------------------------------
     -- Getters
     -- ------------------------------------------------
@@ -176,15 +204,15 @@ function Node.new(parent, name, x, y)
     end
 
     function self:getPosition()
-        return x, y;
+        return posX, posY;
     end
 
     function self:getX()
-        return x;
+        return posX;
     end
 
     function self:getY()
-        return y;
+        return posY;
     end
 
     function self:getName()
@@ -193,6 +221,10 @@ function Node.new(parent, name, x, y)
 
     function self:getParent()
         return parent;
+    end
+
+    function self:getMass()
+        return 0.08 * count;
     end
 
     return self;

@@ -44,6 +44,10 @@ local MOD_UNMERGE = 'U';
 local MOD_UNKNOWN = 'X';
 local MOD_BROKEN_PAIRING = 'B';
 
+-- Constants for force-directed layout.
+local SPRING = -0.0008;
+local CHARGE = 800;
+
 -- ------------------------------------------------
 -- Constructor
 -- ------------------------------------------------
@@ -68,7 +72,9 @@ function Graph.new()
     --
     local function addNode(parentPath, nodePath)
         if not nodes[nodePath] then
-            nodes[nodePath] = Node.new(nodes[parentPath], nodePath, nodes[parentPath]:getX() + love.math.random(-100, 100), nodes[parentPath]:getY() + love.math.random(-100, 100));
+            local nx = nodes[parentPath]:getX() + love.math.random(-15, 15);
+            local ny = nodes[parentPath]:getY() + love.math.random(-15, 15);
+            nodes[nodePath] = Node.new(nodes[parentPath], nodePath, nx, ny);
         end
         return nodes[nodePath];
     end
@@ -149,6 +155,50 @@ function Graph.new()
         end
     end
 
+    ---
+    -- Attracts a node to a certain point on the screen.
+    -- @param node
+    -- @param x2
+    -- @param y2
+    --
+    local function attract(node, x2, y2)
+        local dx, dy = node:getX() - x2, node:getY() - y2;
+        local distance = math.sqrt(dx * dx + dy * dy);
+        distance = math.max(0.001, math.min(distance, 100));
+
+        -- Normalise vector.
+        dx = dx / distance;
+        dy = dy / distance;
+
+        -- Calculate spring force and apply it.
+        local force = SPRING * distance;
+        node:applyForce(dx * force, dy * force);
+    end
+
+    ---
+    -- Repulses one node from another node based on their distance
+    -- from each other and their mass.
+    -- @param a
+    -- @param b
+    --
+    local function repulse(a, b)
+        -- Calculate distance vector.
+        local dx, dy = a:getX() - b:getX(), a:getY() - b:getY();
+        local distance = math.sqrt(dx * dx + dy * dy);
+        distance = math.max(0.001, math.min(distance, 1000));
+
+        -- Normalise vector.
+        dx = dx / distance;
+        dy = dy / distance;
+
+        -- Calculate force's strength and apply it to the vector.
+        local strength = CHARGE * ((a:getMass() * b:getMass()) / (distance * distance));
+        dx = dx * strength;
+        dy = dy * strength;
+
+        a:applyForce(dx, dy);
+    end
+
     -- ------------------------------------------------
     -- Public Functions
     -- ------------------------------------------------
@@ -185,6 +235,8 @@ function Graph.new()
     end
 
     function self:draw()
+        --[[
+        -- Hide edges until graph based layout is completed.
         for i = 1, #edges do
             love.graphics.setColor(100, 100, 100);
             love.graphics.line(nodes[edges[i].a]:getX(),
@@ -193,14 +245,25 @@ function Graph.new()
                 nodes[edges[i].b]:getY());
             love.graphics.setColor(255, 255, 255);
         end
+        --]]
         for _, node in pairs(nodes) do
             node:draw();
         end
     end
 
     function self:update(dt)
-        for _, node in pairs(nodes) do
-            node:update(dt);
+        for idA, nodeA in pairs(nodes) do
+            -- Attract nodes to the center of the screen.
+            attract(nodeA, love.graphics.getWidth() * 0.5, love.graphics.getHeight() * 0.5);
+
+            for idB, nodeB in pairs(nodes) do
+                if nodeA ~= nodeB then
+                    repulse(nodeA, nodeB);
+                end
+            end
+
+            nodeA:damp(0.95);
+            nodeA:update(dt);
         end
     end
 
