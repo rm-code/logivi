@@ -44,6 +44,44 @@ local avatars;
 local aliases;
 
 -- ------------------------------------------------
+-- Local Functions
+-- ------------------------------------------------
+
+---
+-- Tries to load user avatars from the local filesystem or the internet.
+-- @param urlList
+--
+local function grabAvatars(urlList)
+    local counter = 0;
+    local avatars = {};
+    for author, url in pairs(urlList) do
+        -- If the file exists locally we load it as usual.
+        -- If it doesn't we see if the url returns something useful.
+        if love.filesystem.isFile(url) then
+            avatars[author] = love.graphics.newImage(url);
+        else
+            local body = http.request(url);
+            if body then
+                -- Set up the temporary folder if we don't have one yet.
+                if not love.filesystem.isDirectory(PATH_AVATARS) then
+                    love.filesystem.createDirectory(PATH_AVATARS);
+                end
+
+                -- Write file to a temporary folder.
+                love.filesystem.write(string.format(PATH_AVATARS .. "tmp_%03d.png", counter), body);
+                avatars[author] = love.graphics.newImage(string.format(PATH_AVATARS .. "tmp_%03d.png", counter));
+                counter = counter + 1;
+            end
+        end
+    end
+
+    -- Load the default user avatar.
+    avatars['default'] = love.graphics.newImage('res/user.png');
+
+    return avatars;
+end
+
+-- ------------------------------------------------
 -- Public Functions
 -- ------------------------------------------------
 
@@ -54,27 +92,8 @@ function AuthorManager.init(naliases, avatarUrls)
     -- Create an aliases default file or load an existing one.
     aliases = naliases;
 
-    avatars = {};
-    -- Set up the folder.
-    if not love.filesystem.isDirectory(PATH_AVATARS) then
-        love.filesystem.createDirectory(PATH_AVATARS);
-    end
-
-    -- Grab the default avatar online, write it to the save folder and load it as an image.
-    local body = http.request('https://www.love2d.org/w/images/9/9b/Love-game-logo-256x256.png');
-    love.filesystem.write(PATH_AVATARS .. 'tmp_default.png', body);
-    avatars['default'] = love.graphics.newImage(PATH_AVATARS .. 'tmp_default.png');
-
-    -- Read the avatars.lua file (if there is one) and use it to grab an avatar online, write it
-    -- to the save folder and load it as an image to use in LoGiVi.
-    local counter = 0;
-    local avatarFile = avatarUrls
-    for author, url in pairs(avatarFile) do
-        local body = http.request(url);
-        love.filesystem.write(string.format(PATH_AVATARS .. "tmp_%03d.png", counter), body);
-        avatars[author] = love.graphics.newImage(string.format(PATH_AVATARS .. "tmp_%03d.png", counter));
-        counter = counter + 1;
-    end
+    -- Load avatars from the local filesystem or an online location.
+    avatars = grabAvatars(avatarUrls);
 end
 
 ---
