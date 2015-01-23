@@ -69,7 +69,14 @@ local function grabAvatars(urlList)
 
                 -- Write file to a temporary folder.
                 love.filesystem.write(string.format(PATH_AVATARS .. "tmp_%03d.png", counter), body);
-                avatars[author] = love.graphics.newImage(string.format(PATH_AVATARS .. "tmp_%03d.png", counter));
+
+                local ok, image = pcall(love.graphics.newImage, string.format(PATH_AVATARS .. "tmp_%03d.png", counter));
+                if ok then
+                    avatars[author] = image;
+                    counter = counter + 1;
+                else
+                    print("Couldn't load avatar from " .. url .. " - A default avatar will be used instead.");
+                end
                 counter = counter + 1;
             end
         end
