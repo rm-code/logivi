@@ -65,7 +65,7 @@ function MainScreen.new()
         end
         index = index + 1;
 
-        local commitAuthor = AuthorManager.add(commits[index].author);
+        local commitAuthor = AuthorManager.add(commits[index].author, graph:getCenter());
         previousAuthor = commitAuthor; -- Store author so we can reset him when the next commit is loaded.
 
         date = string.format("%02d:%02d:%02d - %02d-%02d-%04d",

@@ -135,12 +135,14 @@ end
 -- was found, the function will use relapcements from that list.
 -- This can be used to fix "faulty" authors in commits.
 -- @param nauthor
+-- @param cx
+-- @param cy
 --
-function AuthorManager.add(nauthor)
+function AuthorManager.add(nauthor, cx, cy)
     local nickname = aliases[nauthor] or nauthor;
 
     if not authors[nickname] then
-        authors[nickname] = Author.new(nickname, avatars[nickname] or avatars['default']);
+        authors[nickname] = Author.new(nickname, avatars[nickname] or avatars['default'], cx, cy);
     end
     return authors[nickname];
 end
