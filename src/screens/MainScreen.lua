@@ -113,8 +113,8 @@ function MainScreen.new()
     end
 
     function self:update(dt)
-        local minX, maxX, minY, maxY = graph:getBoundaries();
-        camera:track(minX + (maxX - minX) * 0.5, minY + (maxY - minY) * 0.5, 3, dt);
+        local cx, cy = graph:getCenter();
+        camera:track(cx, cy, 3, dt);
 
         commitTimer = commitTimer + dt;
         if commitTimer > 0.2 then

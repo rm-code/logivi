@@ -232,6 +232,16 @@ function Graph.new()
         return minX, maxX, minY, maxY;
     end
 
+    ---
+    -- Returns the center of the graph. The center is calculated
+    -- by forming a rectangle that encapsulates all nodes and then
+    -- dividing its sides by two.
+    --
+    function self:getCenter()
+        local minX, maxX, minY, maxY = self:getBoundaries();
+        return minX + (maxX - minX) * 0.5, minY + (maxY - minY) * 0.5;
+    end
+
     return self;
 end
 
