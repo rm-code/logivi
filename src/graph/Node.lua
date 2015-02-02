@@ -170,8 +170,6 @@ function Node.new(name, x, y)
     -- Getters
     -- ------------------------------------------------
 
-    -- ------------------------------------------------
-
     function self:getFileCount()
         return count;
     end
