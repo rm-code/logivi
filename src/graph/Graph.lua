@@ -61,25 +61,25 @@ function Graph.new()
     ---
     -- Creates a new node and stores it in our list, using the name
     -- as the identifier or returns an already existing node.
-    -- @param parent
-    -- @param name
+    -- @param parentPath
+    -- @param nodePath
     -- @param x
     -- @param y
     --
-    local function addNode(parent, name)
-        if not nodes[name] then
-            nodes[name] = Node.new(nodes[parent], name, nodes[parent]:getX() + love.math.random(-100, 100), nodes[parent]:getY() + love.math.random(-100, 100));
+    local function addNode(parentPath, nodePath)
+        if not nodes[nodePath] then
+            nodes[nodePath] = Node.new(nodes[parentPath], nodePath, nodes[parentPath]:getX() + love.math.random(-100, 100), nodes[parentPath]:getY() + love.math.random(-100, 100));
         end
-        return nodes[name];
+        return nodes[nodePath];
     end
 
     ---
     -- Creates an edge between two nodes.
-    -- @param a
-    -- @param b
+    -- @param nodeAPath
+    -- @param nodeBPath
     --
-    local function addEdge(a, b)
-        edges[#edges + 1] = { a = a, b = b };
+    local function addEdge(nodeAPath, nodeBPath)
+        edges[#edges + 1] = { a = nodeAPath, b = nodeBPath };
     end
 
     ---
@@ -107,18 +107,18 @@ function Graph.new()
 
                 -- Get the parent folder from the path. The topmost folder
                 -- will always have 'root' as a parent.
-                local parent = path:sub(1, lastPos - 1);
-                if parent == '' then
-                    parent = ROOT;
+                local parentPath = path:sub(1, lastPos - 1);
+                if parentPath == '' then
+                    parentPath = ROOT;
                 end
 
                 -- Extract the folder path.
-                local folder = path:sub(1, pos);
+                local folderPath = path:sub(1, pos);
                 lastPos = pos + 1;
 
                 -- Add the folder node to our graph.
-                node = addNode(parent, folder);
-                addEdge(parent, folder);
+                node = addNode(parentPath, folderPath);
+                addEdge(parentPath, folderPath);
             end
             return node;
         end
