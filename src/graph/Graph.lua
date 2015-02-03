@@ -51,7 +51,7 @@ local MOD_BROKEN_PAIRING = 'B';
 function Graph.new()
     local self = {};
 
-    local nodes = { [ROOT] = Node.new(ROOT, 300, 200); };
+    local nodes = { [ROOT] = Node.new(nil, ROOT, 300, 200); };
     local edges = {};
 
     -- ------------------------------------------------
@@ -61,14 +61,14 @@ function Graph.new()
     ---
     -- Creates a new node and stores it in our list, using the name
     -- as the identifier or returns an already existing node.
-    -- @param pname - The parent's name.
+    -- @param parent
     -- @param name
     -- @param x
     -- @param y
     --
     local function addNode(parent, name)
         if not nodes[name] then
-            nodes[name] = Node.new(name, nodes[parent]:getX() + love.math.random(-100, 100), nodes[parent]:getY() + love.math.random(-100, 100));
+            nodes[name] = Node.new(nodes[parent], name, nodes[parent]:getX() + love.math.random(-100, 100), nodes[parent]:getY() + love.math.random(-100, 100));
         end
         return nodes[name];
     end

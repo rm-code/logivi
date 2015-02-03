@@ -22,7 +22,7 @@
 
 local Node = {};
 
-function Node.new(name, x, y)
+function Node.new(parent, name, x, y)
     local self = {};
 
     -- ------------------------------------------------
@@ -188,6 +188,10 @@ function Node.new(name, x, y)
 
     function self:getName()
         return name;
+    end
+
+    function self:getParent()
+        return parent;
     end
 
     return self;
