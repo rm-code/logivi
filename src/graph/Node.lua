@@ -119,6 +119,7 @@ function Node.new(parent, name, x, y)
 
     function self:update(dt)
         for _, file in pairs(files) do
+            file:setPosition(x, y);
             file:update(dt);
         end
     end

@@ -124,6 +124,10 @@ function File.new(name, x, y)
         offsetX, offsetY = ox, oy;
     end
 
+    function self:setPosition(nx, ny)
+        x, y = nx, ny;
+    end
+
     return self;
 end
 
