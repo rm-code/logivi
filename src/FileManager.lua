@@ -37,9 +37,10 @@ local extensions = {};
 -- @param fileName
 --
 local function splitExtension(fileName)
-    local pos = fileName:find('%.');
+    local tmp = fileName:reverse();
+    local pos = tmp:find('%.');
     if pos then
-        return fileName:sub(pos);
+        return tmp:sub(1, pos):reverse();
     else
         -- Prevents issues with files sans extension.
         return '.?';
