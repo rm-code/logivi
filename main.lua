@@ -23,6 +23,12 @@
 local ScreenManager = require('lib/screenmanager/ScreenManager');
 
 -- ------------------------------------------------
+-- Local Variables
+-- ------------------------------------------------
+
+local showDebug = false;
+
+-- ------------------------------------------------
 -- Local Functions
 -- ------------------------------------------------
 
@@ -74,9 +80,11 @@ end
 function love.draw()
     ScreenManager.draw();
 
-    love.graphics.print(string.format("FT: %.3f ms", 1000 * love.timer.getAverageDelta()), 10, love.window.getHeight() - 60);
-    love.graphics.print(string.format("FPS: %.3f fps", love.timer.getFPS()), 10, love.window.getHeight() - 40);
-    love.graphics.print(string.format("MEM: %.3f kb", collectgarbage("count")), 10, love.window.getHeight() - 20);
+    if showDebug then
+        love.graphics.print(string.format("FT: %.3f ms", 1000 * love.timer.getAverageDelta()), 10, love.window.getHeight() - 60);
+        love.graphics.print(string.format("FPS: %.3f fps", love.timer.getFPS()), 10, love.window.getHeight() - 40);
+        love.graphics.print(string.format("MEM: %.3f kb", collectgarbage("count")), 10, love.window.getHeight() - 20);
+    end
 end
 
 function love.update(dt)
@@ -85,4 +93,10 @@ end
 
 function love.quit(q)
     ScreenManager.quit(q);
+end
+
+function love.keypressed(key)
+    if key == 'f1' then
+        showDebug = not showDebug;
+    end
 end
