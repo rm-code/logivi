@@ -22,7 +22,7 @@
 
 local Node = {};
 
-function Node.new(parent, name, x, y)
+function Node.new(parent, name, x, y, batch)
     local self = {};
 
     -- ------------------------------------------------
@@ -138,15 +138,10 @@ function Node.new(parent, name, x, y)
         move(dt);
         -- Update files.
         for _, file in pairs(files) do
-            file:setPosition(posX, posY);
             file:update(dt);
-        end
-    end
-
-    function self:draw()
-        -- love.graphics.print(name, posX, posY);
-        for _, file in pairs(files) do
-            file:draw();
+            file:setPosition(posX, posY);
+            batch:setColor(file:getColor());
+            batch:add(file:getX(), file:getY());
         end
     end
 

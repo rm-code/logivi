@@ -49,13 +49,20 @@ local SPRING = -0.0008;
 local CHARGE = 800;
 
 -- ------------------------------------------------
+-- Local Variables
+-- ------------------------------------------------
+
+local fileSprite = love.graphics.newImage('res/file.png');
+local spritebatch = love.graphics.newSpriteBatch(fileSprite, 10000, 'stream');
+
+-- ------------------------------------------------
 -- Constructor
 -- ------------------------------------------------
 
 function Graph.new()
     local self = {};
 
-    local nodes = { [ROOT] = Node.new(nil, ROOT, 300, 200); };
+    local nodes = { [ROOT] = Node.new(nil, ROOT, 300, 200, spritebatch); };
     local edges = {};
 
     -- ------------------------------------------------
@@ -74,7 +81,7 @@ function Graph.new()
         if not nodes[nodePath] then
             local nx = nodes[parentPath]:getX() + love.math.random(-15, 15);
             local ny = nodes[parentPath]:getY() + love.math.random(-15, 15);
-            nodes[nodePath] = Node.new(nodes[parentPath], nodePath, nx, ny);
+            nodes[nodePath] = Node.new(nodes[parentPath], nodePath, nx, ny, spritebatch);
         end
         return nodes[nodePath];
     end
@@ -246,12 +253,11 @@ function Graph.new()
             love.graphics.setColor(255, 255, 255);
         end
         --]]
-        for _, node in pairs(nodes) do
-            node:draw();
-        end
+        love.graphics.draw(spritebatch);
     end
 
     function self:update(dt)
+        spritebatch:clear();
         for idA, nodeA in pairs(nodes) do
             -- Attract nodes to the center of the screen.
             attract(nodeA, love.graphics.getWidth() * 0.5, love.graphics.getHeight() * 0.5);

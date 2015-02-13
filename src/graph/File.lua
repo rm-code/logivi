@@ -36,19 +36,14 @@ local MOD_TIMER = 2;
 local MOD_COLOR = { 255, 0, 0 };
 
 -- ------------------------------------------------
--- Local Variables
--- ------------------------------------------------
-
-local img = love.graphics.newImage('res/file.png');
-
--- ------------------------------------------------
 -- Constructor
 -- ------------------------------------------------
 
 function File.new(name, x, y)
     local self = {};
 
-    local offsetX, offsetY = 0, 0;
+    local posX, posY = x, y;
+    local offX, offY = 0, 0;
     local fileColor = FileManager.add(name);
     local currentColor = {};
     local modified = false;
@@ -65,15 +60,6 @@ function File.new(name, x, y)
     -- ------------------------------------------------
     -- Public Functions
     -- ------------------------------------------------
-
-    ---
-    -- Draw the file with the current color modifier.
-    --
-    function self:draw()
-        love.graphics.setColor(currentColor);
-        love.graphics.draw(img, x + offsetX - img:getWidth() * 0.5, y + offsetY - img:getWidth() * 0.5);
-        love.graphics.setColor(255, 255, 255);
-    end
 
     ---
     -- If the file is marked as modified the color will be lerped from
@@ -113,19 +99,23 @@ function File.new(name, x, y)
     end
 
     function self:getX()
-        return x + offsetX;
+        return posX + offX;
     end
 
     function self:getY()
-        return y + offsetY;
+        return posY + offY;
+    end
+
+    function self:getColor()
+        return currentColor;
     end
 
     function self:setOffset(ox, oy)
-        offsetX, offsetY = ox, oy;
+        offX, offY = ox, oy;
     end
 
     function self:setPosition(nx, ny)
-        x, y = nx, ny;
+        posX, posY = nx, ny;
     end
 
     return self;
