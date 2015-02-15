@@ -90,7 +90,10 @@ local function splitCommits(log)
         elseif line:find(TAG_DATE) then
             -- Transform unix timestamp to a table containing a human-readable date.
             local timestamp = removeTag(line, TAG_DATE);
-            commits[index].date = os.date('*t', tonumber(timestamp));
+            local date = os.date('*t', tonumber(timestamp));
+            commits[index].date = string.format("%02d:%02d:%02d - %02d-%02d-%04d",
+                date.hour, date.min, date.sec,
+                date.day, date.month, date.year);
         elseif line:len() ~= 0 and commits[index] then
             -- Split the file information into the modifier, which determines
             -- what has happened to the file since the last commit and the actual
