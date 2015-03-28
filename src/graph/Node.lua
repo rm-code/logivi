@@ -22,6 +22,17 @@
 
 local Node = {};
 
+-- ------------------------------------------------
+-- Constants
+-- ------------------------------------------------
+
+local SPRITE_SIZE = 0.45;
+local SPRITE_OFFSET = 15;
+
+-- ------------------------------------------------
+-- Constructor
+-- ------------------------------------------------
+
 function Node.new(parent, name, x, y, batch)
     local self = {};
 
@@ -141,7 +152,7 @@ function Node.new(parent, name, x, y, batch)
             file:update(dt);
             file:setPosition(posX, posY);
             batch:setColor(file:getColor());
-            batch:add(file:getX(), file:getY());
+            batch:add(file:getX(), file:getY(), 0, SPRITE_SIZE, SPRITE_SIZE, SPRITE_OFFSET, SPRITE_OFFSET);
         end
     end
 
