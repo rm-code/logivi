@@ -72,6 +72,15 @@ function Node.new(parent, name, x, y, batch)
     end
 
     ---
+    -- @param fx
+    -- @param fy
+    --
+    local function applyForce(fx, fy)
+        accX = clamp(-FORCE_MAX, accX + fx, FORCE_MAX);
+        accY = clamp(-FORCE_MAX, accY + fy, FORCE_MAX);
+    end
+
+    ---
     -- Calculates the arc for a certain angle.
     -- @param radius
     -- @param angle
@@ -227,15 +236,6 @@ function Node.new(parent, name, x, y, batch)
         return files[name];
     end
 
-    ---
-    -- @param fx
-    -- @param fy
-    --
-    function self:applyForce(fx, fy)
-        accX = clamp(-FORCE_MAX, accX + fx, FORCE_MAX);
-        accY = clamp(-FORCE_MAX, accY + fy, FORCE_MAX);
-    end
-
     function self:damp(f)
         velX, velY = velX * f, velY * f;
     end
@@ -254,7 +254,7 @@ function Node.new(parent, name, x, y, batch)
 
         -- Calculate spring force and apply it.
         local force = FORCE_SPRING * distance;
-        self:applyForce(dx * force, dy * force);
+        applyForce(dx * force, dy * force);
     end
 
     ---
@@ -275,7 +275,7 @@ function Node.new(parent, name, x, y, batch)
         dx = dx * strength;
         dy = dy * strength;
 
-        self:applyForce(dx, dy);
+        applyForce(dx, dy);
     end
 
     -- ------------------------------------------------
