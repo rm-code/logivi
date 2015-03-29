@@ -242,8 +242,6 @@ function Graph.new()
     end
 
     function self:draw()
-        --[[
-        -- Hide edges until graph based layout is completed.
         for i = 1, #edges do
             love.graphics.setColor(100, 100, 100);
             love.graphics.line(nodes[edges[i].a]:getX(),
@@ -252,7 +250,6 @@ function Graph.new()
                 nodes[edges[i].b]:getY());
             love.graphics.setColor(255, 255, 255);
         end
-        --]]
         love.graphics.draw(spritebatch);
     end
 
