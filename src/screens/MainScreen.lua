@@ -22,7 +22,7 @@
 
 local Screen = require('lib/screenmanager/Screen');
 local LogReader = require('src/LogReader');
-local Camera = require('lib/Camera');
+local Camera = require('lib/camera/Camera');
 local ConfigReader = require('src/ConfigReader');
 local AuthorManager = require('src/AuthorManager');
 local FileManager = require('src/FileManager');
@@ -33,6 +33,26 @@ local Graph = require('src/graph/Graph');
 -- ------------------------------------------------
 
 local LOG_FILE = 'log.txt';
+
+local CAMERA_ROTATION_SPEED = 0.6;
+local CAMERA_TRANSLATION_SPEED = 400;
+local CAMERA_TRACKING_SPEED = 2;
+local CAMERA_ZOOM_SPEED = 0.6;
+local CAMERA_MAX_ZOOM = 0.05;
+local CAMERA_MIN_ZOOM = 2;
+
+-- ------------------------------------------------
+-- Local Variables
+-- ------------------------------------------------
+
+local camera_zoomIn = '+';
+local camera_zoomOut = '-';
+local camera_rotateL = 'q';
+local camera_rotateR = 'e';
+local camera_n = 'w';
+local camera_w = 'a';
+local camera_s = 's';
+local camera_e = 'd';
 
 -- ------------------------------------------------
 -- Module
@@ -47,13 +67,17 @@ local MainScreen = {};
 function MainScreen.new()
     local self = Screen.new();
 
-    local camera = Camera.new();
     local commits;
     local index = 0;
     local date = '';
     local previousAuthor;
     local commitTimer = 0;
     local graph;
+
+    local camera;
+    local cx, cy;
+    local ox, oy;
+    local zoom = 1;
 
     -- ------------------------------------------------
     -- Private Functions
@@ -80,6 +104,59 @@ function MainScreen.new()
         end
     end
 
+    ---
+    -- Processes camera related controls and updates the camera.
+    -- @param cx - The current x-position the camera is looking at.
+    -- @param cy - The current y-position the camera is looking at.
+    -- @param ox - The current offset of the camera on the x-axis.
+    -- @param oy - The current offset of the camera on the y-axis.
+    -- @param dt
+    --
+    local function updateCamera(cx, cy, ox, oy, dt)
+        -- Zoom.
+        if love.keyboard.isDown(camera_zoomIn) then
+            zoom = zoom + CAMERA_ZOOM_SPEED * dt;
+        elseif love.keyboard.isDown(camera_zoomOut) then
+            zoom = zoom - CAMERA_ZOOM_SPEED * dt;
+        end
+        zoom = math.max(CAMERA_MAX_ZOOM, math.min(zoom, CAMERA_MIN_ZOOM));
+        camera:zoomTo(zoom);
+
+        -- Rotation.
+        if love.keyboard.isDown(camera_rotateL) then
+            camera:rotate(CAMERA_ROTATION_SPEED * dt);
+        elseif love.keyboard.isDown(camera_rotateR) then
+            camera:rotate(-CAMERA_ROTATION_SPEED * dt);
+        end
+
+        -- Horizontal Movement.
+        local dx = 0;
+        if love.keyboard.isDown(camera_w) then
+            dx = dx - dt * CAMERA_TRANSLATION_SPEED;
+        elseif love.keyboard.isDown(camera_e) then
+            dx = dx + dt * CAMERA_TRANSLATION_SPEED;
+        end
+        -- Vertical Movement.
+        local dy = 0;
+        if love.keyboard.isDown(camera_n) then
+            dy = dy - dt * CAMERA_TRANSLATION_SPEED;
+        elseif love.keyboard.isDown(camera_s) then
+            dy = dy + dt * CAMERA_TRANSLATION_SPEED;
+        end
+
+        -- Take the camera rotation into account when calculating the new offset.
+        ox = ox + (math.cos(-camera.rot) * dx - math.sin(-camera.rot) * dy);
+        oy = oy + (math.sin(-camera.rot) * dx + math.cos(-camera.rot) * dy);
+
+        -- Gradually move the camera to the target position.
+        local gx, gy = graph:getCenter();
+        cx = cx - (cx - math.floor(gx + ox)) * dt * CAMERA_TRACKING_SPEED;
+        cy = cy - (cy - math.floor(gy + oy)) * dt * CAMERA_TRACKING_SPEED;
+        camera:lookAt(cx, cy);
+
+        return cx, cy, ox, oy;
+    end
+
     -- ------------------------------------------------
     -- Public Functions
     -- ------------------------------------------------
@@ -96,6 +173,11 @@ function MainScreen.new()
         commits = LogReader.loadLog(LOG_FILE);
 
         graph = Graph.new();
+
+        -- Create the camera.
+        camera = Camera.new();
+        cx, cy = 0, 0;
+        ox, oy = 0, 0;
     end
 
     function self:draw()
@@ -103,16 +185,13 @@ function MainScreen.new()
         FileManager.draw();
         AuthorManager.drawList();
 
-        camera:set();
-        graph:draw();
-        AuthorManager.drawLabels();
-        camera:unset();
+        camera:draw(function()
+            graph:draw();
+            AuthorManager.drawLabels();
+        end);
     end
 
     function self:update(dt)
-        local cx, cy = graph:getCenter();
-        camera:track(cx, cy, 3, dt);
-
         commitTimer = commitTimer + dt;
         if commitTimer > 0.2 then
             -- Reset links of the previous author.
@@ -126,6 +205,8 @@ function MainScreen.new()
         graph:update(dt);
 
         AuthorManager.update(dt);
+
+        cx, cy, ox, oy = updateCamera(cx, cy, ox, oy, dt);
     end
 
     function self:quit()
