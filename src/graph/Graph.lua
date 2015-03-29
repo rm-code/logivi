@@ -80,9 +80,10 @@ function Graph.new()
     local function addNode(parentPath, nodePath)
         if not nodes[nodePath] then
             local parent = nodes[parentPath];
-            local nx = parent:getX() + love.math.random(-15, 15);
-            local ny = parent:getY() + love.math.random(-15, 15);
-            nodes[nodePath] = Node.new(parent, nodePath, nx, ny, spritebatch);
+            nodes[nodePath] = Node.new(parent, nodePath,
+                parent:getX() + love.math.random(5, 40) * (love.math.random(0, 1) == 0 and -1 or 1),
+                parent:getY() + love.math.random(5, 40) * (love.math.random(0, 1) == 0 and -1 or 1),
+                spritebatch);
             parent:addChild(nodes[nodePath]);
         end
         return nodes[nodePath];
