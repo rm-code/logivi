@@ -79,9 +79,11 @@ function Graph.new()
     --
     local function addNode(parentPath, nodePath)
         if not nodes[nodePath] then
-            local nx = nodes[parentPath]:getX() + love.math.random(-15, 15);
-            local ny = nodes[parentPath]:getY() + love.math.random(-15, 15);
-            nodes[nodePath] = Node.new(nodes[parentPath], nodePath, nx, ny, spritebatch);
+            local parent = nodes[parentPath];
+            local nx = parent:getX() + love.math.random(-15, 15);
+            local ny = parent:getY() + love.math.random(-15, 15);
+            nodes[nodePath] = Node.new(parent, nodePath, nx, ny, spritebatch);
+            parent:addChild(nodes[nodePath]);
         end
         return nodes[nodePath];
     end
@@ -156,6 +158,7 @@ function Graph.new()
 
             if edgeCount == 1 then
                 table.remove(edges, edgeToRem);
+                nodes[path]:kill();
                 nodes[path] = nil;
                 -- print('DEL node [' .. path .. ']');
             end

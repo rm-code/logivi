@@ -40,6 +40,9 @@ function Node.new(parent, name, x, y, batch)
     -- Local Variables
     -- ------------------------------------------------
 
+    local children = {};
+    local childCount = 0;
+
     local files = {};
     local fileCount = 0;
 
@@ -144,6 +147,21 @@ function Node.new(parent, name, x, y, batch)
     -- ------------------------------------------------
     -- Public Functions
     -- ------------------------------------------------
+
+    function self:addChild(name, folder)
+        children[name] = folder;
+        childCount = childCount + 1;
+        return children[name];
+    end
+    
+    function self:removeChild(name)
+        children[name] = nil;
+        childCount = childCount - 1;
+    end
+
+    function self:kill()
+        parent:removeChild(name);
+    end
 
     function self:update(dt)
         move(dt);
