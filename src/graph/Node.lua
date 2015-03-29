@@ -48,6 +48,8 @@ function Node.new(parent, name, x, y, batch)
     local files = {};
     local fileCount = 0;
 
+    local speed = 64;
+
     local posX, posY = x, y;
     local velX, velY = 0, 0;
     local accX, accY = 0, 0;
@@ -147,8 +149,8 @@ function Node.new(parent, name, x, y, batch)
     -- Apply the calculated acceleration to the node.
     --
     local function move(dt)
-        velX = velX + accX;
-        velY = velY + accY;
+        velX = velX + accX * dt * speed;
+        velY = velY + accY * dt * speed;
 
         posX = posX + velX;
         posY = posY + velY;
