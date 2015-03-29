@@ -26,6 +26,8 @@ local Node = {};
 -- Constants
 -- ------------------------------------------------
 
+local FORCE_MAX = 4;
+
 local SPRITE_SIZE = 0.45;
 local SPRITE_OFFSET = 15;
 
@@ -53,6 +55,16 @@ function Node.new(parent, name, x, y, batch)
     -- ------------------------------------------------
     -- Public Functions
     -- ------------------------------------------------
+
+    ---
+    -- Clamps a value to a certain range.
+    -- @param min
+    -- @param val
+    -- @param max
+    --
+    local function clamp(min, val, max)
+        return math.max(min, math.min(val, max));
+    end
 
     ---
     -- Calculates the arc for a certain angle.
@@ -210,9 +222,13 @@ function Node.new(parent, name, x, y, batch)
         return files[name];
     end
 
+    ---
+    -- @param fx
+    -- @param fy
+    --
     function self:applyForce(fx, fy)
-        accX = accX + fx;
-        accY = accY + fy;
+        accX = clamp(-FORCE_MAX, accX + fx, FORCE_MAX);
+        accY = clamp(-FORCE_MAX, accY + fy, FORCE_MAX);
     end
 
     function self:damp(f)
