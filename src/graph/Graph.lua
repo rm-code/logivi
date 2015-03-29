@@ -59,11 +59,26 @@ function Graph.new()
     local self = {};
 
     local nodes = { [ROOT] = Node.new(nil, ROOT, 300, 200, spritebatch); };
+    local root = nodes[ROOT];
     local edges = {};
+
+    local minX, maxX, minY, maxY = root:getX(), root:getX(), root:getY(), root:getY();
 
     -- ------------------------------------------------
     -- Local Functions
     -- ------------------------------------------------
+
+    ---
+    -- @param minX - The current minimum x position.
+    -- @param maxX - The current maximum y position.
+    -- @param minY - The current minimum x position.
+    -- @param maxY - The current maximum y position.
+    -- @param nx - The new x position to check.
+    -- @param ny - The new y position to check.
+    --
+    local function updateBoundaries(minX, maxX, minY, maxY, nx, ny)
+        return math.min(nx, minX), math.max(nx, maxX), math.min(ny, minY), math.max(ny, maxY);
+    end
 
     ---
     -- Creates a new node and stores it in our list, using the name
@@ -210,6 +225,8 @@ function Graph.new()
     end
 
     function self:update(dt)
+        minX, maxX, minY, maxY = root:getX(), root:getX(), root:getY(), root:getY();
+
         spritebatch:clear();
         for _, nodeA in pairs(nodes) do
             for _, nodeB in pairs(nodes) do
@@ -223,6 +240,8 @@ function Graph.new()
 
             nodeA:damp(0.95);
             nodeA:update(dt);
+            local nx, ny = nodeA:move(dt);
+            minX, maxX, minY, maxY = updateBoundaries(minX, maxX, minY, maxY, nx, ny);
         end
     end
 
@@ -230,37 +249,12 @@ function Graph.new()
     -- Getters
     -- ------------------------------------------------
 
-    function self:getBoundaries()
-        local minX = nodes[ROOT]:getX();
-        local maxX = nodes[ROOT]:getX();
-        local minY = nodes[ROOT]:getY();
-        local maxY = nodes[ROOT]:getY();
-
-        for i, node in pairs(nodes) do
-            local nx, ny = node:getPosition();
-
-            if not minX or nx < minX then
-                minX = nx;
-            elseif not maxX or nx > maxX then
-                maxX = nx;
-            end
-            if not minY or ny < minY then
-                minY = ny;
-            elseif not maxY or ny > maxY then
-                maxY = ny;
-            end
-        end
-
-        return minX, maxX, minY, maxY;
-    end
-
     ---
     -- Returns the center of the graph. The center is calculated
     -- by forming a rectangle that encapsulates all nodes and then
     -- dividing its sides by two.
     --
     function self:getCenter()
-        local minX, maxX, minY, maxY = self:getBoundaries();
         return minX + (maxX - minX) * 0.5, minY + (maxY - minY) * 0.5;
     end
 

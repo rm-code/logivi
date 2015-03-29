@@ -157,19 +157,6 @@ function Node.new(parent, name, x, y, batch)
         end
     end
 
-    ---
-    -- Apply the calculated acceleration to the node.
-    --
-    local function move(dt)
-        velX = velX + accX * dt * speed;
-        velY = velY + accY * dt * speed;
-
-        posX = posX + velX;
-        posY = posY + velY;
-
-        accX, accY = 0, 0;
-    end
-
     -- ------------------------------------------------
     -- Public Functions
     -- ------------------------------------------------
@@ -190,7 +177,6 @@ function Node.new(parent, name, x, y, batch)
     end
 
     function self:update(dt)
-        move(dt);
         -- Update files.
         for _, file in pairs(files) do
             file:update(dt);
@@ -234,6 +220,20 @@ function Node.new(parent, name, x, y, batch)
     function self:modifyFile(name)
         files[name]:setModified(true);
         return files[name];
+    end
+
+    ---
+    -- Apply the calculated acceleration to the node.
+    --
+    function self:move(dt)
+        velX = velX + accX * dt * speed;
+        velY = velY + accY * dt * speed;
+
+        posX = posX + velX;
+        posY = posY + velY;
+
+        accX, accY = 0, 0;
+        return posX, posY;
     end
 
     function self:damp(f)
