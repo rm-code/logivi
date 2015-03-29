@@ -53,6 +53,23 @@ local function checkSupport()
     print(string.format("Name: %s \nVersion: %s \nVendor: %s \nDevice: %s", name, version, vendor, device));
 end
 
+local function drawStats()
+    love.graphics.setColor(100, 100, 100, 255);
+    love.graphics.rectangle('fill', 5, love.window.getHeight() - 185, 200, 200);
+    love.graphics.setColor(255, 255, 255, 255);
+    love.graphics.print(string.format("FT: %.3f ms", 1000 * love.timer.getAverageDelta()), 10, love.window.getHeight() - 180);
+    love.graphics.print(string.format("FPS: %.3f fps", love.timer.getFPS()), 10, love.window.getHeight() - 160);
+    love.graphics.print(string.format("MEM: %.3f kb", collectgarbage("count")), 10, love.window.getHeight() - 140);
+
+    local stats = love.graphics.getStats();
+    love.graphics.print(string.format("Drawcalls: %d", stats.drawcalls), 10, love.window.getHeight() - 120);
+    love.graphics.print(string.format("Canvas Switches: %d", stats.canvasswitches), 10, love.window.getHeight() - 100);
+    love.graphics.print(string.format("TextureMemory: %.2f kb", stats.texturememory / 1024), 10, love.window.getHeight() - 80);
+    love.graphics.print(string.format("Images: %d", stats.images), 10, love.window.getHeight() - 60);
+    love.graphics.print(string.format("Canvases: %d", stats.canvases), 10, love.window.getHeight() - 40);
+    love.graphics.print(string.format("Fonts: %d", stats.fonts), 10, love.window.getHeight() - 20);
+end
+
 -- ------------------------------------------------
 -- Callbacks
 -- ------------------------------------------------
@@ -81,9 +98,7 @@ function love.draw()
     ScreenManager.draw();
 
     if showDebug then
-        love.graphics.print(string.format("FT: %.3f ms", 1000 * love.timer.getAverageDelta()), 10, love.window.getHeight() - 60);
-        love.graphics.print(string.format("FPS: %.3f fps", love.timer.getFPS()), 10, love.window.getHeight() - 40);
-        love.graphics.print(string.format("MEM: %.3f kb", collectgarbage("count")), 10, love.window.getHeight() - 20);
+        drawStats();
     end
 end
 
