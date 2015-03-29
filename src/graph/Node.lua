@@ -237,6 +237,46 @@ function Node.new(parent, name, x, y, batch)
         velX, velY = velX * f, velY * f;
     end
 
+    ---
+    -- Attracts the node towards nodeB based on a spring force.
+    -- @param nodeB
+    -- @param spring
+    --
+    function self:attract(nodeB, spring)
+        local dx, dy = posX - nodeB:getX(), posY - nodeB:getY();
+        local distance = math.sqrt(dx * dx + dy * dy);
+
+        -- Normalise vector.
+        dx = dx / distance;
+        dy = dy / distance;
+
+        -- Calculate spring force and apply it.
+        local force = spring * distance;
+        self:applyForce(dx * force, dy * force);
+    end
+
+    ---
+    -- Repels the node from nodeB.
+    -- @param nodeB
+    -- @param charge
+    --
+    function self:repel(nodeB, charge)
+        -- Calculate distance vector.
+        local dx, dy = posX - nodeB:getX(), posY - nodeB:getY();
+        local distance = math.sqrt(dx * dx + dy * dy);
+
+        -- Normalise vector.
+        dx = dx / distance;
+        dy = dy / distance;
+
+        -- Calculate force's strength and apply it to the vector.
+        local strength = charge * ((self:getMass() * nodeB:getMass()) / (distance * distance));
+        dx = dx * strength;
+        dy = dy * strength;
+
+        self:applyForce(dx, dy);
+    end
+
     -- ------------------------------------------------
     -- Getters
     -- ------------------------------------------------

@@ -162,48 +162,6 @@ function Graph.new()
         end
     end
 
-    ---
-    -- Attracts the node towards nodeB based on a spring force.
-    -- @param nodeA
-    -- @param nodeB
-    -- @param spring
-    --
-    local function attract(nodeA, nodeB, spring)
-        local dx, dy = nodeA:getX() - nodeB:getX(), nodeA:getY() - nodeB:getY();
-        local distance = math.sqrt(dx * dx + dy * dy);
-
-        -- Normalise vector.
-        dx = dx / distance;
-        dy = dy / distance;
-
-        -- Calculate spring force and apply it.
-        local force = spring * distance;
-        nodeA:applyForce(dx * force, dy * force);
-    end
-
-    ---
-    -- Repels the node from nodeB.
-    -- @param nodeA
-    -- @param nodeB
-    -- @param charge
-    --
-    local function repel(nodeA, nodeB, charge)
-        -- Calculate distance vector.
-        local dx, dy = nodeA:getX() - nodeB:getX(), nodeA:getY() - nodeB:getY();
-        local distance = math.sqrt(dx * dx + dy * dy);
-
-        -- Normalise vector.
-        dx = dx / distance;
-        dy = dy / distance;
-
-        -- Calculate force's strength and apply it to the vector.
-        local strength = charge * ((nodeA:getMass() * nodeB:getMass()) / (distance * distance));
-        dx = dx * strength;
-        dy = dy * strength;
-
-        nodeA:applyForce(dx, dy);
-    end
-
     -- ------------------------------------------------
     -- Public Functions
     -- ------------------------------------------------
@@ -257,9 +215,9 @@ function Graph.new()
             for _, nodeB in pairs(nodes) do
                 if nodeA ~= nodeB then
                     if nodeA:isConnectedTo(nodeB) then
-                        attract(nodeA, nodeB, -0.005);
+                        nodeA:attract(nodeB, -0.005);
                     end
-                    repel(nodeA, nodeB, 100000);
+                    nodeA:repel(nodeB, 100000);
                 end
             end
 
