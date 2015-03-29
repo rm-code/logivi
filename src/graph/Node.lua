@@ -167,7 +167,7 @@ function Node.new(parent, name, x, y, batch)
         childCount = childCount + 1;
         return children[name];
     end
-    
+
     function self:removeChild(name)
         children[name] = nil;
         childCount = childCount - 1;
