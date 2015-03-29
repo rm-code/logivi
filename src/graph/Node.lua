@@ -269,6 +269,17 @@ function Node.new(parent, name, x, y, batch)
         return 0.08 * fileCount;
     end
 
+    function self:isConnectedTo(node)
+        if parent == node then
+            return true;
+        end
+        for _, child in pairs(children) do
+            if node == child then
+                return true;
+            end
+        end
+    end
+
     return self;
 end
 
