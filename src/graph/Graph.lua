@@ -84,7 +84,7 @@ function Graph.new()
                 parent:getX() + love.math.random(5, 40) * (love.math.random(0, 1) == 0 and -1 or 1),
                 parent:getY() + love.math.random(5, 40) * (love.math.random(0, 1) == 0 and -1 or 1),
                 spritebatch);
-            parent:addChild(nodes[nodePath]);
+            parent:addChild(nodePath, nodes[nodePath]);
         end
         return nodes[nodePath];
     end
