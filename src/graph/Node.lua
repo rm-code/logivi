@@ -41,7 +41,7 @@ function Node.new(parent, name, x, y, batch)
     -- ------------------------------------------------
 
     local files = {};
-    local count = 0;
+    local fileCount = 0;
 
     local posX, posY = x, y;
     local velX, velY = 0, 0;
@@ -160,10 +160,10 @@ function Node.new(parent, name, x, y, batch)
         if not files[name] then
             files[name] = file;
             files[name]:setModified(true);
-            count = count + 1;
+            fileCount = fileCount + 1;
 
             -- Update layout of the files.
-            plotCircle(files, count);
+            plotCircle(files, fileCount);
         end
         return files[name];
     end
@@ -180,10 +180,10 @@ function Node.new(parent, name, x, y, batch)
         files[name]:setModified(true);
         files[name]:remove();
         files[name] = nil;
-        count = count - 1;
+        fileCount = fileCount - 1;
 
         -- Update layout of the files.
-        plotCircle(files, count);
+        plotCircle(files, fileCount);
         return tmp;
     end
 
@@ -206,7 +206,7 @@ function Node.new(parent, name, x, y, batch)
     -- ------------------------------------------------
 
     function self:getFileCount()
-        return count;
+        return fileCount;
     end
 
     function self:getPosition()
@@ -230,7 +230,7 @@ function Node.new(parent, name, x, y, batch)
     end
 
     function self:getMass()
-        return 0.08 * count;
+        return 0.08 * fileCount;
     end
 
     return self;
