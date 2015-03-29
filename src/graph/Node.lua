@@ -31,6 +31,9 @@ local FORCE_MAX = 4;
 local SPRITE_SIZE = 0.45;
 local SPRITE_OFFSET = 15;
 
+local FORCE_SPRING = -0.005;
+local FORCE_CHARGE = 100000;
+
 -- ------------------------------------------------
 -- Constructor
 -- ------------------------------------------------
@@ -240,9 +243,8 @@ function Node.new(parent, name, x, y, batch)
     ---
     -- Attracts the node towards nodeB based on a spring force.
     -- @param nodeB
-    -- @param spring
     --
-    function self:attract(nodeB, spring)
+    function self:attract(nodeB)
         local dx, dy = posX - nodeB:getX(), posY - nodeB:getY();
         local distance = math.sqrt(dx * dx + dy * dy);
 
@@ -251,16 +253,15 @@ function Node.new(parent, name, x, y, batch)
         dy = dy / distance;
 
         -- Calculate spring force and apply it.
-        local force = spring * distance;
+        local force = FORCE_SPRING * distance;
         self:applyForce(dx * force, dy * force);
     end
 
     ---
     -- Repels the node from nodeB.
     -- @param nodeB
-    -- @param charge
     --
-    function self:repel(nodeB, charge)
+    function self:repel(nodeB)
         -- Calculate distance vector.
         local dx, dy = posX - nodeB:getX(), posY - nodeB:getY();
         local distance = math.sqrt(dx * dx + dy * dy);
@@ -270,7 +271,7 @@ function Node.new(parent, name, x, y, batch)
         dy = dy / distance;
 
         -- Calculate force's strength and apply it to the vector.
-        local strength = charge * ((self:getMass() * nodeB:getMass()) / (distance * distance));
+        local strength = FORCE_CHARGE * ((self:getMass() * nodeB:getMass()) / (distance * distance));
         dx = dx * strength;
         dy = dy * strength;
 

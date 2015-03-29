@@ -215,9 +215,9 @@ function Graph.new()
             for _, nodeB in pairs(nodes) do
                 if nodeA ~= nodeB then
                     if nodeA:isConnectedTo(nodeB) then
-                        nodeA:attract(nodeB, -0.005);
+                        nodeA:attract(nodeB);
                     end
-                    nodeA:repel(nodeB, 100000);
+                    nodeA:repel(nodeB);
                 end
             end
 
