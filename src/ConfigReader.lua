@@ -45,8 +45,14 @@ return {
     options = {
         backgroundColor = { 0, 0, 0 },
         removeTmpFiles = false,
+
         screenWidth = 800,
         screenHeight = 600,
+        fullscreen = false,
+        fullscreenType = 'desktop',
+        vsync = true,
+        msaa = 0,
+        display = 1,
     },
 };
 ]]
