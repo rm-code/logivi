@@ -38,7 +38,7 @@ local FORCE_CHARGE = 100000;
 -- Constructor
 -- ------------------------------------------------
 
-function Node.new(parent, name, x, y, batch)
+function Node.new(parent, name, x, y, spritebatch)
     local self = {};
 
     -- ------------------------------------------------
@@ -181,8 +181,8 @@ function Node.new(parent, name, x, y, batch)
         for _, file in pairs(files) do
             file:update(dt);
             file:setPosition(posX, posY);
-            batch:setColor(file:getColor());
-            batch:add(file:getX(), file:getY(), 0, SPRITE_SIZE, SPRITE_SIZE, SPRITE_OFFSET, SPRITE_OFFSET);
+            spritebatch:setColor(file:getColor());
+            spritebatch:add(file:getX(), file:getY(), 0, SPRITE_SIZE, SPRITE_SIZE, SPRITE_OFFSET, SPRITE_OFFSET);
         end
     end
 
