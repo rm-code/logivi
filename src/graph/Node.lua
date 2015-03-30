@@ -32,7 +32,7 @@ local SPRITE_SIZE = 0.45;
 local SPRITE_OFFSET = 15;
 
 local FORCE_SPRING = -0.005;
-local FORCE_CHARGE = 100000;
+local FORCE_CHARGE = 10000000;
 
 -- ------------------------------------------------
 -- Constructor
@@ -320,7 +320,7 @@ function Node.new(parent, name, x, y, spritebatch)
     end
 
     function self:getMass()
-        return 0.08 * fileCount;
+        return 0.01 * childCount + 0.001 * math.max(1, fileCount);
     end
 
     function self:isConnectedTo(node)
