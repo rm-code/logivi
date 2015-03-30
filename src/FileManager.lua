@@ -27,6 +27,7 @@ local FileManager = {};
 -- ------------------------------------------------
 
 local extensions = {};
+local totalFiles = 0;
 
 -- ------------------------------------------------
 -- Local Functions
@@ -37,9 +38,10 @@ local extensions = {};
 -- @param fileName
 --
 local function splitExtension(fileName)
-    local pos = fileName:find('%.');
+    local tmp = fileName:reverse();
+    local pos = tmp:find('%.');
     if pos then
-        return fileName:sub(pos);
+        return tmp:sub(1, pos):reverse():lower();
     else
         -- Prevents issues with files sans extension.
         return '.?';
@@ -55,11 +57,13 @@ end
 --
 function FileManager.draw()
     local count = 0;
+    love.graphics.print(totalFiles, love.graphics.getWidth() - 120, 20);
+    love.graphics.print('Files', love.graphics.getWidth() - 80, 20);
     for ext, tbl in pairs(extensions) do
         count = count + 1;
         love.graphics.setColor(tbl.color);
-        love.graphics.print(ext, love.graphics.getWidth() - 80, 100 + count * 20);
-        love.graphics.print(tbl.amount, love.graphics.getWidth() - 120, 100 + count * 20);
+        love.graphics.print(ext, love.graphics.getWidth() - 80, 20 + count * 20);
+        love.graphics.print(tbl.amount, love.graphics.getWidth() - 120, 20 + count * 20);
         love.graphics.setColor(255, 255, 255);
     end
 end
@@ -76,6 +80,7 @@ function FileManager.add(fileName)
         extensions[ext].color = { love.math.random(0, 255), love.math.random(0, 255), love.math.random(0, 255) };
     end
     extensions[ext].amount = extensions[ext].amount + 1;
+    totalFiles = totalFiles + 1;
 
     return extensions[ext].color;
 end
@@ -93,6 +98,7 @@ function FileManager.remove(fileName)
     end
 
     extensions[ext].amount = extensions[ext].amount - 1;
+    totalFiles = totalFiles - 1;
     if extensions[ext].amount == 0 then
         extensions[ext] = nil;
     end

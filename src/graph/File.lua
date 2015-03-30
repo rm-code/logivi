@@ -20,13 +20,13 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
-local Node = require('src/nodes/Node');
+local FileManager = require('src/FileManager');
 
 -- ------------------------------------------------
 -- Module
 -- ------------------------------------------------
 
-local FileNode = {};
+local File = {};
 
 -- ------------------------------------------------
 -- Constants
@@ -36,19 +36,15 @@ local MOD_TIMER = 2;
 local MOD_COLOR = { 255, 0, 0 };
 
 -- ------------------------------------------------
--- Local Variables
--- ------------------------------------------------
-
-local img = love.graphics.newImage('res/fileNode.png');
-
--- ------------------------------------------------
 -- Constructor
 -- ------------------------------------------------
 
-function FileNode.new(name, color)
-    local self = Node.new('file', name);
+function File.new(name, x, y)
+    local self = {};
 
-    local fileColor = color;
+    local posX, posY = x, y;
+    local offX, offY = 0, 0;
+    local fileColor = FileManager.add(name);
     local currentColor = {};
     local modified = false;
     local timer = MOD_TIMER;
@@ -64,15 +60,6 @@ function FileNode.new(name, color)
     -- ------------------------------------------------
     -- Public Functions
     -- ------------------------------------------------
-
-    ---
-    -- Draw the node with the current color modifier.
-    --
-    function self:draw()
-        love.graphics.setColor(currentColor);
-        love.graphics.draw(img, self:getX() - 8, self:getY() - 8);
-        love.graphics.setColor(255, 255, 255);
-    end
 
     ---
     -- If the file is marked as modified the color will be lerped from
@@ -107,6 +94,30 @@ function FileNode.new(name, color)
         currentColor[3] = MOD_COLOR[3];
     end
 
+    function self:remove()
+        FileManager.remove(name);
+    end
+
+    function self:getX()
+        return posX + offX;
+    end
+
+    function self:getY()
+        return posY + offY;
+    end
+
+    function self:getColor()
+        return currentColor;
+    end
+
+    function self:setOffset(ox, oy)
+        offX, offY = ox, oy;
+    end
+
+    function self:setPosition(nx, ny)
+        posX, posY = nx, ny;
+    end
+
     return self;
 end
 
@@ -114,4 +125,4 @@ end
 -- Return Module
 -- ------------------------------------------------
 
-return FileNode;
+return File;

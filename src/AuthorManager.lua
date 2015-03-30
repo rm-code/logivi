@@ -33,20 +33,7 @@ local AuthorManager = {};
 -- Constants
 -- ------------------------------------------------
 
-local DEFAULT_ALIASES_FILE_CONTENT = [[
-return {
-    -- ['NameToReplace'] = 'ReplaceWith',
-};
-]];
-
-local DEFAULT_AVATARS_FILE_CONTENT = [[
-return {
-    -- ['user'] = 'UrlToAvatar',
-};
-]];
-
-local ALIASES_FILE_NAME = 'aliases.lua';
-local AVATARS_FILE_NAME = 'avatars.lua';
+local PATH_AVATARS = 'tmp/avatars/';
 
 -- ------------------------------------------------
 -- Local Variables
@@ -55,56 +42,66 @@ local AVATARS_FILE_NAME = 'avatars.lua';
 local authors;
 local avatars;
 local aliases;
+local addresses;
 
 -- ------------------------------------------------
--- Private Functions
+-- Local Functions
 -- ------------------------------------------------
 
 ---
--- Checks if the file already exists. If it does it is
--- loaded, executed and returned. If the file doesn't
--- exist yet a default file will be written instead.
--- This default file is then read and returned.
--- @param name
--- @param default
+-- Tries to load user avatars from the local filesystem or the internet.
+-- @param urlList
 --
-local function loadFile(name, default)
-    if not love.filesystem.isFile(name) then
-        local file = love.filesystem.newFile(name);
-        file:open('w');
-        file:write(default);
-        file:close();
+local function grabAvatars(urlList)
+    local counter = 0;
+    local avatars = {};
+    for author, url in pairs(urlList) do
+        -- If the file exists locally we load it as usual.
+        -- If it doesn't we see if the url returns something useful.
+        if love.filesystem.isFile(url) then
+            avatars[author] = love.graphics.newImage(url);
+        else
+            local body = http.request(url);
+            if body then
+                -- Set up the temporary folder if we don't have one yet.
+                if not love.filesystem.isDirectory(PATH_AVATARS) then
+                    love.filesystem.createDirectory(PATH_AVATARS);
+                end
+
+                -- Write file to a temporary folder.
+                love.filesystem.write(string.format(PATH_AVATARS .. "tmp_%03d.png", counter), body);
+
+                local ok, image = pcall(love.graphics.newImage, string.format(PATH_AVATARS .. "tmp_%03d.png", counter));
+                if ok then
+                    avatars[author] = image;
+                    counter = counter + 1;
+                else
+                    print("Couldn't load avatar from " .. url .. " - A default avatar will be used instead.");
+                end
+                counter = counter + 1;
+            end
+        end
     end
-    return love.filesystem.load(name)();
+
+    -- Load the default user avatar.
+    avatars['default'] = love.graphics.newImage('res/user.png');
+
+    return avatars;
 end
 
 -- ------------------------------------------------
 -- Public Functions
 -- ------------------------------------------------
 
-function AuthorManager.init()
+function AuthorManager.init(naliases, avatarUrls)
     -- Set up the table to store all authors.
     authors = {};
 
-    -- Create an aliases default file or load an existing one.
-    aliases = loadFile(ALIASES_FILE_NAME, DEFAULT_ALIASES_FILE_CONTENT);
+    addresses = {};
+    aliases = naliases;
 
-    avatars = {};
-    -- Grab the default avatar online, write it to the save folder and load it as an image.
-    local body = http.request('https://www.love2d.org/w/images/9/9b/Love-game-logo-256x256.png');
-    love.filesystem.write('tmp_default.png', body);
-    avatars['default'] = love.graphics.newImage('tmp_default.png');
-
-    -- Read the avatars.lua file (if there is one) and use it to grab an avatar online, write it
-    -- to the save folder and load it as an image to use in LoGiVi.
-    local counter = 0;
-    local avatarFile = loadFile(AVATARS_FILE_NAME, DEFAULT_AVATARS_FILE_CONTENT);
-    for author, url in pairs(avatarFile) do
-        local body = http.request(url);
-        love.filesystem.write(string.format("tmp_%03d.png", counter), body);
-        avatars[author] = love.graphics.newImage(string.format("tmp_%03d.png", counter));
-        counter = counter + 1;
-    end
+    -- Load avatars from the local filesystem or an online location.
+    avatars = grabAvatars(avatarUrls);
 end
 
 ---
@@ -135,17 +132,26 @@ function AuthorManager.update(dt)
 end
 
 ---
--- Adds a new author to the list. If a file for alternatives
--- was found, the function will use relapcements from that list.
--- This can be used to fix "faulty" authors in commits.
+-- Adds a new author to the list using his name as a key. Before storing the
+-- author the function checks the config file to see if an alias is associated
+-- with the specific email address. If it is, it will use the alias and ignore
+-- the name found in the log file.
+-- If there isn't an alias, it will check if there already is another nickname
+-- stored for that email address. If there isn't, it will use the nickname
+-- found in the log.
+-- @param nemail
 -- @param nauthor
+-- @param cx
+-- @param cy
 --
-function AuthorManager.add(nauthor)
-    local nickname = aliases[nauthor] or nauthor;
+function AuthorManager.add(nemail, nauthor, cx, cy)
+    local nickname = aliases[nemail] or addresses[nemail] or nauthor;
 
     if not authors[nickname] then
-        authors[nickname] = Author.new(nickname, avatars[nickname] or avatars['default']);
+        addresses[nemail] = nauthor; -- Store this name as the default for this email address.
+        authors[nickname] = Author.new(nickname, avatars[nickname] or avatars['default'], cx, cy);
     end
+
     return authors[nickname];
 end
 

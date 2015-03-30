@@ -20,50 +20,98 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
-local Node = {};
+local ConfigReader = {};
 
 -- ------------------------------------------------
--- Constructor
+-- Constants
 -- ------------------------------------------------
 
-function Node.new(type, name, x, y)
-    local self = {};
+local FILE_NAME = 'config.lua';
+local FILE_TEMPLATE = [[
+-- ------------------------------- --
+-- LoGiVi - Configuration File.    --
+-- ------------------------------- --
 
-    local x, y = x, y;
+return {
+    -- Associates an email address with a author. This name will
+    -- then be used instead of the one found in the git log.
+    aliases = {
+        -- ['email'] = 'Author',
+    },
+    -- Assigns an avatar to an author.
+    avatars = {
+        -- ['author'] = 'urlToAvatar',
+    },
+    options = {
+        backgroundColor = { 0, 0, 0 },
+        removeTmpFiles = false,
+        screenWidth = 800,
+        screenHeight = 600,
+    },
+};
+]]
 
-    function self:update(dt) end
+-- ------------------------------------------------
+-- Local Variables
+-- ------------------------------------------------
 
-    function self:draw() end
+local config;
 
-    function self:setPosition(nx, ny)
-        x, y = nx, ny;
+-- ------------------------------------------------
+-- Local Functions
+-- ------------------------------------------------
+
+local function loadFile(name, default)
+    if not love.filesystem.isFile(name) then
+        local file = love.filesystem.newFile(name);
+        file:open('w');
+        file:write(default);
+        file:close();
+    end
+    return love.filesystem.load(name)();
+end
+
+-- ------------------------------------------------
+-- Public Functions
+-- ------------------------------------------------
+
+function ConfigReader.init()
+    config = loadFile(FILE_NAME, FILE_TEMPLATE);
+end
+
+function ConfigReader.removeTmpFiles()
+    print('Removing temporary files...');
+    local function recursivelyDelete(item, depth)
+        local ws = '';
+        for _ = 1, depth do
+            ws = ws .. '    ';
+        end
+        print(ws .. item);
+        if love.filesystem.isDirectory(item) then
+            for _, child in pairs(love.filesystem.getDirectoryItems(item)) do
+                recursivelyDelete(item .. '/' .. child, depth + 1);
+                love.filesystem.remove(item .. '/' .. child);
+            end
+        elseif love.filesystem.isFile(item) then
+            love.filesystem.remove(item);
+        end
+        love.filesystem.remove(item);
     end
 
-    function self:getPosition()
-        return x, y;
-    end
+    recursivelyDelete('tmp', 0);
+    print('... Done!');
+end
 
-    function self:getX()
-        return x;
-    end
+-- ------------------------------------------------
+-- Getters
+-- ------------------------------------------------
 
-    function self:getY()
-        return y;
-    end
-
-    function self:getName()
-        return name;
-    end
-
-    function self:getType()
-        return type;
-    end
-
-    return self;
+function ConfigReader.getConfig(section)
+    return config[section];
 end
 
 -- ------------------------------------------------
 -- Return Module
 -- ------------------------------------------------
 
-return Node;
+return ConfigReader;

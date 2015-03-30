@@ -24,7 +24,7 @@ local GAME_TITLE = "LoGiVi";
 
 local LOVE_VERSION = "0.9.2";
 
-local GAME_VERSION = "0052";
+local GAME_VERSION = "0104";
 
 -- ------------------------------------------------
 -- Local variables
@@ -47,8 +47,8 @@ function love.conf(t)
 
     t.window.title = GAME_TITLE;
     t.window.icon = nil;
-    t.window.width = 0;
-    t.window.height = 0;
+    t.window.width = 800;
+    t.window.height = 600;
     t.window.borderless = false;
     t.window.resizable = true;
     t.window.minwidth = 800;
@@ -93,5 +93,14 @@ end
 function getVersion()
     if GAME_VERSION then
         return GAME_VERSION;
+    end
+end
+
+---
+-- Returns the title.
+--
+function getTitle()
+    if GAME_TITLE then
+        return GAME_TITLE;
     end
 end

@@ -20,9 +20,8 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
-local TAG_SEPARATOR = 'logivi_commit';
 local TAG_AUTHOR = 'author: ';
-local TAG_DATE = 'date';
+local TAG_DATE = 'date: ';
 
 -- ------------------------------------------------
 -- Module
@@ -62,6 +61,18 @@ local function removeTag(line, tag)
 end
 
 ---
+-- @param author
+--
+local function splitLine(line, delimiter)
+    local pos = line:find(delimiter);
+    if pos then
+        return line:sub(1, pos - 1), line:sub(pos + 1);
+    else
+        return line;
+    end
+end
+
+---
 -- Split up the log table into commits. Each commit is a new
 -- nested table.
 -- @param log
@@ -72,21 +83,41 @@ local function splitCommits(log)
     for i = 1, #log do
         local line = log[i];
 
-        if line:find(TAG_SEPARATOR) then -- Commit separator.
+        if line:find(TAG_AUTHOR) then
             index = index + 1;
             commits[index] = {};
-        elseif line:find(TAG_AUTHOR) then
-            commits[index].author = removeTag(line, TAG_AUTHOR);
+            commits[index].author, commits[index].email = splitLine(removeTag(line, TAG_AUTHOR), '|');
         elseif line:find(TAG_DATE) then
-            commits[index].date = line;
-        elseif line:len() ~= 0 then
+            -- Transform unix timestamp to a table containing a human-readable date.
+            local timestamp = removeTag(line, TAG_DATE);
+            local date = os.date('*t', tonumber(timestamp));
+            commits[index].date = string.format("%02d:%02d:%02d - %02d-%02d-%04d",
+                date.hour, date.min, date.sec,
+                date.day, date.month, date.year);
+        elseif line:len() ~= 0 and commits[index] then
             -- Split the file information into the modifier, which determines
             -- what has happened to the file since the last commit and the actual
             -- filepath / name.
             local modifier = line:sub(1, 1);
             local path = line:sub(2);
             path = trim(path);
-            commits[index][#commits[index] + 1] = { modifier = modifier, path = path };
+
+            if path:find('/') then
+                path = path:reverse();
+                local pos = path:find('/');
+
+                -- Reverse string and cut off the end to get the file's name.
+                local file = path:sub(1, pos - 1);
+                file = file:reverse();
+
+                -- Remove the file from the path and reverse it again.
+                path = path:sub(pos);
+                path = path:reverse();
+
+                commits[index][#commits[index] + 1] = { modifier = modifier, path = path, file = file };
+            else
+                commits[index][#commits[index] + 1] = { modifier = modifier, path = '', file = path };
+            end
         end
     end
 

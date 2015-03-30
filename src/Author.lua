@@ -35,12 +35,16 @@ local DEFAULT_ALPHA = 255;
 -- Constructor
 -- ------------------------------------------------
 
-function Author.new(name, avatar)
+function Author.new(name, avatar, cx, cy)
     local self = {};
 
     local name = name;
-    local posX, posY = love.math.random(100, 1000), love.math.random(100, 600);
-    local dX, dY = love.math.random(-50, 50), love.math.random(-50, 50);
+
+    local radius = 200;
+    local speed = love.math.random(1, 5) / 5;
+    local angle = love.math.random(360);
+    local x, y = cx + math.cos(angle) * radius, cy + math.sin(angle) * radius;
+
     local links = {};
     local inactivity = 0;
     local alpha = DEFAULT_ALPHA;
@@ -61,23 +65,17 @@ function Author.new(name, avatar)
     function self:draw()
         for i = 1, #links do
             love.graphics.setColor(255, 255, 255, 50);
-            love.graphics.line(posX, posY, links[i]:getX(), links[i]:getY());
+            love.graphics.line(x, y, links[i]:getX(), links[i]:getY());
             love.graphics.setColor(255, 255, 255, 255);
         end
         love.graphics.setColor(255, 255, 255, alpha);
-        love.graphics.draw(avatar, posX - AVATAR_SIZE * 0.5, posY - AVATAR_SIZE * 0.5, 0, AVATAR_SIZE / avatar:getWidth(), AVATAR_SIZE / avatar:getHeight());
+        love.graphics.draw(avatar, x - AVATAR_SIZE * 0.5, y - AVATAR_SIZE * 0.5, 0, AVATAR_SIZE / avatar:getWidth(), AVATAR_SIZE / avatar:getHeight());
         love.graphics.setColor(255, 255, 255, 255);
     end
 
     function self:update(dt)
-        if posX < 200 or posX > love.graphics.getWidth() - 200 then
-            dX = -dX;
-        end
-        if posY < 200 or posY > love.graphics.getHeight() - 200 then
-            dY = -dY;
-        end
-        posX = posX + (dX * dt);
-        posY = posY + (dY * dt);
+        angle = angle + speed * dt;
+        x, y = cx + math.cos(angle) * radius, cy + math.sin(angle) * radius;
 
         inactivity = inactivity + dt;
         if inactivity > INACTIVITY_TIMER then
