@@ -60,7 +60,6 @@ function Graph.new()
 
     local nodes = { [ROOT] = Node.new(nil, ROOT, 300, 200, spritebatch); };
     local root = nodes[ROOT];
-    local edges = {};
 
     local minX, maxX, minY, maxY = root:getX(), root:getX(), root:getY(), root:getY();
 
@@ -101,15 +100,6 @@ function Graph.new()
     end
 
     ---
-    -- Creates an edge between two nodes.
-    -- @param nodeAPath
-    -- @param nodeBPath
-    --
-    local function addEdge(nodeAPath, nodeBPath)
-        edges[#edges + 1] = { a = nodeAPath, b = nodeBPath };
-    end
-
-    ---
     -- Returns the node of the specified path if it already exists.
     -- If the string is empty it points to the root node. If the path
     -- doesn't already belong to a node it creates nodes for each sub-
@@ -145,7 +135,6 @@ function Graph.new()
 
                 -- Add the folder node to our graph.
                 node = addNode(parentPath, folderPath);
-                addEdge(parentPath, folderPath);
             end
             return node;
         end
@@ -158,22 +147,10 @@ function Graph.new()
     -- @param path
     --
     local function removeDeadNode(targetNode, path)
-        if targetNode:getFileCount() == 0 then
-            local edgeCount = 0;
-            local edgeToRem;
-            for i = 1, #edges do
-                if nodes[edges[i].a] == targetNode or nodes[edges[i].b] == targetNode then
-                    edgeCount = edgeCount + 1;
-                    edgeToRem = i;
-                end
-            end
-
-            if edgeCount == 1 then
-                table.remove(edges, edgeToRem);
-                nodes[path]:kill();
-                nodes[path] = nil;
-                -- print('DEL node [' .. path .. ']');
-            end
+        if targetNode:getFileCount() == 0 and targetNode:getChildCount() == 0 then
+            nodes[path]:kill();
+            nodes[path] = nil;
+            -- print('DEL node [' .. path .. ']');
         end
     end
 
@@ -213,14 +190,7 @@ function Graph.new()
     end
 
     function self:draw()
-        for i = 1, #edges do
-            love.graphics.setColor(100, 100, 100);
-            love.graphics.line(nodes[edges[i].a]:getX(),
-                nodes[edges[i].a]:getY(),
-                nodes[edges[i].b]:getX(),
-                nodes[edges[i].b]:getY());
-            love.graphics.setColor(255, 255, 255);
-        end
+        root:draw();
         love.graphics.draw(spritebatch);
     end
 

@@ -176,6 +176,15 @@ function Node.new(parent, name, x, y, spritebatch)
         parent:removeChild(name);
     end
 
+    function self:draw()
+        for _, node in pairs(children) do
+            love.graphics.setColor(255, 255, 255, 55);
+            love.graphics.line(posX, posY, node:getX(), node:getY());
+            love.graphics.setColor(255, 255, 255, 255);
+            node:draw();
+        end
+    end
+
     function self:update(dt)
         -- Update files.
         for _, file in pairs(files) do
@@ -284,6 +293,10 @@ function Node.new(parent, name, x, y, spritebatch)
 
     function self:getFileCount()
         return fileCount;
+    end
+
+    function self:getChildCount()
+        return childCount;
     end
 
     function self:getPosition()
