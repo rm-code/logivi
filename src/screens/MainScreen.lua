@@ -157,6 +157,11 @@ function MainScreen.new()
         return cx, cy, ox, oy;
     end
 
+    local function setWindowMode(options)
+        local w, h, flags = love.window.getMode();
+        love.window.setMode(options.screenWidth, options.screenHeight, flags);
+    end
+
     -- ------------------------------------------------
     -- Public Functions
     -- ------------------------------------------------
@@ -166,7 +171,7 @@ function MainScreen.new()
 
         -- Set the background color based on the option in the config file.
         love.graphics.setBackgroundColor(ConfigReader.getConfig('options').backgroundColor);
-        love.window.setMode(ConfigReader.getConfig('options').screenWidth, ConfigReader.getConfig('options').screenHeight);
+        setWindowMode(ConfigReader.getConfig('options'));
 
         AuthorManager.init(ConfigReader.getConfig('aliases'), ConfigReader.getConfig('avatars'));
 
