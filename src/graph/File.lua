@@ -20,7 +20,7 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
-local FileManager = require('src/FileManager');
+local FileManager = require('src.FileManager');
 
 -- ------------------------------------------------
 -- Module

@@ -20,8 +20,8 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
-local Node = require('src/graph/Node');
-local File = require('src/graph/File');
+local Node = require('src.graph.Node');
+local File = require('src.graph.File');
 
 -- ------------------------------------------------
 -- Module

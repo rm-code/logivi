@@ -20,13 +20,13 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
-local Screen = require('lib/screenmanager/Screen');
-local LogReader = require('src/LogReader');
-local Camera = require('lib/camera/Camera');
-local ConfigReader = require('src/ConfigReader');
-local AuthorManager = require('src/AuthorManager');
-local FileManager = require('src/FileManager');
-local Graph = require('src/graph/Graph');
+local Screen = require('lib.screenmanager.Screen');
+local LogReader = require('src.LogReader');
+local Camera = require('lib.camera.Camera');
+local ConfigReader = require('src.ConfigReader');
+local AuthorManager = require('src.AuthorManager');
+local FileManager = require('src.FileManager');
+local Graph = require('src.graph.Graph');
 
 -- ------------------------------------------------
 -- Constants

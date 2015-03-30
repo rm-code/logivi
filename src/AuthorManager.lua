@@ -20,7 +20,7 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
-local Author = require('src/Author');
+local Author = require('src.Author');
 local http = require('socket.http');
 
 -- ------------------------------------------------
