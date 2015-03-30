@@ -172,10 +172,6 @@ function Node.new(parent, name, x, y, spritebatch)
         childCount = childCount - 1;
     end
 
-    function self:kill()
-        parent:removeChild(name);
-    end
-
     function self:draw()
         for _, node in pairs(children) do
             love.graphics.setColor(255, 255, 255, 55);

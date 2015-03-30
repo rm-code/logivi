@@ -148,9 +148,13 @@ function Graph.new()
     --
     local function removeDeadNode(targetNode, path)
         if targetNode:getFileCount() == 0 and targetNode:getChildCount() == 0 then
-            nodes[path]:kill();
-            nodes[path] = nil;
             -- print('DEL node [' .. path .. ']');
+            local parent = nodes[path]:getParent();
+            parent:removeChild(path);
+            nodes[path] = nil;
+
+            -- Recursively check if we also need to remove the parent.
+            removeDeadNode(parent, parent:getName());
         end
     end
 
