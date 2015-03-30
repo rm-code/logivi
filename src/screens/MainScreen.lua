@@ -165,6 +165,8 @@ function MainScreen.new()
         flags.vsync = options.vsync;
         flags.msaa = options.msaa;
         flags.display = options.display;
+        flags.x = 0;
+        flags.y = 0;
 
         love.window.setMode(options.screenWidth, options.screenHeight, flags);
     end

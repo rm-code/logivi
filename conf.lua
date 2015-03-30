@@ -60,6 +60,8 @@ function love.conf(t)
     t.window.display = 1;
     t.window.highdpi = false;
     t.window.srgb = false;
+    t.window.x = nil;
+    t.window.y = nil;
 
     t.modules.audio = true;
     t.modules.event = true;
