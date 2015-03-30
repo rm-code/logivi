@@ -30,6 +30,8 @@ local AVATAR_SIZE = 48;
 local INACTIVITY_TIMER = 10;
 local FADE_FACTOR = 2;
 local DEFAULT_ALPHA = 255;
+local DEFAULT_DAMPING_VALUE = 0.5;
+local MIN_DISTANCE = 400;
 
 -- ------------------------------------------------
 -- Constructor
@@ -37,11 +39,10 @@ local DEFAULT_ALPHA = 255;
 
 function Author.new(name, avatar, cx, cy)
     local self = {};
-
-    local radius = 200;
-    local speed = love.math.random(1, 5) / 5;
-    local angle = love.math.random(360);
-    local x, y = cx + math.cos(angle) * radius, cy + math.sin(angle) * radius;
+    
+    local posX, posY = cx + love.math.random(5, 40) * (love.math.random(0, 1) == 0 and -1 or 1), cy + love.math.random(5, 40) * (love.math.random(0, 1) == 0 and -1 or 1);
+    local accX, accY = 0, 0;
+    local velX, velY = 0, 0;
 
     local links = {};
     local inactivity = 0;
@@ -50,13 +51,64 @@ function Author.new(name, avatar, cx, cy)
     -- Avatar's width and height.
     local aw, ah = avatar:getWidth(), avatar:getHeight();
 
+    local dampingFactor = DEFAULT_DAMPING_VALUE;
+
     -- ------------------------------------------------
     -- Private Functions
     -- ------------------------------------------------
 
     local function reactivate()
         inactivity = 0;
+        dampingFactor = DEFAULT_DAMPING_VALUE;
         alpha = DEFAULT_ALPHA;
+    end
+
+    local function move(dt)
+        local dx, dy;
+        local distance
+
+        for i = 1, #links do
+            local file = links[i];
+
+            -- Attract
+            dx, dy = posX - file:getX(), posY - file:getY();
+            distance = math.sqrt(dx * dx + dy * dy);
+
+            -- Normalise vector.
+            dx = dx / distance;
+            dy = dy / distance;
+
+            -- Attraction.
+            if distance > MIN_DISTANCE then
+                accX = dx * -distance * 5;
+                accY = dy * -distance * 5;
+            end
+
+            -- Repulsion.
+            accX = accX + (dx * distance);
+            accY = accY + (dy * distance);
+        end
+
+        -- Repel from the graph's center.
+        dx, dy = posX - cx, posY - cy;
+        distance = math.sqrt(dx * dx + dy * dy);
+        dx = dx / distance;
+        dy = dy / distance;
+        accX = accX + (dx * distance);
+        accY = accY + (dy * distance);
+
+
+        accX = math.max(-4, math.min(accX, 4));
+        accY = math.max(-4, math.min(accY, 4));
+
+        velX = velX + accX * dt * 16;
+        velY = velY + accY * dt * 16;
+
+        posX = posX + velX;
+        posY = posY + velY;
+
+        velX = velX * dampingFactor;
+        velY = velY * dampingFactor;
     end
 
     -- ------------------------------------------------
@@ -66,22 +118,22 @@ function Author.new(name, avatar, cx, cy)
     function self:draw(rotation)
         for i = 1, #links do
             love.graphics.setColor(255, 255, 255, 50);
-            love.graphics.line(x, y, links[i]:getX(), links[i]:getY());
+            love.graphics.line(posX, posY, links[i]:getX(), links[i]:getY());
             love.graphics.setColor(255, 255, 255, 255);
         end
         love.graphics.setColor(255, 255, 255, alpha);
-        love.graphics.draw(avatar, x, y, -rotation, AVATAR_SIZE / aw, AVATAR_SIZE / ah, aw * 0.5, ah * 0.5);
+        love.graphics.draw(avatar, posX, posY, -rotation, AVATAR_SIZE / aw, AVATAR_SIZE / ah, aw * 0.5, ah * 0.5);
         love.graphics.setColor(255, 255, 255, 255);
     end
 
     function self:update(dt)
-        angle = angle + speed * dt;
-        x, y = cx + math.cos(angle) * radius, cy + math.sin(angle) * radius;
+        move(dt);
 
         inactivity = inactivity + dt;
         if inactivity > INACTIVITY_TIMER then
             alpha = alpha - alpha * dt * FADE_FACTOR;
         end
+        dampingFactor = math.max(0.01, dampingFactor - dt);
     end
 
     function self:addLink(file)
