@@ -202,9 +202,6 @@ function MainScreen.new()
     end
 
     function self:draw()
-        love.graphics.print(date, 20, 20);
-        AuthorManager.drawList();
-
         camera:draw(function()
             graph:draw();
             AuthorManager.drawLabels(camera.rot);
