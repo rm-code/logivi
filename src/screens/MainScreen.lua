@@ -27,6 +27,7 @@ local ConfigReader = require('src.ConfigReader');
 local AuthorManager = require('src.AuthorManager');
 local FileManager = require('src.FileManager');
 local Graph = require('src.graph.Graph');
+local Panel = require('src.ui.Panel');
 
 -- ------------------------------------------------
 -- Constants
@@ -78,6 +79,8 @@ function MainScreen.new()
     local cx, cy;
     local ox, oy;
     local zoom = 1;
+
+    local filePanel;
 
     -- ------------------------------------------------
     -- Private Functions
@@ -192,17 +195,22 @@ function MainScreen.new()
         camera = Camera.new();
         cx, cy = 0, 0;
         ox, oy = 0, 0;
+
+        -- Create panel.
+        filePanel = Panel.new(0, 0, 150, 400);
+        filePanel:setVisible(true);
     end
 
     function self:draw()
         love.graphics.print(date, 20, 20);
-        FileManager.draw();
         AuthorManager.drawList();
 
         camera:draw(function()
             graph:draw();
             AuthorManager.drawLabels(camera.rot);
         end);
+
+        filePanel:draw(FileManager.draw);
     end
 
     function self:update(dt)
@@ -219,6 +227,7 @@ function MainScreen.new()
         graph:update(dt);
 
         AuthorManager.update(dt);
+        filePanel:update(dt);
 
         cx, cy, ox, oy = updateCamera(cx, cy, ox, oy, dt);
     end
@@ -227,6 +236,18 @@ function MainScreen.new()
         if ConfigReader.getConfig('options').removeTmpFiles then
             ConfigReader.removeTmpFiles();
         end
+    end
+
+    function self:mousepressed(x, y, b)
+        filePanel:mousepressed(x, y, b);
+    end
+
+    function self:mousereleased(x, y, b)
+        filePanel:mousereleased(x, y, b);
+    end
+
+    function self:mousemoved(x, y, dx, dy)
+        filePanel:mousemoved(x, y, dx, dy);
     end
 
     return self;

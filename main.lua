@@ -115,3 +115,15 @@ function love.keypressed(key)
         showDebug = not showDebug;
     end
 end
+
+function love.mousepressed(x, y, b)
+    ScreenManager.mousepressed(x, y, b);
+end
+
+function love.mousereleased(x, y, b)
+    ScreenManager.mousereleased(x, y, b);
+end
+
+function love.mousemoved(x, y, dx, dy)
+    ScreenManager.mousemoved(x, y, dx, dy);
+end
