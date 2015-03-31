@@ -38,8 +38,6 @@ local DEFAULT_ALPHA = 255;
 function Author.new(name, avatar, cx, cy)
     local self = {};
 
-    local name = name;
-
     local radius = 200;
     local speed = love.math.random(1, 5) / 5;
     local angle = love.math.random(360);
