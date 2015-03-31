@@ -49,6 +49,9 @@ function Author.new(name, avatar, cx, cy)
     local inactivity = 0;
     local alpha = DEFAULT_ALPHA;
 
+    -- Avatar's width and height.
+    local aw, ah = avatar:getWidth(), avatar:getHeight();
+
     -- ------------------------------------------------
     -- Private Functions
     -- ------------------------------------------------
@@ -62,14 +65,14 @@ function Author.new(name, avatar, cx, cy)
     -- Public Functions
     -- ------------------------------------------------
 
-    function self:draw()
+    function self:draw(rotation)
         for i = 1, #links do
             love.graphics.setColor(255, 255, 255, 50);
             love.graphics.line(x, y, links[i]:getX(), links[i]:getY());
             love.graphics.setColor(255, 255, 255, 255);
         end
         love.graphics.setColor(255, 255, 255, alpha);
-        love.graphics.draw(avatar, x - AVATAR_SIZE * 0.5, y - AVATAR_SIZE * 0.5, 0, AVATAR_SIZE / avatar:getWidth(), AVATAR_SIZE / avatar:getHeight());
+        love.graphics.draw(avatar, x, y, -rotation, AVATAR_SIZE / aw, AVATAR_SIZE / ah, aw * 0.5, ah * 0.5);
         love.graphics.setColor(255, 255, 255, 255);
     end
 

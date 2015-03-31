@@ -201,7 +201,7 @@ function MainScreen.new()
 
         camera:draw(function()
             graph:draw();
-            AuthorManager.drawLabels();
+            AuthorManager.drawLabels(camera.rot);
         end);
     end
 
