@@ -57,6 +57,8 @@ function Node.new(parent, name, x, y, spritebatch)
     local velX, velY = 0, 0;
     local accX, accY = 0, 0;
 
+    local radius = 0;
+
     -- ------------------------------------------------
     -- Public Functions
     -- ------------------------------------------------
@@ -124,7 +126,7 @@ function Node.new(parent, name, x, y, spritebatch)
             end
         end
 
-        return layers;
+        return layers, radius;
     end
 
     ---
@@ -133,7 +135,7 @@ function Node.new(parent, name, x, y, spritebatch)
     --
     local function plotCircle(files, count)
         -- Get a blueprint of how the file nodes need to be distributed amongst different layers.
-        local layers = createOnionLayers(count);
+        local layers, maxradius = createOnionLayers(count);
 
         -- Update the position of the file nodes based on the previously calculated onion-layers.
         local fileCounter = 0;
@@ -155,6 +157,7 @@ function Node.new(parent, name, x, y, spritebatch)
             local y = (layers[layer].radius * math.sin((angle * (fileCounter - 1)) * (math.pi / 180)));
             file:setOffset(x, y);
         end
+        return maxradius;
     end
 
     -- ------------------------------------------------
@@ -198,7 +201,7 @@ function Node.new(parent, name, x, y, spritebatch)
             fileCount = fileCount + 1;
 
             -- Update layout of the files.
-            plotCircle(files, fileCount);
+            radius = plotCircle(files, fileCount);
         end
         return files[name];
     end
@@ -218,7 +221,7 @@ function Node.new(parent, name, x, y, spritebatch)
         fileCount = fileCount - 1;
 
         -- Update layout of the files.
-        plotCircle(files, fileCount);
+        radius = plotCircle(files, fileCount);
         return tmp;
     end
 
@@ -316,7 +319,7 @@ function Node.new(parent, name, x, y, spritebatch)
     end
 
     function self:getMass()
-        return 0.01 * childCount + 0.001 * math.max(1, fileCount);
+        return 0.01 * (childCount + math.log(math.max(15, radius)));
     end
 
     function self:isConnectedTo(node)
