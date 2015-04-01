@@ -55,6 +55,7 @@ end
 
 function ConfigReader.init()
     config = loadFile(FILE_NAME, FILE_TEMPLATE);
+    return config;
 end
 
 function ConfigReader.removeTmpFiles()

@@ -179,13 +179,13 @@ function MainScreen.new()
     -- ------------------------------------------------
 
     function self:init()
-        ConfigReader.init();
+        local config = ConfigReader.init();
 
         -- Set the background color based on the option in the config file.
-        love.graphics.setBackgroundColor(ConfigReader.getConfig('options').backgroundColor);
-        setWindowMode(ConfigReader.getConfig('options'));
+        love.graphics.setBackgroundColor(config.options.backgroundColor);
+        setWindowMode(config.options);
 
-        AuthorManager.init(ConfigReader.getConfig('aliases'), ConfigReader.getConfig('avatars'));
+        AuthorManager.init(config.aliases, config.avatars);
 
         commits = LogReader.loadLog(LOG_FILE);
 
