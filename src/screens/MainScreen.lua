@@ -56,6 +56,7 @@ local camera_e;
 local camera_w;
 
 local toggleAuthors;
+local toggleFilePanel;
 
 -- ------------------------------------------------
 -- Module
@@ -198,6 +199,7 @@ function MainScreen.new()
         camera_w = config.keyBindings.camera_w;
 
         toggleAuthors = config.keyBindings.toggleAuthors;
+        toggleFilePanel = config.keyBindings.toggleFileList;
 
         -- Set the background color based on the option in the config file.
         love.graphics.setBackgroundColor(config.options.backgroundColor);
@@ -256,6 +258,8 @@ function MainScreen.new()
     function self:keypressed(key)
         if key == toggleAuthors then
             AuthorManager.setVisible(not AuthorManager.isVisible());
+        elseif key == toggleFilePanel then
+            filePanel:setVisible(not filePanel:isVisible());
         end
     end
 

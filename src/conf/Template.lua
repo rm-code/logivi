@@ -41,6 +41,7 @@ return {
         camera_zoomOut = '-',    -- Zoom out
 
         toggleAuthors = '1',     -- Hide / Show authors
+        toggleFileList = '2',    -- Hide / Show file panel
     },
 };
 ]]
