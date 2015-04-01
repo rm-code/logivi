@@ -118,14 +118,6 @@ function AuthorManager.drawLabels(rotation)
     end
 end
 
-function AuthorManager.drawList()
-    local count = 0;
-    for name, _ in pairs(authors) do
-        count = count + 1;
-        love.graphics.print(name, 20, 100 + count * 20);
-    end
-end
-
 ---
 -- Updates all authors.
 -- @param dt
