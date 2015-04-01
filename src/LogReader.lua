@@ -22,6 +22,7 @@
 
 local TAG_AUTHOR = 'author: ';
 local TAG_DATE = 'date: ';
+local ROOT_FOLDER = 'root';
 
 -- ------------------------------------------------
 -- Module
@@ -113,13 +114,13 @@ local function splitCommits(log)
                 local file = path:sub(1, pos - 1);
                 file = file:reverse();
 
-                -- Remove the file from the path and reverse it again.
-                path = path:sub(pos);
+                -- Cut the file and the slash before it (hence the + 1) from the path and reverse it again.
+                path = path:sub(pos + 1);
                 path = path:reverse();
 
-                commits[index][#commits[index] + 1] = { modifier = modifier, path = path, file = file };
+                commits[index][#commits[index] + 1] = { modifier = modifier, path = ROOT_FOLDER .. '/' .. path, file = file };
             else
-                commits[index][#commits[index] + 1] = { modifier = modifier, path = '', file = path };
+                commits[index][#commits[index] + 1] = { modifier = modifier, path = ROOT_FOLDER, file = path };
             end
         end
     end

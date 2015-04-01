@@ -33,7 +33,7 @@ local Graph = {};
 -- Constants
 -- ------------------------------------------------
 
-local ROOT = 'root/';
+local ROOT_FOLDER = 'root';
 local MOD_ADD = 'A';
 local MOD_COPY = 'C';
 local MOD_DELETE = 'D';
@@ -58,8 +58,8 @@ local spritebatch = love.graphics.newSpriteBatch(fileSprite, 10000, 'stream');
 function Graph.new(ewidth, slabels)
     local self = {};
 
-    local nodes = { [ROOT] = Node.new(nil, ROOT, 300, 200, spritebatch); };
-    local root = nodes[ROOT];
+    local nodes = { [ROOT_FOLDER] = Node.new(nil, ROOT_FOLDER, 300, 200, spritebatch); };
+    local root = nodes[ROOT_FOLDER];
 
     local minX, maxX, minY, maxY = root:getX(), root:getX(), root:getY(), root:getY();
 
@@ -96,7 +96,7 @@ function Graph.new(ewidth, slabels)
                 spritebatch);
             parent:addChild(nodePath, nodes[nodePath]);
         end
-        return nodes[nodePath];
+        return nodes[nodePath], nodePath;
     end
 
     ---
@@ -108,33 +108,15 @@ function Graph.new(ewidth, slabels)
     -- @param path
     --
     local function getNode(path)
-        -- If we already have this path return it.
         if nodes[path] then
             return nodes[path];
         else
-            local lastPos = 1;
             local node;
-            while path:find('/') do
-                local pos = path:find('/', lastPos);
-
-                -- No more folders.
-                if not pos then
-                    break;
+            local ppath = ROOT_FOLDER;
+            for part in path:gmatch('[^/]+') do
+                if part ~= ROOT_FOLDER then
+                    node, ppath = addNode(ppath, ppath .. '/' .. part);
                 end
-
-                -- Get the parent folder from the path. The topmost folder
-                -- will always have 'root' as a parent.
-                local parentPath = path:sub(1, lastPos - 1);
-                if parentPath == '' then
-                    parentPath = ROOT;
-                end
-
-                -- Extract the folder path.
-                local folderPath = path:sub(1, pos);
-                lastPos = pos + 1;
-
-                -- Add the folder node to our graph.
-                node = addNode(parentPath, folderPath);
             end
             return node;
         end
@@ -173,8 +155,6 @@ function Graph.new(ewidth, slabels)
     -- @param file
     --
     function self:applyGitStatus(modifier, path, file)
-        if path == '' then path = ROOT; end
-
         local targetNode = getNode(path);
 
         if modifier == MOD_ADD then
