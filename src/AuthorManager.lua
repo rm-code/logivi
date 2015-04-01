@@ -85,7 +85,7 @@ local function grabAvatars(urlList)
     end
 
     -- Load the default user avatar.
-    avatars['default'] = love.graphics.newImage('res/user.png');
+    avatars['default'] = love.graphics.newImage('res/img/user.png');
 
     return avatars;
 end

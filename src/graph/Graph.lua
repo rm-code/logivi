@@ -48,7 +48,7 @@ local MOD_BROKEN_PAIRING = 'B';
 -- Local Variables
 -- ------------------------------------------------
 
-local fileSprite = love.graphics.newImage('res/file.png');
+local fileSprite = love.graphics.newImage('res/img/file.png');
 local spritebatch = love.graphics.newSpriteBatch(fileSprite, 10000, 'stream');
 
 -- ------------------------------------------------
