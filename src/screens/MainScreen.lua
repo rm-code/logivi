@@ -207,7 +207,7 @@ function MainScreen.new()
 
         commits = LogReader.loadLog(LOG_FILE);
 
-        graph = Graph.new();
+        graph = Graph.new(config.options.edgeWidth);
 
         -- Create the camera.
         camera = Camera.new();

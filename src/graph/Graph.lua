@@ -55,7 +55,7 @@ local spritebatch = love.graphics.newSpriteBatch(fileSprite, 10000, 'stream');
 -- Constructor
 -- ------------------------------------------------
 
-function Graph.new()
+function Graph.new(ewidth)
     local self = {};
 
     local nodes = { [ROOT] = Node.new(nil, ROOT, 300, 200, spritebatch); };
@@ -194,7 +194,7 @@ function Graph.new()
     end
 
     function self:draw()
-        root:draw();
+        root:draw(ewidth);
         love.graphics.draw(spritebatch);
     end
 

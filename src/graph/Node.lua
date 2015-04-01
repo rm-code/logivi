@@ -175,12 +175,14 @@ function Node.new(parent, name, x, y, spritebatch)
         childCount = childCount - 1;
     end
 
-    function self:draw()
+    function self:draw(ewidth)
         for _, node in pairs(children) do
             love.graphics.setColor(255, 255, 255, 55);
+            love.graphics.setLineWidth(ewidth);
             love.graphics.line(posX, posY, node:getX(), node:getY());
+            love.graphics.setLineWidth(1);
             love.graphics.setColor(255, 255, 255, 255);
-            node:draw();
+            node:draw(ewidth);
         end
     end
 

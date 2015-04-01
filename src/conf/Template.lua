@@ -16,6 +16,7 @@ return {
     options = {
         showAuthors = true,
         commitDelay = 0.2,
+        edgeWidth = 5,
         backgroundColor = { 0, 0, 0 },
         removeTmpFiles = false,
         screenWidth = 800,
