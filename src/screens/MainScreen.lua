@@ -77,6 +77,8 @@ function MainScreen.new()
     local commitTimer = 0;
     local graph;
 
+    local commitDelay;
+
     local camera;
     local cx, cy;
     local ox, oy;
@@ -183,6 +185,8 @@ function MainScreen.new()
     function self:init()
         local config = ConfigReader.init();
 
+        commitDelay = config.options.commitDelay;
+
         -- Load key bindings.
         camera_zoomIn = config.keyBindings.camera_zoomIn;
         camera_zoomOut = config.keyBindings.camera_zoomOut;
@@ -226,7 +230,7 @@ function MainScreen.new()
 
     function self:update(dt)
         commitTimer = commitTimer + dt;
-        if commitTimer > 0.2 then
+        if commitTimer > commitDelay then
             -- Reset links of the previous author.
             if previousAuthor then
                 previousAuthor:resetLinks();
