@@ -219,6 +219,13 @@ function Graph.new(ewidth, slabels)
         end
     end
 
+    ---
+    -- Activate / Deactivate folder labels.
+    --
+    function self:toggleLabels()
+        slabels = not slabels;
+    end
+
     -- ------------------------------------------------
     -- Getters
     -- ------------------------------------------------
