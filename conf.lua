@@ -29,12 +29,6 @@ local PROJECT_IDENTITY = "rmcode_LoGiVi";
 local LOVE_VERSION = "0.9.2";
 
 -- ------------------------------------------------
--- Local variables
--- ------------------------------------------------
-
-local config;
-
--- ------------------------------------------------
 -- Global Functions
 -- ------------------------------------------------
 
@@ -78,17 +72,6 @@ function love.conf(t)
     t.modules.system = true;
     t.modules.timer = true;
     t.modules.window = true;
-
-    config = t;
-end
-
----
--- Returns the config file.
---
-function getConfig()
-    if config then
-        return config;
-    end
 end
 
 ---
