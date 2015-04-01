@@ -14,6 +14,7 @@ return {
         -- ['author'] = 'urlToAvatar',
     },
     options = {
+        showFileList = true,
         showAuthors = true,
         commitDelay = 0.2,
         edgeWidth = 5,

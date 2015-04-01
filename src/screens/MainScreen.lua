@@ -216,7 +216,7 @@ function MainScreen.new()
 
         -- Create panel.
         filePanel = Panel.new(0, 0, 150, 400);
-        filePanel:setVisible(true);
+        filePanel:setVisible(config.options.showFileList);
     end
 
     function self:draw()
