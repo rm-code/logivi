@@ -43,6 +43,7 @@ local authors;
 local avatars;
 local aliases;
 local addresses;
+local visible;
 
 -- ------------------------------------------------
 -- Local Functions
@@ -93,7 +94,7 @@ end
 -- Public Functions
 -- ------------------------------------------------
 
-function AuthorManager.init(naliases, avatarUrls)
+function AuthorManager.init(naliases, avatarUrls, visibility)
     -- Set up the table to store all authors.
     authors = {};
 
@@ -102,14 +103,18 @@ function AuthorManager.init(naliases, avatarUrls)
 
     -- Load avatars from the local filesystem or an online location.
     avatars = grabAvatars(avatarUrls);
+
+    visible = visibility;
 end
 
 ---
 -- Draws a list of all authors working on the project.
 --
 function AuthorManager.drawLabels(rotation)
-    for _, author in pairs(authors) do
-        author:draw(rotation);
+    if visible then
+        for _, author in pairs(authors) do
+            author:draw(rotation);
+        end
     end
 end
 

@@ -14,6 +14,8 @@ return {
         -- ['author'] = 'urlToAvatar',
     },
     options = {
+        showAuthors = true,
+
         backgroundColor = { 0, 0, 0 },
         removeTmpFiles = false,
         screenWidth = 800,

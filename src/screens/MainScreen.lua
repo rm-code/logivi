@@ -195,7 +195,7 @@ function MainScreen.new()
         love.graphics.setBackgroundColor(config.options.backgroundColor);
         setWindowMode(config.options);
 
-        AuthorManager.init(config.aliases, config.avatars);
+        AuthorManager.init(config.aliases, config.avatars, config.options.showAuthors);
 
         commits = LogReader.loadLog(LOG_FILE);
 
