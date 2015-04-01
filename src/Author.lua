@@ -97,7 +97,6 @@ function Author.new(name, avatar, cx, cy)
         accX = accX + (dx * distance);
         accY = accY + (dy * distance);
 
-
         accX = math.max(-4, math.min(accX, 4));
         accY = math.max(-4, math.min(accY, 4));
 
