@@ -178,17 +178,19 @@ function Node.new(parent, name, x, y, spritebatch)
         childCount = childCount - 1;
     end
 
-    function self:draw(ewidth, camrot)
-        love.graphics.setFont(LABEL_FONT);
-        love.graphics.print(name, posX, posY, -camrot, 1, 1, -radius, -radius);
-        love.graphics.setFont(DEFAULT_FONT);
+    function self:draw(ewidth, camrot, showlabel)
+        if showlabel then
+            love.graphics.setFont(LABEL_FONT);
+            love.graphics.print(name, posX, posY, -camrot, 1, 1, -radius, -radius);
+            love.graphics.setFont(DEFAULT_FONT);
+        end
         for _, node in pairs(children) do
             love.graphics.setColor(255, 255, 255, 55);
             love.graphics.setLineWidth(ewidth);
             love.graphics.line(posX, posY, node:getX(), node:getY());
             love.graphics.setLineWidth(1);
             love.graphics.setColor(255, 255, 255, 255);
-            node:draw(ewidth, camrot);
+            node:draw(ewidth, camrot, showlabel);
         end
     end
 

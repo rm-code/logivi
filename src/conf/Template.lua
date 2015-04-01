@@ -16,6 +16,7 @@ return {
     options = {
         showFileList = true,
         showAuthors = true,
+        showLabels = true,
         commitDelay = 0.2,
         edgeWidth = 5,
         backgroundColor = { 0, 0, 0 },
