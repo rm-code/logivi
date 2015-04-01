@@ -32,13 +32,16 @@ local SPRITE_SIZE = 0.45;
 local SPRITE_OFFSET = 15;
 
 local FORCE_SPRING = -0.005;
-local FORCE_CHARGE = 100000;
+local FORCE_CHARGE = 10000000;
+
+local LABEL_FONT = love.graphics.newFont('res/fonts/SourceCodePro-Medium.otf', 20);
+local DEFAULT_FONT = love.graphics.newFont(12);
 
 -- ------------------------------------------------
 -- Constructor
 -- ------------------------------------------------
 
-function Node.new(parent, name, x, y, batch)
+function Node.new(parent, name, x, y, spritebatch)
     local self = {};
 
     -- ------------------------------------------------
@@ -56,6 +59,8 @@ function Node.new(parent, name, x, y, batch)
     local posX, posY = x, y;
     local velX, velY = 0, 0;
     local accX, accY = 0, 0;
+
+    local radius = 0;
 
     -- ------------------------------------------------
     -- Public Functions
@@ -124,7 +129,7 @@ function Node.new(parent, name, x, y, batch)
             end
         end
 
-        return layers;
+        return layers, radius;
     end
 
     ---
@@ -133,7 +138,7 @@ function Node.new(parent, name, x, y, batch)
     --
     local function plotCircle(files, count)
         -- Get a blueprint of how the file nodes need to be distributed amongst different layers.
-        local layers = createOnionLayers(count);
+        local layers, maxradius = createOnionLayers(count);
 
         -- Update the position of the file nodes based on the previously calculated onion-layers.
         local fileCounter = 0;
@@ -155,6 +160,7 @@ function Node.new(parent, name, x, y, batch)
             local y = (layers[layer].radius * math.sin((angle * (fileCounter - 1)) * (math.pi / 180)));
             file:setOffset(x, y);
         end
+        return maxradius;
     end
 
     -- ------------------------------------------------
@@ -172,8 +178,18 @@ function Node.new(parent, name, x, y, batch)
         childCount = childCount - 1;
     end
 
-    function self:kill()
-        parent:removeChild(name);
+    function self:draw(ewidth, camrot)
+        love.graphics.setFont(LABEL_FONT);
+        love.graphics.print(name, posX, posY, -camrot, 1, 1, -radius, -radius);
+        love.graphics.setFont(DEFAULT_FONT);
+        for _, node in pairs(children) do
+            love.graphics.setColor(255, 255, 255, 55);
+            love.graphics.setLineWidth(ewidth);
+            love.graphics.line(posX, posY, node:getX(), node:getY());
+            love.graphics.setLineWidth(1);
+            love.graphics.setColor(255, 255, 255, 255);
+            node:draw(ewidth, camrot);
+        end
     end
 
     function self:update(dt)
@@ -181,26 +197,29 @@ function Node.new(parent, name, x, y, batch)
         for _, file in pairs(files) do
             file:update(dt);
             file:setPosition(posX, posY);
-            batch:setColor(file:getColor());
-            batch:add(file:getX(), file:getY(), 0, SPRITE_SIZE, SPRITE_SIZE, SPRITE_OFFSET, SPRITE_OFFSET);
+            spritebatch:setColor(file:getColor());
+            spritebatch:add(file:getX(), file:getY(), 0, SPRITE_SIZE, SPRITE_SIZE, SPRITE_OFFSET, SPRITE_OFFSET);
         end
     end
 
     function self:addFile(name, file)
-        if not files[name] then
-            files[name] = file;
-            files[name]:setModified(true);
-            fileCount = fileCount + 1;
-
-            -- Update layout of the files.
-            plotCircle(files, fileCount);
+        if files[name] then
+            print('+ Can not add file: ' .. name .. ' - It already exists.');
+            return;
         end
+
+        files[name] = file;
+        files[name]:setModified(true);
+        fileCount = fileCount + 1;
+
+        -- Update layout of the files.
+        radius = plotCircle(files, fileCount);
         return files[name];
     end
 
     function self:removeFile(name)
         if not files[name] then
-            print('Can not remove file [' .. name .. ']. It doesn\'t exist.');
+            print('- Can not rem file: ' .. name .. ' - It doesn\'t exist.');
             return;
         end
 
@@ -213,11 +232,16 @@ function Node.new(parent, name, x, y, batch)
         fileCount = fileCount - 1;
 
         -- Update layout of the files.
-        plotCircle(files, fileCount);
+        radius = plotCircle(files, fileCount);
         return tmp;
     end
 
     function self:modifyFile(name)
+        if not files[name] then
+            print('~ Can not mod file: ' .. name .. ' - It doesn\'t exist.');
+            return;
+        end
+
         files[name]:setModified(true);
         return files[name];
     end
@@ -286,6 +310,10 @@ function Node.new(parent, name, x, y, batch)
         return fileCount;
     end
 
+    function self:getChildCount()
+        return childCount;
+    end
+
     function self:getPosition()
         return posX, posY;
     end
@@ -307,7 +335,7 @@ function Node.new(parent, name, x, y, batch)
     end
 
     function self:getMass()
-        return 0.08 * fileCount;
+        return 0.01 * (childCount + math.log(math.max(15, radius)));
     end
 
     function self:isConnectedTo(node)

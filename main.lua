@@ -20,7 +20,7 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
-local ScreenManager = require('lib/screenmanager/ScreenManager');
+local ScreenManager = require('lib.screenmanager.ScreenManager');
 
 -- ------------------------------------------------
 -- Local Variables
@@ -88,7 +88,7 @@ function love.load()
     print("===================")
 
     local screens = {
-        main = require('src/screens/MainScreen');
+        main = require('src.screens.MainScreen');
     };
 
     ScreenManager.init(screens, 'main');
@@ -114,4 +114,18 @@ function love.keypressed(key)
     if key == 'f1' then
         showDebug = not showDebug;
     end
+
+    ScreenManager.keypressed(key);
+end
+
+function love.mousepressed(x, y, b)
+    ScreenManager.mousepressed(x, y, b);
+end
+
+function love.mousereleased(x, y, b)
+    ScreenManager.mousereleased(x, y, b);
+end
+
+function love.mousemoved(x, y, dx, dy)
+    ScreenManager.mousemoved(x, y, dx, dy);
 end

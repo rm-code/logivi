@@ -24,7 +24,7 @@ local GAME_TITLE = "LoGiVi";
 
 local LOVE_VERSION = "0.9.2";
 
-local GAME_VERSION = "0104";
+local GAME_VERSION = "0142";
 
 -- ------------------------------------------------
 -- Local variables
@@ -60,6 +60,8 @@ function love.conf(t)
     t.window.display = 1;
     t.window.highdpi = false;
     t.window.srgb = false;
+    t.window.x = nil;
+    t.window.y = nil;
 
     t.modules.audio = true;
     t.modules.event = true;

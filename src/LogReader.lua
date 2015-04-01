@@ -33,8 +33,11 @@ local LogReader = {};
 -- Constants
 -- ------------------------------------------------
 
+local WARNING_TITLE = 'No git log found.';
 local WARNING_MESSAGE = [[
-To use LoGiVi you will have to generate a git log first. See the readme for instructions on how to generate a proper log.
+To use LoGiVi you will have to generate a git log first.
+
+You can view the wiki (online) for more information on how to generate a proper log.
 
 LoGiVi now will open the file directory in which to place the log.
 ]];
@@ -132,8 +135,14 @@ end
 --
 local function isLogFile(name)
     if not love.filesystem.isFile(name) then
-        love.window.showMessageBox('No git log found.', WARNING_MESSAGE, 'warning', false);
-        love.system.openURL('file://' .. love.filesystem.getSaveDirectory());
+        local buttons = { "Yes", "No", "Show Help (Online)", enterbutton = 1, escapebutton = 2 };
+
+        local pressedbutton = love.window.showMessageBox(WARNING_TITLE, WARNING_MESSAGE, buttons, 'warning', false);
+        if pressedbutton == 1 then
+            love.system.openURL('file://' .. love.filesystem.getSaveDirectory());
+        elseif pressedbutton == 3 then
+            love.system.openURL('https://github.com/rm-code/logivi/wiki#instructions');
+        end
         return false;
     end
     return true;

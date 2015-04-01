@@ -20,7 +20,7 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
-local Author = require('src/Author');
+local Author = require('src.Author');
 local http = require('socket.http');
 
 -- ------------------------------------------------
@@ -43,6 +43,7 @@ local authors;
 local avatars;
 local aliases;
 local addresses;
+local visible;
 
 -- ------------------------------------------------
 -- Local Functions
@@ -84,7 +85,7 @@ local function grabAvatars(urlList)
     end
 
     -- Load the default user avatar.
-    avatars['default'] = love.graphics.newImage('res/user.png');
+    avatars['default'] = love.graphics.newImage('res/img/user.png');
 
     return avatars;
 end
@@ -93,7 +94,7 @@ end
 -- Public Functions
 -- ------------------------------------------------
 
-function AuthorManager.init(naliases, avatarUrls)
+function AuthorManager.init(naliases, avatarUrls, visibility)
     -- Set up the table to store all authors.
     authors = {};
 
@@ -102,22 +103,18 @@ function AuthorManager.init(naliases, avatarUrls)
 
     -- Load avatars from the local filesystem or an online location.
     avatars = grabAvatars(avatarUrls);
+
+    visible = visibility;
 end
 
 ---
 -- Draws a list of all authors working on the project.
 --
-function AuthorManager.drawLabels()
-    for _, author in pairs(authors) do
-        author:draw();
-    end
-end
-
-function AuthorManager.drawList()
-    local count = 0;
-    for name, _ in pairs(authors) do
-        count = count + 1;
-        love.graphics.print(name, 20, 100 + count * 20);
+function AuthorManager.drawLabels(rotation)
+    if visible then
+        for _, author in pairs(authors) do
+            author:draw(rotation);
+        end
     end
 end
 
@@ -153,6 +150,21 @@ function AuthorManager.add(nemail, nauthor, cx, cy)
     end
 
     return authors[nickname];
+end
+
+---
+-- Shows / Hides authors.
+-- @param nv
+--
+function AuthorManager.setVisible(nv)
+    visible = nv;
+end
+
+---
+-- Returns visibility of authors.
+--
+function AuthorManager.isVisible()
+    return visible;
 end
 
 -- ------------------------------------------------

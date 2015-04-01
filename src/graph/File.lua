@@ -20,7 +20,7 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
-local FileManager = require('src/FileManager');
+local FileManager = require('src.FileManager');
 
 -- ------------------------------------------------
 -- Module
@@ -82,21 +82,13 @@ function File.new(name, x, y)
         end
     end
 
-    ---
-    -- Marks the file as modified and changes the
-    -- current color to the modified color.
-    -- @param mod
-    --
-    function self:setModified(mod)
-        modified = mod;
-        currentColor[1] = MOD_COLOR[1];
-        currentColor[2] = MOD_COLOR[2];
-        currentColor[3] = MOD_COLOR[3];
-    end
-
     function self:remove()
         FileManager.remove(name);
     end
+
+    -- ------------------------------------------------
+    -- Getters
+    -- ------------------------------------------------
 
     function self:getX()
         return posX + offX;
@@ -108,6 +100,22 @@ function File.new(name, x, y)
 
     function self:getColor()
         return currentColor;
+    end
+
+    -- ------------------------------------------------
+    -- Setters
+    -- ------------------------------------------------
+
+    ---
+    -- Marks the file as modified and changes the
+    -- current color to the modified color.
+    -- @param mod
+    --
+    function self:setModified(mod)
+        modified = mod;
+        currentColor[1] = MOD_COLOR[1];
+        currentColor[2] = MOD_COLOR[2];
+        currentColor[3] = MOD_COLOR[3];
     end
 
     function self:setOffset(ox, oy)
