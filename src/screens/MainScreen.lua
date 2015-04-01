@@ -43,17 +43,17 @@ local CAMERA_MAX_ZOOM = 0.05;
 local CAMERA_MIN_ZOOM = 2;
 
 -- ------------------------------------------------
--- Local Variables
+-- Controls
 -- ------------------------------------------------
 
-local camera_zoomIn = '+';
-local camera_zoomOut = '-';
-local camera_rotateL = 'q';
-local camera_rotateR = 'e';
-local camera_n = 'w';
-local camera_w = 'a';
-local camera_s = 's';
-local camera_e = 'd';
+local camera_zoomIn;
+local camera_zoomOut;
+local camera_rotateL;
+local camera_rotateR;
+local camera_n;
+local camera_s;
+local camera_e;
+local camera_w;
 
 -- ------------------------------------------------
 -- Module
@@ -180,6 +180,16 @@ function MainScreen.new()
 
     function self:init()
         local config = ConfigReader.init();
+
+        -- Load key bindings.
+        camera_zoomIn = config.keyBindings.camera_zoomIn;
+        camera_zoomOut = config.keyBindings.camera_zoomOut;
+        camera_rotateL = config.keyBindings.camera_rotateL;
+        camera_rotateR = config.keyBindings.camera_rotateR;
+        camera_n = config.keyBindings.camera_n;
+        camera_s = config.keyBindings.camera_s;
+        camera_e = config.keyBindings.camera_e;
+        camera_w = config.keyBindings.camera_w;
 
         -- Set the background color based on the option in the config file.
         love.graphics.setBackgroundColor(config.options.backgroundColor);
