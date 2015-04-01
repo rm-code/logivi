@@ -195,20 +195,23 @@ function Node.new(parent, name, x, y, spritebatch)
     end
 
     function self:addFile(name, file)
-        if not files[name] then
-            files[name] = file;
-            files[name]:setModified(true);
-            fileCount = fileCount + 1;
-
-            -- Update layout of the files.
-            radius = plotCircle(files, fileCount);
+        if files[name] then
+            print('+ Can not add file: ' .. name .. ' - It already exists.');
+            return;
         end
+
+        files[name] = file;
+        files[name]:setModified(true);
+        fileCount = fileCount + 1;
+
+        -- Update layout of the files.
+        radius = plotCircle(files, fileCount);
         return files[name];
     end
 
     function self:removeFile(name)
         if not files[name] then
-            print('Can not remove file [' .. name .. ']. It doesn\'t exist.');
+            print('- Can not rem file: ' .. name .. ' - It doesn\'t exist.');
             return;
         end
 
@@ -226,6 +229,11 @@ function Node.new(parent, name, x, y, spritebatch)
     end
 
     function self:modifyFile(name)
+        if not files[name] then
+            print('~ Can not mod file: ' .. name .. ' - It doesn\'t exist.');
+            return;
+        end
+
         files[name]:setModified(true);
         return files[name];
     end
