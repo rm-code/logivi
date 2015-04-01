@@ -53,7 +53,8 @@ end
 -- ------------------------------------------------
 
 ---
--- Draws a list of all authors working on the project.
+-- Draws a counter of all files in the project and
+-- a separate counter for each used file extension.
 --
 function FileManager.draw(x, y)
     local count = 0;
