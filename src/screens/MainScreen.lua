@@ -55,6 +55,8 @@ local camera_s;
 local camera_e;
 local camera_w;
 
+local toggleAuthors;
+
 -- ------------------------------------------------
 -- Module
 -- ------------------------------------------------
@@ -191,6 +193,8 @@ function MainScreen.new()
         camera_e = config.keyBindings.camera_e;
         camera_w = config.keyBindings.camera_w;
 
+        toggleAuthors = config.keyBindings.toggleAuthors;
+
         -- Set the background color based on the option in the config file.
         love.graphics.setBackgroundColor(config.options.backgroundColor);
         setWindowMode(config.options);
@@ -242,6 +246,12 @@ function MainScreen.new()
     function self:quit()
         if ConfigReader.getConfig('options').removeTmpFiles then
             ConfigReader.removeTmpFiles();
+        end
+    end
+
+    function self:keypressed(key)
+        if key == toggleAuthors then
+            AuthorManager.setVisible(not AuthorManager.isVisible());
         end
     end
 

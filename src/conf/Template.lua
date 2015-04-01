@@ -37,6 +37,8 @@ return {
         camera_rotateR = 'e',    -- Rotate camera right
         camera_zoomIn  = '+',    -- Zoom in
         camera_zoomOut = '-',    -- Zoom out
+
+        toggleAuthors = '1',     -- Hide / Show authors
     },
 };
 ]]

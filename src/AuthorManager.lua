@@ -160,6 +160,21 @@ function AuthorManager.add(nemail, nauthor, cx, cy)
     return authors[nickname];
 end
 
+---
+-- Shows / Hides authors.
+-- @param nv
+--
+function AuthorManager.setVisible(nv)
+    visible = nv;
+end
+
+---
+-- Returns visibility of authors.
+--
+function AuthorManager.isVisible()
+    return visible;
+end
+
 -- ------------------------------------------------
 -- Return Module
 -- ------------------------------------------------
