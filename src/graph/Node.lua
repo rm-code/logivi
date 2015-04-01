@@ -34,6 +34,9 @@ local SPRITE_OFFSET = 15;
 local FORCE_SPRING = -0.005;
 local FORCE_CHARGE = 10000000;
 
+local LABEL_FONT = love.graphics.newFont('res/fonts/SourceCodePro-Medium.otf', 20);
+local DEFAULT_FONT = love.graphics.newFont(12);
+
 -- ------------------------------------------------
 -- Constructor
 -- ------------------------------------------------
@@ -175,14 +178,17 @@ function Node.new(parent, name, x, y, spritebatch)
         childCount = childCount - 1;
     end
 
-    function self:draw(ewidth)
+    function self:draw(ewidth, camrot)
+        love.graphics.setFont(LABEL_FONT);
+        love.graphics.print(name, posX, posY, -camrot, 1, 1, -radius, -radius);
+        love.graphics.setFont(DEFAULT_FONT);
         for _, node in pairs(children) do
             love.graphics.setColor(255, 255, 255, 55);
             love.graphics.setLineWidth(ewidth);
             love.graphics.line(posX, posY, node:getX(), node:getY());
             love.graphics.setLineWidth(1);
             love.graphics.setColor(255, 255, 255, 255);
-            node:draw(ewidth);
+            node:draw(ewidth, camrot);
         end
     end
 

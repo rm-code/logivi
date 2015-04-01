@@ -193,8 +193,8 @@ function Graph.new(ewidth)
         end
     end
 
-    function self:draw()
-        root:draw(ewidth);
+    function self:draw(camrot)
+        root:draw(ewidth, camrot);
         love.graphics.draw(spritebatch);
     end
 
