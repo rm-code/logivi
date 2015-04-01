@@ -23,6 +23,13 @@
 local FileManager = {};
 
 -- ------------------------------------------------
+-- Constants
+-- ------------------------------------------------
+
+local FRST_OFFSET = 10;
+local SCND_OFFSET = 50;
+
+-- ------------------------------------------------
 -- Local Variables
 -- ------------------------------------------------
 
@@ -58,13 +65,13 @@ end
 --
 function FileManager.draw(x, y)
     local count = 0;
-    love.graphics.print(totalFiles, x + 80, y + 10);
-    love.graphics.print('Files', x + 10, y + 10);
+    love.graphics.print(totalFiles, x + FRST_OFFSET, y + 10);
+    love.graphics.print('Files', x + SCND_OFFSET, y + 10);
     for ext, tbl in pairs(extensions) do
         count = count + 1;
         love.graphics.setColor(tbl.color);
-        love.graphics.print(tbl.amount, x + 80, y + 10 + count * 20);
-        love.graphics.print(ext, x + 10, y + 10 + count * 20);
+        love.graphics.print(tbl.amount, x + FRST_OFFSET, y + 10 + count * 20);
+        love.graphics.print(ext, x + SCND_OFFSET, y + 10 + count * 20);
         love.graphics.setColor(255, 255, 255);
     end
 end
