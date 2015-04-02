@@ -47,6 +47,7 @@ return {
 
         toggleSimulation = ' ',  -- Stop / Play the simulation
         loadNextCommit = 'right',    -- Manually load the next commit
+        loadPrevCommit = 'left',     -- Manually load the previous commit
     },
 };
 ]]

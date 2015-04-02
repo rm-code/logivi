@@ -132,11 +132,13 @@ function Graph.new(ewidth, slabels)
         if targetNode:getFileCount() == 0 and targetNode:getChildCount() == 0 then
             -- print('DEL node [' .. path .. ']');
             local parent = nodes[path]:getParent();
-            parent:removeChild(path);
-            nodes[path] = nil;
+            if parent then
+                parent:removeChild(path);
+                nodes[path] = nil;
 
-            -- Recursively check if we also need to remove the parent.
-            removeDeadNode(parent, parent:getPath());
+                -- Recursively check if we also need to remove the parent.
+                removeDeadNode(parent, parent:getPath());
+            end
         end
     end
 
@@ -171,6 +173,20 @@ function Graph.new(ewidth, slabels)
         elseif modifier == MOD_MODIFY then
             return targetNode:modifyFile(file);
         end
+    end
+
+    ---
+    -- This function will take a git modifier and return the direct
+    -- opposite of it.
+    -- @param modifier
+    --
+    function self:reverseGitStatus(modifier)
+        if modifier == MOD_ADD then
+            return MOD_DELETE;
+        elseif modifier == MOD_DELETE then
+            return MOD_ADD;
+        end
+        return modifier;
     end
 
     function self:draw(camrot)

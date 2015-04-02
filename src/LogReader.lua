@@ -184,6 +184,26 @@ local function applyNextCommit(graph)
     end
 end
 
+local function reverseCurCommit(graph)
+    if index == 0 then
+        return;
+    end
+
+    AuthorManager.setCommitAuthor(log[index].email, log[index].author, graph:getCenter());
+
+    for i = 1, #log[index] do
+        local change = log[index][i];
+
+        -- Modify the graph based on the git file status we read from the log.
+        local file = graph:applyGitStatus(graph:reverseGitStatus(change.modifier), change.path, change.file);
+
+        -- Add a link from the file to the author of the commit.
+        AuthorManager.addFileLink(file);
+    end
+
+    index = index - 1;
+end
+
 -- ------------------------------------------------
 -- Public Functions
 -- ------------------------------------------------
@@ -227,6 +247,11 @@ end
 function LogReader.loadNextCommit(graph)
     run = false;
     applyNextCommit(graph);
+end
+
+function LogReader.loadPrevCommit(graph)
+    run = false;
+    reverseCurCommit(graph);
 end
 
 -- ------------------------------------------------
