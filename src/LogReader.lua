@@ -58,6 +58,7 @@ local index;
 local commitTimer;
 local commitDelay;
 local play;
+local rewind;
 
 -- ------------------------------------------------
 -- Local Functions
@@ -235,13 +236,21 @@ function LogReader.update(dt, graph)
 
     commitTimer = commitTimer + dt;
     if commitTimer > commitDelay then
-        applyNextCommit(graph);
+        if rewind then
+            reverseCurCommit(graph);
+        else
+            applyNextCommit(graph);
+        end
         commitTimer = 0;
     end
 end
 
 function LogReader.toggleSimulation()
     play = not play;
+end
+
+function LogReader.toggleRewind()
+    rewind = not rewind;
 end
 
 function LogReader.loadNextCommit(graph)

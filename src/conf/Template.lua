@@ -46,6 +46,7 @@ return {
         toggleLabels = '3',      -- Hide / Show folder labels
 
         toggleSimulation = ' ',  -- Stop / Play the simulation
+        toggleRewind = 'backspace',  -- Make simulation run backwards
         loadNextCommit = 'right',    -- Manually load the next commit
         loadPrevCommit = 'left',     -- Manually load the previous commit
     },

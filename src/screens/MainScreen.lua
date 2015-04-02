@@ -60,6 +60,7 @@ local toggleFilePanel;
 local toggleLabels;
 
 local toggleSimulation;
+local toggleRewind;
 local loadNextCommit;
 local loadPrevCommit;
 
@@ -178,6 +179,7 @@ function MainScreen.new()
         toggleLabels = config.keyBindings.toggleLabels;
 
         toggleSimulation = config.keyBindings.toggleSimulation;
+        toggleRewind = config.keyBindings.toggleRewind;
         loadNextCommit = config.keyBindings.loadNextCommit;
         loadPrevCommit = config.keyBindings.loadPrevCommit;
 
@@ -236,6 +238,8 @@ function MainScreen.new()
             graph:toggleLabels();
         elseif key == toggleSimulation then
             LogReader.toggleSimulation();
+        elseif key == toggleRewind then
+            LogReader.toggleRewind();
         elseif key == loadNextCommit then
             LogReader.loadNextCommit(graph);
         elseif key == loadPrevCommit then
