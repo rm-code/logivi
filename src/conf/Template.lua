@@ -44,6 +44,8 @@ return {
         toggleAuthors = '1',     -- Hide / Show authors
         toggleFileList = '2',    -- Hide / Show file panel
         toggleLabels = '3',      -- Hide / Show folder labels
+
+        toggleSimulation = ' ',  -- Stop / Play the simulation
     },
 };
 ]]

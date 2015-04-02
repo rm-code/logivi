@@ -59,6 +59,8 @@ local toggleAuthors;
 local toggleFilePanel;
 local toggleLabels;
 
+local toggleSimulation;
+
 -- ------------------------------------------------
 -- Module
 -- ------------------------------------------------
@@ -173,6 +175,8 @@ function MainScreen.new()
         toggleFilePanel = config.keyBindings.toggleFileList;
         toggleLabels = config.keyBindings.toggleLabels;
 
+        toggleSimulation = config.keyBindings.toggleSimulation;
+
         -- Set the background color based on the option in the config file.
         love.graphics.setBackgroundColor(config.options.backgroundColor);
         setWindowMode(config.options);
@@ -226,6 +230,8 @@ function MainScreen.new()
             filePanel:setVisible(not filePanel:isVisible());
         elseif key == toggleLabels then
             graph:toggleLabels();
+        elseif key == toggleSimulation then
+            LogReader.toggleSimulation();
         end
     end
 
