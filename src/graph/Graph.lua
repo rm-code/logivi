@@ -147,7 +147,7 @@ function Graph.new(ewidth, slabels)
     -- ------------------------------------------------
 
     ---
-    -- This function will take a git modifer and apply it to a file.
+    -- This function will take a git modifier and apply it to a file.
     -- If it encounters the 'A' modifier it will create a file at the
     -- specified path. If it encounters the 'D' modifier it will remove
     -- the file from the path. Nodes will be created and removed based
