@@ -57,7 +57,7 @@ local log;
 local index;
 local commitTimer;
 local commitDelay;
-local run;
+local play;
 
 -- ------------------------------------------------
 -- Local Functions
@@ -227,11 +227,11 @@ function LogReader.init(logpath, delay)
     index = 0;
     commitTimer = 0;
     commitDelay = delay;
-    run = true;
+    play = true;
 end
 
 function LogReader.update(dt, graph)
-    if not run then return end
+    if not play then return end
 
     commitTimer = commitTimer + dt;
     if commitTimer > commitDelay then
@@ -241,16 +241,16 @@ function LogReader.update(dt, graph)
 end
 
 function LogReader.toggleSimulation()
-    run = not run;
+    play = not play;
 end
 
 function LogReader.loadNextCommit(graph)
-    run = false;
+    play = false;
     applyNextCommit(graph);
 end
 
 function LogReader.loadPrevCommit(graph)
-    run = false;
+    play = false;
     reverseCurCommit(graph);
 end
 
