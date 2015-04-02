@@ -58,7 +58,7 @@ local spritebatch = love.graphics.newSpriteBatch(fileSprite, 10000, 'stream');
 function Graph.new(ewidth, slabels)
     local self = {};
 
-    local nodes = { [ROOT_FOLDER] = Node.new(nil, ROOT_FOLDER, 300, 200, spritebatch); };
+    local nodes = { [ROOT_FOLDER] = Node.new(nil, ROOT_FOLDER, ROOT_FOLDER, 300, 200, spritebatch); };
     local root = nodes[ROOT_FOLDER];
 
     local minX, maxX, minY, maxY = root:getX(), root:getX(), root:getY(), root:getY();
@@ -87,10 +87,10 @@ function Graph.new(ewidth, slabels)
     -- @param x
     -- @param y
     --
-    local function addNode(parentPath, nodePath)
+    local function addNode(parentPath, nodePath, folder)
         if not nodes[nodePath] then
             local parent = nodes[parentPath];
-            nodes[nodePath] = Node.new(parent, nodePath,
+            nodes[nodePath] = Node.new(parent, nodePath, folder,
                 parent:getX() + love.math.random(5, 40) * (love.math.random(0, 1) == 0 and -1 or 1),
                 parent:getY() + love.math.random(5, 40) * (love.math.random(0, 1) == 0 and -1 or 1),
                 spritebatch);
@@ -115,7 +115,7 @@ function Graph.new(ewidth, slabels)
             local ppath = ROOT_FOLDER;
             for part in path:gmatch('[^/]+') do
                 if part ~= ROOT_FOLDER then
-                    node, ppath = addNode(ppath, ppath .. '/' .. part);
+                    node, ppath = addNode(ppath, ppath .. '/' .. part, part);
                 end
             end
             return node;

@@ -41,7 +41,7 @@ local DEFAULT_FONT = love.graphics.newFont(12);
 -- Constructor
 -- ------------------------------------------------
 
-function Node.new(parent, path, x, y, spritebatch)
+function Node.new(parent, path, name, x, y, spritebatch)
     local self = {};
 
     -- ------------------------------------------------
@@ -181,7 +181,7 @@ function Node.new(parent, path, x, y, spritebatch)
     function self:draw(ewidth, camrot, showlabel)
         if showlabel then
             love.graphics.setFont(LABEL_FONT);
-            love.graphics.print(path, posX, posY, -camrot, 1, 1, -radius, -radius);
+            love.graphics.print(name, posX, posY, -camrot, 1, 1, -radius, -radius);
             love.graphics.setFont(DEFAULT_FONT);
         end
         for _, node in pairs(children) do
