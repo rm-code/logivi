@@ -20,6 +20,12 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
+local AuthorManager = require('src.AuthorManager');
+
+-- ------------------------------------------------
+-- Constants
+-- ------------------------------------------------
+
 local TAG_AUTHOR = 'author: ';
 local TAG_DATE = 'date: ';
 local ROOT_FOLDER = 'root';
@@ -42,6 +48,15 @@ You can view the wiki (online) for more information on how to generate a proper 
 
 LoGiVi now will open the file directory in which to place the log.
 ]];
+
+-- ------------------------------------------------
+-- Local Variables
+-- ------------------------------------------------
+
+local log;
+local index;
+local commitTimer;
+local commitDelay;
 
 -- ------------------------------------------------
 -- Local Functions
@@ -149,25 +164,56 @@ local function isLogFile(name)
     return true;
 end
 
+local function applyNextCommit(graph)
+    if index == #log then
+        return;
+    end
+    index = index + 1;
+
+    AuthorManager.setCommitAuthor(log[index].email, log[index].author, graph:getCenter());
+
+    for i = 1, #log[index] do
+        local change = log[index][i];
+
+        -- Modify the graph based on the git file status we read from the log.
+        local file = graph:applyGitStatus(change.modifier, change.path, change.file);
+
+        -- Add a link from the file to the author of the commit.
+        AuthorManager.addFileLink(file);
+    end
+end
+
 -- ------------------------------------------------
 -- Public Functions
 -- ------------------------------------------------
 
 ---
 -- Loads the file and stores it line for line in a lua table.
--- @param name
+-- @param logpath
 --
-function LogReader.loadLog(name)
-    if not isLogFile(name) then
+function LogReader.init(logpath, delay)
+    if not isLogFile(logpath) then
         return {};
     end
 
-    local log = {};
-    for line in love.filesystem.lines(name) do
-        log[#log + 1] = line;
+    local file = {};
+    for line in love.filesystem.lines(logpath) do
+        file[#file + 1] = line;
     end
+    log = splitCommits(file);
 
-    return splitCommits(log);
+    -- Set default values.
+    index = 1;
+    commitTimer = 0;
+    commitDelay = delay;
+end
+
+function LogReader.update(dt, graph)
+    commitTimer = commitTimer + dt;
+    if commitTimer > commitDelay then
+        applyNextCommit(graph);
+        commitTimer = 0;
+    end
 end
 
 -- ------------------------------------------------

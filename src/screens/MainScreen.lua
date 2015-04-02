@@ -72,12 +72,7 @@ local MainScreen = {};
 function MainScreen.new()
     local self = Screen.new();
 
-    local commits;
-    local index = 0;
-    local commitTimer = 0;
     local graph;
-
-    local commitDelay;
 
     local camera;
     local cx, cy;
@@ -89,25 +84,6 @@ function MainScreen.new()
     -- ------------------------------------------------
     -- Private Functions
     -- ------------------------------------------------
-
-    local function nextCommit()
-        if index == #commits then
-            return;
-        end
-        index = index + 1;
-
-        AuthorManager.setCommitAuthor(commits[index].email, commits[index].author, graph:getCenter());
-
-        for i = 1, #commits[index] do
-            local change = commits[index][i];
-
-            -- Modify the graph based on the git file status we read from the log.
-            local file = graph:applyGitStatus(change.modifier, change.path, change.file);
-
-            -- Add a link from the file to the author of the commit.
-            AuthorManager.addFileLink(file);
-        end
-    end
 
     ---
     -- Processes camera related controls and updates the camera.
@@ -183,8 +159,6 @@ function MainScreen.new()
     function self:init()
         local config = ConfigReader.init();
 
-        commitDelay = config.options.commitDelay;
-
         -- Load key bindings.
         camera_zoomIn = config.keyBindings.camera_zoomIn;
         camera_zoomOut = config.keyBindings.camera_zoomOut;
@@ -205,7 +179,7 @@ function MainScreen.new()
 
         AuthorManager.init(config.aliases, config.avatars, config.options.showAuthors);
 
-        commits = LogReader.loadLog(LOG_FILE);
+        LogReader.init(LOG_FILE, config.options.commitDelay);
 
         graph = Graph.new(config.options.edgeWidth, config.options.showLabels);
 
@@ -229,11 +203,7 @@ function MainScreen.new()
     end
 
     function self:update(dt)
-        commitTimer = commitTimer + dt;
-        if commitTimer > commitDelay then
-            nextCommit();
-            commitTimer = 0;
-        end
+        LogReader.update(dt, graph);
 
         graph:update(dt);
 
