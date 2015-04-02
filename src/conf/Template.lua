@@ -46,6 +46,7 @@ return {
         toggleLabels = '3',      -- Hide / Show folder labels
 
         toggleSimulation = ' ',  -- Stop / Play the simulation
+        loadNextCommit = 'right',    -- Manually load the next commit
     },
 };
 ]]

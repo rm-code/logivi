@@ -60,6 +60,7 @@ local toggleFilePanel;
 local toggleLabels;
 
 local toggleSimulation;
+local loadNextCommit;
 
 -- ------------------------------------------------
 -- Module
@@ -176,6 +177,7 @@ function MainScreen.new()
         toggleLabels = config.keyBindings.toggleLabels;
 
         toggleSimulation = config.keyBindings.toggleSimulation;
+        loadNextCommit = config.keyBindings.loadNextCommit;
 
         -- Set the background color based on the option in the config file.
         love.graphics.setBackgroundColor(config.options.backgroundColor);
@@ -232,6 +234,8 @@ function MainScreen.new()
             graph:toggleLabels();
         elseif key == toggleSimulation then
             LogReader.toggleSimulation();
+        elseif key == loadNextCommit then
+            LogReader.loadNextCommit(graph);
         end
     end
 

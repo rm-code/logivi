@@ -224,6 +224,11 @@ function LogReader.toggleSimulation()
     run = not run;
 end
 
+function LogReader.loadNextCommit(graph)
+    run = false;
+    applyNextCommit(graph);
+end
+
 -- ------------------------------------------------
 -- Return Module
 -- ------------------------------------------------
