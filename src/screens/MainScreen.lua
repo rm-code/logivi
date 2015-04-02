@@ -74,7 +74,6 @@ function MainScreen.new()
 
     local commits;
     local index = 0;
-    local date = '';
     local previousAuthor;
     local commitTimer = 0;
     local graph;
@@ -101,7 +100,6 @@ function MainScreen.new()
         local commitAuthor = AuthorManager.add(commits[index].email, commits[index].author, graph:getCenter());
         previousAuthor = commitAuthor; -- Store author so we can reset him when the next commit is loaded.
 
-        date = commits[index].date;
         for i = 1, #commits[index] do
             local change = commits[index][i];
 
