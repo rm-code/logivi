@@ -136,7 +136,7 @@ function Graph.new(ewidth, slabels)
             nodes[path] = nil;
 
             -- Recursively check if we also need to remove the parent.
-            removeDeadNode(parent, parent:getName());
+            removeDeadNode(parent, parent:getPath());
         end
     end
 
