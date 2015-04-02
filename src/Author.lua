@@ -39,7 +39,7 @@ local MIN_DISTANCE = 400;
 
 function Author.new(name, avatar, cx, cy)
     local self = {};
-    
+
     local posX, posY = cx + love.math.random(5, 40) * (love.math.random(0, 1) == 0 and -1 or 1), cy + love.math.random(5, 40) * (love.math.random(0, 1) == 0 and -1 or 1);
     local accX, accY = 0, 0;
     local velX, velY = 0, 0;
