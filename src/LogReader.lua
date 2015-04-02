@@ -204,7 +204,7 @@ function LogReader.init(logpath, delay)
     log = splitCommits(file);
 
     -- Set default values.
-    index = 1;
+    index = 0;
     commitTimer = 0;
     commitDelay = delay;
     run = true;
