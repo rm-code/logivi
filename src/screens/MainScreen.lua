@@ -74,7 +74,6 @@ function MainScreen.new()
 
     local commits;
     local index = 0;
-    local previousAuthor;
     local commitTimer = 0;
     local graph;
 
@@ -97,8 +96,7 @@ function MainScreen.new()
         end
         index = index + 1;
 
-        local commitAuthor = AuthorManager.add(commits[index].email, commits[index].author, graph:getCenter());
-        previousAuthor = commitAuthor; -- Store author so we can reset him when the next commit is loaded.
+        AuthorManager.setCommitAuthor(commits[index].email, commits[index].author, graph:getCenter());
 
         for i = 1, #commits[index] do
             local change = commits[index][i];
@@ -107,7 +105,7 @@ function MainScreen.new()
             local file = graph:applyGitStatus(change.modifier, change.path, change.file);
 
             -- Add a link from the file to the author of the commit.
-            commitAuthor:addLink(file);
+            AuthorManager.addFileLink(file);
         end
     end
 
@@ -233,10 +231,6 @@ function MainScreen.new()
     function self:update(dt)
         commitTimer = commitTimer + dt;
         if commitTimer > commitDelay then
-            -- Reset links of the previous author.
-            if previousAuthor then
-                previousAuthor:resetLinks();
-            end
             nextCommit();
             commitTimer = 0;
         end
