@@ -263,6 +263,18 @@ function LogReader.loadPrevCommit(graph)
     reverseCurCommit(graph);
 end
 
+function LogReader.getTotalCommits()
+    return #log;
+end
+
+function LogReader.getCurrentIndex()
+    return index;
+end
+
+function LogReader.getCurrentDate()
+    return index ~= 0 and log[index].date or '';
+end
+
 -- ------------------------------------------------
 -- Return Module
 -- ------------------------------------------------

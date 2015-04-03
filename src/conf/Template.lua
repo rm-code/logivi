@@ -17,6 +17,7 @@ return {
         showFileList = true,
         showAuthors = true,
         showLabels = true,
+        showTimeline = true,
         commitDelay = 0.2,
         edgeWidth = 5,
         backgroundColor = { 0, 0, 0 },
@@ -44,6 +45,7 @@ return {
         toggleAuthors = '1',     -- Hide / Show authors
         toggleFileList = '2',    -- Hide / Show file panel
         toggleLabels = '3',      -- Hide / Show folder labels
+        toggleTimeline = '4',    -- Hide / Show timeline
 
         toggleSimulation = ' ',  -- Stop / Play the simulation
         toggleRewind = 'backspace',  -- Make simulation run backwards

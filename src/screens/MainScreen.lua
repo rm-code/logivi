@@ -28,6 +28,7 @@ local AuthorManager = require('src.AuthorManager');
 local FileManager = require('src.FileManager');
 local Graph = require('src.graph.Graph');
 local Panel = require('src.ui.Panel');
+local Timeline = require('src.Timeline');
 
 -- ------------------------------------------------
 -- Constants
@@ -58,6 +59,7 @@ local camera_w;
 local toggleAuthors;
 local toggleFilePanel;
 local toggleLabels;
+local toggleTimeline;
 
 local toggleSimulation;
 local toggleRewind;
@@ -87,6 +89,7 @@ function MainScreen.new()
     local zoom = 1;
 
     local filePanel;
+    local timeline;
 
     -- ------------------------------------------------
     -- Private Functions
@@ -179,6 +182,7 @@ function MainScreen.new()
         toggleAuthors = config.keyBindings.toggleAuthors;
         toggleFilePanel = config.keyBindings.toggleFileList;
         toggleLabels = config.keyBindings.toggleLabels;
+        toggleTimeline = config.keyBindings.toggleTimeline;
 
         toggleSimulation = config.keyBindings.toggleSimulation;
         toggleRewind = config.keyBindings.toggleRewind;
@@ -205,6 +209,8 @@ function MainScreen.new()
         -- Create panel.
         filePanel = Panel.new(0, 0, 150, 400);
         filePanel:setVisible(config.options.showFileList);
+
+        timeline = Timeline.new(config.options.showTimeline, LogReader.getTotalCommits(), LogReader.getCurrentDate());
     end
 
     function self:draw()
@@ -214,6 +220,7 @@ function MainScreen.new()
         end);
 
         filePanel:draw(FileManager.draw);
+        timeline:draw();
     end
 
     function self:update(dt)
@@ -223,6 +230,8 @@ function MainScreen.new()
 
         AuthorManager.update(dt);
         filePanel:update(dt);
+        timeline:setCurrentCommit(LogReader.getCurrentIndex());
+        timeline:setCurrentDate(LogReader.getCurrentDate());
 
         cx, cy, ox, oy = updateCamera(cx, cy, ox, oy, dt);
     end
@@ -250,6 +259,8 @@ function MainScreen.new()
             LogReader.loadPrevCommit(graph);
         elseif key == toggleFullscreen then
             love.window.setFullscreen(not love.window.getFullscreen());
+        elseif key == toggleTimeline then
+            timeline:toggle();
         end
     end
 
