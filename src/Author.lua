@@ -32,6 +32,7 @@ local FADE_FACTOR = 2;
 local DEFAULT_ALPHA = 255;
 local DEFAULT_DAMPING_VALUE = 0.5;
 local MIN_DISTANCE = 400;
+local BEAM_WIDTH = 3;
 
 -- ------------------------------------------------
 -- Constructor
@@ -117,7 +118,9 @@ function Author.new(name, avatar, cx, cy)
     function self:draw(rotation)
         for i = 1, #links do
             love.graphics.setColor(255, 255, 255, 50);
+            love.graphics.setLineWidth(BEAM_WIDTH);
             love.graphics.line(posX, posY, links[i]:getX(), links[i]:getY());
+            love.graphics.setLineWidth(1);
             love.graphics.setColor(255, 255, 255, 255);
         end
         love.graphics.setColor(255, 255, 255, alpha);
