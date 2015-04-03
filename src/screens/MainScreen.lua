@@ -64,6 +64,8 @@ local toggleRewind;
 local loadNextCommit;
 local loadPrevCommit;
 
+local toggleFullscreen;
+
 -- ------------------------------------------------
 -- Module
 -- ------------------------------------------------
@@ -183,6 +185,8 @@ function MainScreen.new()
         loadNextCommit = config.keyBindings.loadNextCommit;
         loadPrevCommit = config.keyBindings.loadPrevCommit;
 
+        toggleFullscreen = config.keyBindings.toggleFullscreen;
+
         -- Set the background color based on the option in the config file.
         love.graphics.setBackgroundColor(config.options.backgroundColor);
         setWindowMode(config.options);
@@ -244,6 +248,8 @@ function MainScreen.new()
             LogReader.loadNextCommit(graph);
         elseif key == loadPrevCommit then
             LogReader.loadPrevCommit(graph);
+        elseif key == toggleFullscreen then
+            love.window.setFullscreen(not love.window.getFullscreen());
         end
     end
 

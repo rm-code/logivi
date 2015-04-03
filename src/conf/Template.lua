@@ -49,6 +49,8 @@ return {
         toggleRewind = 'backspace',  -- Make simulation run backwards
         loadNextCommit = 'right',    -- Manually load the next commit
         loadPrevCommit = 'left',     -- Manually load the previous commit
+
+        toggleFullscreen = 'f',  -- Toggle fullscreen
     },
 };
 ]]
