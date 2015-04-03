@@ -208,7 +208,6 @@ function Graph.new(ewidth, slabels)
                 end
             end
 
-            nodeA:damp(0.95);
             nodeA:update(dt);
             local nx, ny = nodeA:move(dt);
             minX, maxX, minY, maxY = updateBoundaries(minX, maxX, minY, maxY, nx, ny);

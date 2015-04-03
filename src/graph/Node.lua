@@ -37,6 +37,8 @@ local FORCE_CHARGE = 10000000;
 local LABEL_FONT = love.graphics.newFont('res/fonts/SourceCodePro-Medium.otf', 20);
 local DEFAULT_FONT = love.graphics.newFont(12);
 
+local DAMPING_FACTOR = 0.95;
+
 -- ------------------------------------------------
 -- Constructor
 -- ------------------------------------------------
@@ -252,18 +254,14 @@ function Node.new(parent, path, name, x, y, spritebatch)
     -- Apply the calculated acceleration to the node.
     --
     function self:move(dt)
-        velX = velX + accX * dt * speed;
-        velY = velY + accY * dt * speed;
+        velX = (velX + accX * dt * speed) * DAMPING_FACTOR;
+        velY = (velY + accY * dt * speed) * DAMPING_FACTOR;
 
         posX = posX + velX;
         posY = posY + velY;
 
         accX, accY = 0, 0;
         return posX, posY;
-    end
-
-    function self:damp(f)
-        velX, velY = velX * f, velY * f;
     end
 
     ---
