@@ -28,7 +28,7 @@ local AuthorManager = require('src.AuthorManager');
 local FileManager = require('src.FileManager');
 local Graph = require('src.graph.Graph');
 local Panel = require('src.ui.Panel');
-local Timeline = require('src.Timeline');
+local Timeline = require('src.ui.Timeline');
 
 -- ------------------------------------------------
 -- Constants
