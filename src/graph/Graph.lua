@@ -200,12 +200,7 @@ function Graph.new(ewidth, slabels)
         spritebatch:clear();
         for _, nodeA in pairs(nodes) do
             for _, nodeB in pairs(nodes) do
-                if nodeA ~= nodeB then
-                    if nodeA:isConnectedTo(nodeB) then
-                        nodeA:attract(nodeB);
-                    end
-                    nodeA:repel(nodeB);
-                end
+                nodeA:calculateForces(nodeB);
             end
 
             minX, maxX, minY, maxY = updateBoundaries(minX, maxX, minY, maxY, nodeA:update(dt));

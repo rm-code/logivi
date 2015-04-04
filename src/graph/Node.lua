@@ -264,41 +264,28 @@ function Node.new(parent, path, name, x, y, spritebatch)
     end
 
     ---
-    -- Attracts the node towards nodeB based on a spring force.
-    -- @param nodeB
+    -- Calculate and apply attraction and repulsion forces.
+    -- @param node
     --
-    function self:attract(nodeB)
-        local dx, dy = posX - nodeB:getX(), posY - nodeB:getY();
-        local distance = math.sqrt(dx * dx + dy * dy);
+    function self:calculateForces(node)
+        if self == node then return end
 
-        -- Normalise vector.
+        -- Calculate distance vector and normalise it.
+        local dx, dy = posX - node:getX(), posY - node:getY();
+        local distance = math.sqrt(dx * dx + dy * dy);
         dx = dx / distance;
         dy = dy / distance;
 
-        -- Calculate spring force and apply it.
-        local force = FORCE_SPRING * distance;
-        applyForce(dx * force, dy * force);
-    end
+        -- Attract to node if they are connected.
+        local strength;
+        if self:isConnectedTo(node) then
+            strength = FORCE_SPRING * distance;
+            applyForce(dx * strength, dy * strength);
+        end
 
-    ---
-    -- Repels the node from nodeB.
-    -- @param nodeB
-    --
-    function self:repel(nodeB)
-        -- Calculate distance vector.
-        local dx, dy = posX - nodeB:getX(), posY - nodeB:getY();
-        local distance = math.sqrt(dx * dx + dy * dy);
-
-        -- Normalise vector.
-        dx = dx / distance;
-        dy = dy / distance;
-
-        -- Calculate force's strength and apply it to the vector.
-        local strength = FORCE_CHARGE * ((self:getMass() * nodeB:getMass()) / (distance * distance));
-        dx = dx * strength;
-        dy = dy * strength;
-
-        applyForce(dx, dy);
+        -- Repel unconnected nodes.
+        strength = FORCE_CHARGE * ((self:getMass() * node:getMass()) / (distance * distance));
+        applyForce(dx * strength, dy * strength);
     end
 
     -- ------------------------------------------------
