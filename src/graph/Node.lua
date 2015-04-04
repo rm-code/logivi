@@ -165,6 +165,18 @@ function Node.new(parent, path, name, x, y, spritebatch)
         return maxradius;
     end
 
+    ---
+    -- Update the node's position based on the calculated
+    -- velocity and acceleration.
+    --
+    local function move(dt)
+        velX = (velX + accX * dt * speed) * DAMPING_FACTOR;
+        velY = (velY + accY * dt * speed) * DAMPING_FACTOR;
+        posX = posX + velX;
+        posY = posY + velY;
+        accX, accY = 0, 0;
+    end
+
     -- ------------------------------------------------
     -- Public Functions
     -- ------------------------------------------------
@@ -197,13 +209,14 @@ function Node.new(parent, path, name, x, y, spritebatch)
     end
 
     function self:update(dt)
-        -- Update files.
+        move(dt);
         for _, file in pairs(files) do
             file:update(dt);
             file:setPosition(posX, posY);
             spritebatch:setColor(file:getColor());
             spritebatch:add(file:getX(), file:getY(), 0, SPRITE_SIZE, SPRITE_SIZE, SPRITE_OFFSET, SPRITE_OFFSET);
         end
+        return posX, posY;
     end
 
     function self:addFile(name, file)
@@ -248,20 +261,6 @@ function Node.new(parent, path, name, x, y, spritebatch)
 
         files[name]:setModified(true);
         return files[name];
-    end
-
-    ---
-    -- Apply the calculated acceleration to the node.
-    --
-    function self:move(dt)
-        velX = (velX + accX * dt * speed) * DAMPING_FACTOR;
-        velY = (velY + accY * dt * speed) * DAMPING_FACTOR;
-
-        posX = posX + velX;
-        posY = posY + velY;
-
-        accX, accY = 0, 0;
-        return posX, posY;
     end
 
     ---
