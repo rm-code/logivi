@@ -204,6 +204,10 @@ function Node.new(parent, path, name, x, y, spritebatch)
     end
 
     function self:drawLabel(camrot)
+        love.graphics.setFont(LABEL_FONT);
+        love.graphics.print(name, posX, posY, -camrot, 1, 1, -radius, -radius);
+        love.graphics.setFont(DEFAULT_FONT);
+
         for _, node in pairs(children) do
             love.graphics.setFont(LABEL_FONT);
             love.graphics.print(name, posX, posY, -camrot, 1, 1, -radius, -radius);
