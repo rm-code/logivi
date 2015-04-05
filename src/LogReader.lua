@@ -228,6 +228,34 @@ local function fastForward(graph, to)
     end
 end
 
+---
+-- Quickly rewinds the graph from the current position to the
+-- target position. We ignore author assigments and modifications
+-- and only are interested in additions and deletions.
+-- @param graph -- The graph on which to apply these changes.
+-- @param to -- The index of the commit to go to.
+--
+local function fastBackward(graph, to)
+    -- We start at the current index, because it has already been loaded
+    -- and we have to reverse it too.
+    for i = index, to, -1 do
+        index = i;
+        
+        -- When we have reached the target commit, we update the index, but
+        -- don't reverse the changes it made.
+        if index == to then break end
+        
+        local commit = log[index];
+        for j = #commit, 1, -1 do
+            local change = commit[j];
+            -- Ignore modifications we just need to know about additions and deletions.
+            if change.modifier ~= 'M' then
+                graph:applyGitStatus(graph:reverseGitStatus(change.modifier), change.path, change.file);
+            end
+        end
+    end
+end
+
 -- ------------------------------------------------
 -- Public Functions
 -- ------------------------------------------------
@@ -292,6 +320,26 @@ end
 function LogReader.loadPrevCommit(graph)
     play = false;
     reverseCurCommit(graph);
+end
+
+---
+-- Sets the reader to a new commit index. If the
+-- index is the same as the current one, the input is
+-- ignored. If the target commit is smaller (aka older)
+-- as the current one we fast-rewind the graph to that
+-- position. If the target commit is bigger than the 
+-- current one, we fast-forward instead.
+--
+function LogReader.setCurrentIndex(graph, ni)
+    if log[ni] then
+        if index == ni then
+            return;
+        elseif index < ni then
+            fastForward(graph, ni);
+        elseif index > ni then
+            fastBackward(graph, ni);
+        end
+    end
 end
 
 function LogReader.getTotalCommits()

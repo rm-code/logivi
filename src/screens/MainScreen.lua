@@ -238,6 +238,7 @@ function MainScreen.new()
 
         AuthorManager.update(dt);
         filePanel:update(dt);
+        timeline:update(dt);
         timeline:setCurrentCommit(LogReader.getCurrentIndex());
         timeline:setCurrentDate(LogReader.getCurrentDate());
 
@@ -274,6 +275,11 @@ function MainScreen.new()
 
     function self:mousepressed(x, y, b)
         filePanel:mousepressed(x, y, b);
+
+        local pos = timeline:getCommitAt(x, y);
+        if pos then
+            LogReader.setCurrentIndex(graph, pos);
+        end
     end
 
     function self:mousereleased(x, y, b)
