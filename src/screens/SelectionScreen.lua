@@ -21,6 +21,7 @@
 --==================================================================================================
 
 local Screen = require('lib.screenmanager.Screen');
+local LogCreator = require('src.logfactory.LogCreator');
 local LogLoader = require('src.logfactory.LogLoader');
 local ButtonList = require('src.ui.ButtonList');
 local InfoPanel = require('src.ui.InfoPanel');
@@ -81,6 +82,11 @@ function SelectionScreen.new()
         -- Set the background color based on the option in the config file.
         love.graphics.setBackgroundColor(config.options.backgroundColor);
         setWindowMode(config.options);
+
+        -- Create git logs for repositories specified in the config file.
+        for name, path in pairs(config.repositories) do
+            LogCreator.createGitLog(name, path);
+        end
 
         -- Intitialise LogLoader.
         logList = LogLoader.init();

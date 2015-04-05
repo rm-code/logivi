@@ -18,6 +18,10 @@ return {
         -- ['.lua'] = { 255, 0, 0 },
     },
 
+    repositories = {
+        -- ['project'] = 'path/to/repository',
+    },
+
     options = {
         mode = 'default',       -- 'default' or 'rewind'
         autoplay = true,
