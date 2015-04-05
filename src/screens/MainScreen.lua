@@ -148,6 +148,34 @@ function MainScreen.new()
         return cx, cy, ox, oy;
     end
 
+    ---
+    -- Assigns keybindings loaded from the config file to a
+    -- local variable for faster access.
+    -- @param config
+    --
+    local function assignKeyBindings(config)
+        camera_zoomIn = config.keyBindings.camera_zoomIn;
+        camera_zoomOut = config.keyBindings.camera_zoomOut;
+        camera_rotateL = config.keyBindings.camera_rotateL;
+        camera_rotateR = config.keyBindings.camera_rotateR;
+        camera_n = config.keyBindings.camera_n;
+        camera_s = config.keyBindings.camera_s;
+        camera_e = config.keyBindings.camera_e;
+        camera_w = config.keyBindings.camera_w;
+
+        toggleAuthors = config.keyBindings.toggleAuthors;
+        toggleFilePanel = config.keyBindings.toggleFileList;
+        toggleLabels = config.keyBindings.toggleLabels;
+        toggleTimeline = config.keyBindings.toggleTimeline;
+
+        toggleSimulation = config.keyBindings.toggleSimulation;
+        toggleRewind = config.keyBindings.toggleRewind;
+        loadNextCommit = config.keyBindings.loadNextCommit;
+        loadPrevCommit = config.keyBindings.loadPrevCommit;
+
+        toggleFullscreen = config.keyBindings.toggleFullscreen;
+    end
+
     local function setWindowMode(options)
         local w, h, flags = love.window.getMode();
 
@@ -169,27 +197,8 @@ function MainScreen.new()
     function self:init()
         local config = ConfigReader.init();
 
-        -- Load key bindings.
-        camera_zoomIn = config.keyBindings.camera_zoomIn;
-        camera_zoomOut = config.keyBindings.camera_zoomOut;
-        camera_rotateL = config.keyBindings.camera_rotateL;
-        camera_rotateR = config.keyBindings.camera_rotateR;
-        camera_n = config.keyBindings.camera_n;
-        camera_s = config.keyBindings.camera_s;
-        camera_e = config.keyBindings.camera_e;
-        camera_w = config.keyBindings.camera_w;
-
-        toggleAuthors = config.keyBindings.toggleAuthors;
-        toggleFilePanel = config.keyBindings.toggleFileList;
-        toggleLabels = config.keyBindings.toggleLabels;
-        toggleTimeline = config.keyBindings.toggleTimeline;
-
-        toggleSimulation = config.keyBindings.toggleSimulation;
-        toggleRewind = config.keyBindings.toggleRewind;
-        loadNextCommit = config.keyBindings.loadNextCommit;
-        loadPrevCommit = config.keyBindings.loadPrevCommit;
-
-        toggleFullscreen = config.keyBindings.toggleFullscreen;
+        -- Load keybindings.
+        assignKeyBindings(config);
 
         -- Set the background color based on the option in the config file.
         love.graphics.setBackgroundColor(config.options.backgroundColor);
