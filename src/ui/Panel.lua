@@ -153,10 +153,6 @@ function Panel.new(x, y, w, h)
     -- Setters
     -- ------------------------------------------------
 
-    function self:setContent(c)
-        content = c;
-    end
-
     ---
     -- Sets the position of the panel's content.
     -- @param x
