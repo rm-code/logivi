@@ -333,14 +333,12 @@ function Node.new(parent, path, name, x, y, spritebatch)
     end
 
     function self:isConnectedTo(node)
-        if parent == node then
-            return true;
-        end
         for _, child in pairs(children) do
             if node == child then
                 return true;
             end
         end
+        return parent == node;
     end
 
     return self;
