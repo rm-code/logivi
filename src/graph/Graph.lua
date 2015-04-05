@@ -55,7 +55,7 @@ local spritebatch = love.graphics.newSpriteBatch(fileSprite, 10000, 'stream');
 -- Constructor
 -- ------------------------------------------------
 
-function Graph.new(ewidth, slabels)
+function Graph.new(ewidth, showLabels)
     local self = {};
 
     local nodes = { [ROOT_FOLDER] = Node.new(nil, ROOT_FOLDER, ROOT_FOLDER, 300, 200, spritebatch); };
@@ -190,8 +190,12 @@ function Graph.new(ewidth, slabels)
     end
 
     function self:draw(camrot)
-        root:draw(ewidth, camrot, slabels);
+        root:draw(ewidth);
         love.graphics.draw(spritebatch);
+
+        if showLabels then
+            root:drawLabel(camrot);
+        end
     end
 
     function self:update(dt)
@@ -211,7 +215,7 @@ function Graph.new(ewidth, slabels)
     -- Activate / Deactivate folder labels.
     --
     function self:toggleLabels()
-        slabels = not slabels;
+        showLabels = not showLabels;
     end
 
     -- ------------------------------------------------
