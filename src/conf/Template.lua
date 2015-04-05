@@ -14,6 +14,7 @@ return {
         -- ['author'] = 'urlToAvatar',
     },
     options = {
+        mode = 'default',       -- 'default' or 'rewind'
         showFileList = true,
         showAuthors = true,
         showLabels = true,

@@ -205,6 +205,29 @@ local function reverseCurCommit(graph)
     index = index - 1;
 end
 
+---
+-- Fast forwards the graph from the current position to the
+-- target position. We ignore author assigments and modifications
+-- and only are interested in additions and deletions.
+-- @param graph -- The graph on which to apply these changes.
+-- @param to -- The index of the commit to go to.
+--
+local function fastForward(graph, to)
+    -- We start at index + 1 because the current index has already
+    -- been loaded (or it was 0 and therefore nonrelevant anyway).
+    for i = index + 1, to do
+        index = i; -- Update the index.
+        local commit = log[index];
+        for j = 1, #commit do
+            local change = commit[j];
+            -- Ignore modifications we just need to know about additions and deletions.
+            if change.modifier ~= 'M' then
+                local file = graph:applyGitStatus(change.modifier, change.path, change.file);
+            end
+        end
+    end
+end
+
 -- ------------------------------------------------
 -- Public Functions
 -- ------------------------------------------------
@@ -213,7 +236,7 @@ end
 -- Loads the file and stores it line for line in a lua table.
 -- @param logpath
 --
-function LogReader.init(logpath, delay)
+function LogReader.init(logpath, delay, playmode, graph)
     if not isLogFile(logpath) then
         return {};
     end
@@ -226,6 +249,14 @@ function LogReader.init(logpath, delay)
 
     -- Set default values.
     index = 0;
+    if playmode == 'default' then
+        rewind = false;
+    elseif playmode == 'rewind' then
+        fastForward(graph, #log);
+        rewind = true;
+    else
+        error("Unsupported playmode '" .. playmode .. "' - please use either 'default' or 'rewind'");
+    end
     commitTimer = 0;
     commitDelay = delay;
     play = true;
