@@ -240,11 +240,11 @@ local function fastBackward(graph, to)
     -- and we have to reverse it too.
     for i = index, to, -1 do
         index = i;
-        
+
         -- When we have reached the target commit, we update the index, but
         -- don't reverse the changes it made.
         if index == to then break end
-        
+
         local commit = log[index];
         for j = #commit, 1, -1 do
             local change = commit[j];

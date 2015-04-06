@@ -20,7 +20,7 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
-local MARGIN_LEFT  = 10;
+local MARGIN_LEFT = 10;
 local MARGIN_RIGHT = 10;
 local HEIGHT = 30;
 local TOTAL_STEPS = 128;
@@ -43,7 +43,7 @@ function Timeline.new(v, totalCommits, date)
     local highlighted = -1;
     local visible = v;
     local w, h = 2, -5;
-    
+
     ---
     -- Calculates which timestep the user has clicked on and returns the 
     -- index of the commit which has been mapped to that location.
@@ -52,14 +52,14 @@ function Timeline.new(v, totalCommits, date)
     local function calculateCommitIndex(x)
         return math.floor(totalCommits / (TOTAL_STEPS / (x / stepWidth)));
     end
-    
+
     ---
     -- Maps a certain commit to a timestep.
     --
     local function calculateTimelineIndex(cindex)
         return math.floor((cindex / totalCommits) * (TOTAL_STEPS - 1) + 1);
     end
-    
+
     function self:draw()
         if not visible then return end
         for i = 1, TOTAL_STEPS do
