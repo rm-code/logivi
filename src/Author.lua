@@ -27,9 +27,11 @@ local Author = {};
 -- ------------------------------------------------
 
 local AVATAR_SIZE = 48;
-local INACTIVITY_TIMER = 10;
+local AUTHOR_INACTIVITY_TIMER = 10;
+local LINK_INACTIVITY_TIMER = 3;
 local FADE_FACTOR = 2;
-local DEFAULT_ALPHA = 255;
+local DEFAULT_AVATAR_ALPHA = 255;
+local DEFAULT_LINK_ALPHA = 50;
 local DEFAULT_DAMPING_VALUE = 0.5;
 local MIN_DISTANCE = 400;
 local BEAM_WIDTH = 3;
@@ -47,7 +49,8 @@ function Author.new(name, avatar, cx, cy)
 
     local links = {};
     local inactivity = 0;
-    local alpha = DEFAULT_ALPHA;
+    local avatarAlpha = DEFAULT_AVATAR_ALPHA;
+    local linkAlpha = DEFAULT_LINK_ALPHA;
 
     -- Avatar's width and height.
     local aw, ah = avatar:getWidth(), avatar:getHeight();
@@ -61,7 +64,8 @@ function Author.new(name, avatar, cx, cy)
     local function reactivate()
         inactivity = 0;
         dampingFactor = DEFAULT_DAMPING_VALUE;
-        alpha = DEFAULT_ALPHA;
+        avatarAlpha = DEFAULT_AVATAR_ALPHA;
+        linkAlpha = DEFAULT_LINK_ALPHA;
     end
 
     local function move(dt)
@@ -117,13 +121,13 @@ function Author.new(name, avatar, cx, cy)
 
     function self:draw(rotation)
         for i = 1, #links do
-            love.graphics.setColor(255, 255, 255, 50);
+            love.graphics.setColor(255, 255, 255, linkAlpha);
             love.graphics.setLineWidth(BEAM_WIDTH);
             love.graphics.line(posX, posY, links[i]:getX(), links[i]:getY());
             love.graphics.setLineWidth(1);
             love.graphics.setColor(255, 255, 255, 255);
         end
-        love.graphics.setColor(255, 255, 255, alpha);
+        love.graphics.setColor(255, 255, 255, avatarAlpha);
         love.graphics.draw(avatar, posX, posY, -rotation, AVATAR_SIZE / aw, AVATAR_SIZE / ah, aw * 0.5, ah * 0.5);
         love.graphics.setColor(255, 255, 255, 255);
     end
@@ -132,8 +136,11 @@ function Author.new(name, avatar, cx, cy)
         move(dt);
 
         inactivity = inactivity + dt;
-        if inactivity > INACTIVITY_TIMER then
-            alpha = alpha - alpha * dt * FADE_FACTOR;
+        if inactivity > AUTHOR_INACTIVITY_TIMER then
+            avatarAlpha = avatarAlpha - avatarAlpha * dt * FADE_FACTOR;
+        end
+        if inactivity > LINK_INACTIVITY_TIMER then
+            linkAlpha = linkAlpha - linkAlpha * dt * FADE_FACTOR;
         end
         dampingFactor = math.max(0.01, dampingFactor - dt);
     end
