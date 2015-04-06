@@ -222,7 +222,7 @@ local function fastForward(graph, to)
             local change = commit[j];
             -- Ignore modifications we just need to know about additions and deletions.
             if change.modifier ~= 'M' then
-                local file = graph:applyGitStatus(change.modifier, change.path, change.file);
+                graph:applyGitStatus(change.modifier, change.path, change.file);
             end
         end
     end
