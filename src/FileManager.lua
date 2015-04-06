@@ -42,18 +42,11 @@ local totalFiles = 0;
 -- ------------------------------------------------
 
 ---
--- Splits the extension from a file.
+-- Returns the extension of a file (or '.?' if it doesn't have one).
 -- @param fileName
 --
 local function splitExtension(fileName)
-    local tmp = fileName:reverse();
-    local pos = tmp:find('%.');
-    if pos then
-        return tmp:sub(1, pos):reverse():lower();
-    else
-        -- Prevents issues with files sans extension.
-        return '.?';
-    end
+    return '.' .. (fileName:match("%.([^%.]+)$") or '?');
 end
 
 ---
