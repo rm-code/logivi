@@ -59,6 +59,7 @@ local commitTimer;
 local commitDelay;
 local play;
 local rewind;
+local observers;
 
 -- ------------------------------------------------
 -- Local Functions
@@ -82,6 +83,17 @@ local function splitLine(line, delimiter)
         return line:sub(1, pos - 1), line:sub(pos + 1);
     else
         return line;
+    end
+end
+
+---
+-- Notify observers about the event.
+-- @param event
+-- @param ...
+--
+local function notify(event, ...)
+    for i = 1, #observers do
+        observers[i]:update(event, ...);
     end
 end
 
@@ -276,6 +288,8 @@ function LogReader.init(logpath, delay, playmode, autoplay, graph)
     commitTimer = 0;
     commitDelay = delay;
     play = autoplay;
+
+    observers = {};
 end
 
 function LogReader.update(dt, graph)
@@ -340,6 +354,14 @@ end
 
 function LogReader.getCurrentDate()
     return index ~= 0 and log[index].date or '';
+end
+
+---
+-- Register an observer.
+-- @param observer
+--
+function LogReader.register(observer)
+    observers[#observers + 1] = observer;
 end
 
 -- ------------------------------------------------
