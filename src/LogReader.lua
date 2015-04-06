@@ -236,7 +236,7 @@ end
 -- Loads the file and stores it line for line in a lua table.
 -- @param logpath
 --
-function LogReader.init(logpath, delay, playmode, graph)
+function LogReader.init(logpath, delay, playmode, autoplay, graph)
     if not isLogFile(logpath) then
         return {};
     end
@@ -259,7 +259,7 @@ function LogReader.init(logpath, delay, playmode, graph)
     end
     commitTimer = 0;
     commitDelay = delay;
-    play = true;
+    play = autoplay;
 end
 
 function LogReader.update(dt, graph)

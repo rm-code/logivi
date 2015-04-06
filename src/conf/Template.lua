@@ -15,6 +15,7 @@ return {
     },
     options = {
         mode = 'default',       -- 'default' or 'rewind'
+        autoplay = true,
         showFileList = true,
         showAuthors = true,
         showLabels = true,
