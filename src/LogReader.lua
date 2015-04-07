@@ -143,6 +143,18 @@ local function isLogFile(name)
     return true;
 end
 
+---
+-- Reads the git log and returns it as a table.
+-- @param path
+--
+local function readLogFile(path)
+    local file = {};
+    for line in love.filesystem.lines(path) do
+        file[#file + 1] = line;
+    end
+    return file;
+end
+
 local function applyNextCommit(graph)
     if index == #log then
         return;
@@ -246,11 +258,8 @@ function LogReader.init(logpath, delay, playmode, autoplay, graph)
         return {};
     end
 
-    local file = {};
-    for line in love.filesystem.lines(logpath) do
-        file[#file + 1] = line;
-    end
-    log = splitCommits(file);
+    local logFile = readLogFile(logpath);
+    log = splitCommits(logFile);
 
     -- Set default values.
     index = 0;
