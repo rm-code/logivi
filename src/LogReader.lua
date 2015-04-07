@@ -107,7 +107,7 @@ local function splitCommits(log)
             commits[index].date = string.format("%02d:%02d:%02d - %02d-%02d-%04d",
                 date.hour, date.min, date.sec,
                 date.day, date.month, date.year);
-        elseif line:len() ~= 0 and commits[index] then
+        elseif commits[index] then
             -- Split the whole change line into modifier, file name and file path fields.
             local path = line:gsub("^(%a)%s*", ''); -- Remove modifier and whitespace.
             local file = path:match("/?([^/]+)$");  -- Get the the filename at the end.
@@ -150,7 +150,9 @@ end
 local function readLogFile(path)
     local file = {};
     for line in love.filesystem.lines(path) do
-        file[#file + 1] = line;
+        if line ~= '' then
+            file[#file + 1] = line;
+        end
     end
     return file;
 end
