@@ -65,14 +65,6 @@ local rewind;
 -- ------------------------------------------------
 
 ---
--- Remove leading and trailing whitespace.
--- @param str
---
-local function trim(str)
-    return str:match("^%s*(.-)%s*$");
-end
-
----
 -- Remove the specified tag from the line.
 -- @param line
 -- @param tag
@@ -116,29 +108,14 @@ local function splitCommits(log)
                 date.hour, date.min, date.sec,
                 date.day, date.month, date.year);
         elseif line:len() ~= 0 and commits[index] then
-            -- Split the file information into the modifier, which determines
-            -- what has happened to the file since the last commit and the actual
-            -- filepath / name.
-            local modifier = line:sub(1, 1);
-            local path = line:sub(2);
-            path = trim(path);
-
-            if path:find('/') then
-                path = path:reverse();
-                local pos = path:find('/');
-
-                -- Reverse string and cut off the end to get the file's name.
-                local file = path:sub(1, pos - 1);
-                file = file:reverse();
-
-                -- Cut the file and the slash before it (hence the + 1) from the path and reverse it again.
-                path = path:sub(pos + 1);
-                path = path:reverse();
-
-                commits[index][#commits[index] + 1] = { modifier = modifier, path = ROOT_FOLDER .. '/' .. path, file = file };
-            else
-                commits[index][#commits[index] + 1] = { modifier = modifier, path = ROOT_FOLDER, file = path };
+            -- Split the whole change line into modifier, file name and file path fields.
+            local path = line:gsub("^(%a)%s*", ''); -- Remove modifier and whitespace.
+            local file = path:match("/?([^/]+)$");  -- Get the the filename at the end.
+            path = path:gsub("/?([^/]+)$", '');     -- Remove the filename from the path.
+            if path ~= '' then
+                path = '/' .. path;
             end
+            commits[index][#commits[index] + 1] = { modifier = line:sub(1, 1), path = ROOT_FOLDER .. path, file = file };
         end
     end
 
