@@ -46,7 +46,7 @@ local totalFiles = 0;
 -- @param fileName
 --
 local function splitExtension(fileName)
-    return '.' .. (fileName:match("%.([^%.]+)$") or '?');
+    return fileName:match("(%.[^.]+)$") or '.?';
 end
 
 ---
