@@ -139,6 +139,20 @@ function AuthorManager.addFileLink(file)
 end
 
 ---
+-- Receives a notification from an observable.
+-- @param self
+-- @param event
+-- @param ...
+--
+function AuthorManager.update(self, event, ...)
+    if event == 'NEW_COMMIT' then
+        AuthorManager.setCommitAuthor(...);
+    elseif event == 'MODIFY_FILE' then
+        AuthorManager.addFileLink(...)
+    end
+end
+
+---
 -- Sets the author of the currently processed commit and resets the previously
 -- active one. If he doesn't exist yet he will be created and added to the list
 -- of authors for. Before storing the author the function checks the config file

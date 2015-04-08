@@ -20,15 +20,12 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
-local AuthorManager = require('src.AuthorManager');
-
--- ------------------------------------------------
--- Constants
--- ------------------------------------------------
-
 local TAG_AUTHOR = 'author: ';
 local TAG_DATE = 'date: ';
 local ROOT_FOLDER = 'root';
+
+local EVENT_NEW_COMMIT = 'NEW_COMMIT';
+local EVENT_MODIFY_FILE = 'MODIFY_FILE';
 
 -- ------------------------------------------------
 -- Module
@@ -175,7 +172,7 @@ local function applyNextCommit(graph)
     end
     index = index + 1;
 
-    AuthorManager.setCommitAuthor(log[index].email, log[index].author, graph:getCenter());
+    notify(EVENT_NEW_COMMIT, log[index].email, log[index].author, graph:getCenter());
 
     for i = 1, #log[index] do
         local change = log[index][i];
@@ -183,8 +180,7 @@ local function applyNextCommit(graph)
         -- Modify the graph based on the git file status we read from the log.
         local file = graph:applyGitStatus(change.modifier, change.path, change.file);
 
-        -- Add a link from the file to the author of the commit.
-        AuthorManager.addFileLink(file);
+        notify(EVENT_MODIFY_FILE, file);
     end
 end
 
@@ -193,7 +189,7 @@ local function reverseCurCommit(graph)
         return;
     end
 
-    AuthorManager.setCommitAuthor(log[index].email, log[index].author, graph:getCenter());
+    notify(EVENT_NEW_COMMIT, log[index].email, log[index].author, graph:getCenter());
 
     for i = 1, #log[index] do
         local change = log[index][i];
@@ -201,8 +197,7 @@ local function reverseCurCommit(graph)
         -- Modify the graph based on the git file status we read from the log.
         local file = graph:applyGitStatus(graph:reverseGitStatus(change.modifier), change.path, change.file);
 
-        -- Add a link from the file to the author of the commit.
-        AuthorManager.addFileLink(file);
+        notify(EVENT_MODIFY_FILE, file);
     end
 
     index = index - 1;

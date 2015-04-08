@@ -207,7 +207,9 @@ function MainScreen.new()
         AuthorManager.init(config.aliases, config.avatars, config.options.showAuthors);
 
         graph = Graph.new(config.options.edgeWidth, config.options.showLabels);
+        -- Initialise LogReader and register observers.
         LogReader.init(LOG_FILE, config.options.commitDelay, config.options.mode, config.options.autoplay, graph);
+        LogReader.register(AuthorManager);
 
         -- Create the camera.
         camera = Camera.new();
