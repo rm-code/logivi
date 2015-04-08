@@ -144,7 +144,7 @@ end
 -- @param event
 -- @param ...
 --
-function AuthorManager.update(self, event, ...)
+function AuthorManager.receive(self, event, ...)
     if event == 'NEW_COMMIT' then
         AuthorManager.setCommitAuthor(...);
     elseif event == 'MODIFY_FILE' then

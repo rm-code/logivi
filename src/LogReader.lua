@@ -90,7 +90,7 @@ end
 --
 local function notify(event, ...)
     for i = 1, #observers do
-        observers[i]:update(event, ...);
+        observers[i]:receive(event, ...);
     end
 end
 
