@@ -175,20 +175,6 @@ function Graph.new(ewidth, showLabels)
         end
     end
 
-    ---
-    -- This function will take a git modifier and return the direct
-    -- opposite of it.
-    -- @param modifier
-    --
-    function self:reverseGitStatus(modifier)
-        if modifier == MOD_ADD then
-            return MOD_DELETE;
-        elseif modifier == MOD_DELETE then
-            return MOD_ADD;
-        end
-        return modifier;
-    end
-
     function self:draw(camrot)
         root:draw(ewidth);
         love.graphics.draw(spritebatch);

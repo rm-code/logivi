@@ -46,6 +46,9 @@ You can view the wiki (online) for more information on how to generate a proper 
 LoGiVi now will open the file directory in which to place the log.
 ]];
 
+local MOD_ADD = 'A';
+local MOD_DELETE = 'D';
+
 -- ------------------------------------------------
 -- Local Variables
 -- ------------------------------------------------
@@ -132,6 +135,20 @@ local function splitCommits(log)
 end
 
 ---
+-- This function will take a git modifier and return the direct
+-- opposite of it.
+-- @param modifier
+--
+local function reverseGitStatus(modifier)
+    if modifier == MOD_ADD then
+        return MOD_DELETE;
+    elseif modifier == MOD_DELETE then
+        return MOD_ADD;
+    end
+    return modifier;
+end
+
+---
 -- Checks if there is a log file LoGiVi can work with. If the file
 -- can't be found it will display a warning message and open the save
 -- folder.
@@ -195,7 +212,7 @@ local function reverseCurCommit(graph)
         local change = log[index][i];
 
         -- Modify the graph based on the git file status we read from the log.
-        local file = graph:applyGitStatus(graph:reverseGitStatus(change.modifier), change.path, change.file);
+        local file = graph:applyGitStatus(reverseGitStatus(change.modifier), change.path, change.file);
 
         notify(EVENT_MODIFY_FILE, file);
     end
@@ -248,7 +265,7 @@ local function fastBackward(graph, to)
             local change = commit[j];
             -- Ignore modifications we just need to know about additions and deletions.
             if change.modifier ~= 'M' then
-                graph:applyGitStatus(graph:reverseGitStatus(change.modifier), change.path, change.file);
+                graph:applyGitStatus(reverseGitStatus(change.modifier), change.path, change.file);
             end
         end
     end
