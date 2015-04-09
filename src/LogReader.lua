@@ -189,7 +189,7 @@ local function applyNextCommit(graph)
     end
     index = index + 1;
 
-    notify(EVENT_NEW_COMMIT, log[index].email, log[index].author, graph:getCenter());
+    notify(EVENT_NEW_COMMIT, log[index].email, log[index].author);
 
     for i = 1, #log[index] do
         local change = log[index][i];
@@ -206,7 +206,7 @@ local function reverseCurCommit(graph)
         return;
     end
 
-    notify(EVENT_NEW_COMMIT, log[index].email, log[index].author, graph:getCenter());
+    notify(EVENT_NEW_COMMIT, log[index].email, log[index].author);
 
     for i = 1, #log[index] do
         local change = log[index][i];
