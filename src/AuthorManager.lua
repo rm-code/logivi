@@ -151,7 +151,7 @@ end
 function AuthorManager.receive(self, event, ...)
     if event == 'NEW_COMMIT' then
         AuthorManager.setCommitAuthor(...);
-    elseif event == 'MODIFY_FILE' then
+    elseif event == 'GRAPH_UPDATE_FILE' then
         AuthorManager.addFileLink(...)
     elseif event == 'GRAPH_UPDATE_CENTER' then
         AuthorManager.setGraphCenter(...);

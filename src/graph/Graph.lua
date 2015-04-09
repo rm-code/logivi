@@ -45,6 +45,7 @@ local MOD_UNKNOWN = 'X';
 local MOD_BROKEN_PAIRING = 'B';
 
 local EVENT_UPDATE_CENTER = 'GRAPH_UPDATE_CENTER';
+local EVENT_UPDATE_FILE = 'GRAPH_UPDATE_FILE';
 
 -- ------------------------------------------------
 -- Local Variables
@@ -171,22 +172,27 @@ function Graph.new(ewidth, showLabels)
     -- @param path
     -- @param file
     --
-    function self:applyGitStatus(modifier, path, file)
+    function self:applyGitStatus(modifier, path, file, mode)
         local targetNode = getNode(path);
 
+        local modifiedFile;
         if modifier == MOD_ADD then
-            return targetNode:addFile(file, File.new(file, targetNode:getX(), targetNode:getY()));
+            modifiedFile = targetNode:addFile(file, File.new(file, targetNode:getX(), targetNode:getY()));
             -- print('ADD file [' .. file .. '] to node: ' .. path);
         elseif modifier == MOD_DELETE then
-            local tmp = targetNode:removeFile(file);
+            modifiedFile = targetNode:removeFile(file);
             -- print('DEL file [' .. file .. '] from node: ' .. path);
 
             -- Remove the node if it doesn't contain files and only
             -- has a link to its parent.
             removeDeadNode(targetNode, path);
-            return tmp;
         elseif modifier == MOD_MODIFY then
-            return targetNode:modifyFile(file);
+            modifiedFile = targetNode:modifyFile(file);
+        end
+
+        -- We only notify observers if the graph isn't modifed in fast forward / rewind mode.
+        if mode == 'normal' then
+            notify(EVENT_UPDATE_FILE, modifiedFile);
         end
     end
 

@@ -25,7 +25,6 @@ local TAG_DATE = 'date: ';
 local ROOT_FOLDER = 'root';
 
 local EVENT_NEW_COMMIT = 'NEW_COMMIT';
-local EVENT_MODIFY_FILE = 'MODIFY_FILE';
 
 -- ------------------------------------------------
 -- Module
@@ -195,9 +194,7 @@ local function applyNextCommit(graph)
         local change = log[index][i];
 
         -- Modify the graph based on the git file status we read from the log.
-        local file = graph:applyGitStatus(change.modifier, change.path, change.file);
-
-        notify(EVENT_MODIFY_FILE, file);
+        graph:applyGitStatus(change.modifier, change.path, change.file, 'normal');
     end
 end
 
@@ -212,9 +209,7 @@ local function reverseCurCommit(graph)
         local change = log[index][i];
 
         -- Modify the graph based on the git file status we read from the log.
-        local file = graph:applyGitStatus(reverseGitStatus(change.modifier), change.path, change.file);
-
-        notify(EVENT_MODIFY_FILE, file);
+        graph:applyGitStatus(reverseGitStatus(change.modifier), change.path, change.file, 'normal');
     end
 
     index = index - 1;
@@ -237,7 +232,7 @@ local function fastForward(graph, to)
             local change = commit[j];
             -- Ignore modifications we just need to know about additions and deletions.
             if change.modifier ~= 'M' then
-                graph:applyGitStatus(change.modifier, change.path, change.file);
+                graph:applyGitStatus(change.modifier, change.path, change.file, 'fast');
             end
         end
     end
@@ -265,7 +260,7 @@ local function fastBackward(graph, to)
             local change = commit[j];
             -- Ignore modifications we just need to know about additions and deletions.
             if change.modifier ~= 'M' then
-                graph:applyGitStatus(reverseGitStatus(change.modifier), change.path, change.file);
+                graph:applyGitStatus(reverseGitStatus(change.modifier), change.path, change.file, 'fast');
             end
         end
     end
