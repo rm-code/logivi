@@ -234,7 +234,7 @@ function Node.new(parent, path, name, x, y, spritebatch)
         end
 
         files[name] = file;
-        files[name]:setModified(true);
+        files[name]:setModified('add');
         fileCount = fileCount + 1;
 
         -- Update layout of the files.
@@ -251,7 +251,7 @@ function Node.new(parent, path, name, x, y, spritebatch)
         -- Store a reference to the file which can be returned
         -- after the file has been removed from the table.
         local tmp = files[name];
-        files[name]:setModified(true);
+        files[name]:setModified('del');
         files[name]:remove();
         files[name] = nil;
         fileCount = fileCount - 1;
@@ -267,7 +267,7 @@ function Node.new(parent, path, name, x, y, spritebatch)
             return;
         end
 
-        files[name]:setModified(true);
+        files[name]:setModified('mod');
         return files[name];
     end
 

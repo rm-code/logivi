@@ -33,7 +33,11 @@ local File = {};
 -- ------------------------------------------------
 
 local MOD_TIMER = 2;
-local MOD_COLOR = { 255, 0, 0 };
+local MOD_COLOR = {
+    add = { 0, 255, 0 },
+    del = { 255, 0, 0 },
+    mod = { 254, 140, 0 },
+};
 
 -- ------------------------------------------------
 -- Constructor
@@ -112,10 +116,10 @@ function File.new(name, x, y)
     -- @param mod
     --
     function self:setModified(mod)
-        modified = mod;
-        currentColor[1] = MOD_COLOR[1];
-        currentColor[2] = MOD_COLOR[2];
-        currentColor[3] = MOD_COLOR[3];
+        modified = true;
+        currentColor[1] = MOD_COLOR[mod][1];
+        currentColor[2] = MOD_COLOR[mod][2];
+        currentColor[3] = MOD_COLOR[mod][3];
     end
 
     function self:setOffset(ox, oy)
