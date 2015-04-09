@@ -168,7 +168,7 @@ function Graph.new(ewidth, showLabels)
     -- @param path
     -- @param file
     --
-    local function applyGitStatus(modifier, path, file, mode)
+    local function applyGitModifier(modifier, path, file, mode)
         local targetNode = getNode(path);
 
         local modifiedFile;
@@ -242,7 +242,7 @@ function Graph.new(ewidth, showLabels)
     --
     function self:receive(event, ...)
         if event == 'LOGREADER_CHANGED_FILE' then
-            applyGitStatus(...)
+            applyGitModifier(...)
         end
     end
 
