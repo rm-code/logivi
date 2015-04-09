@@ -158,10 +158,6 @@ function Graph.new(ewidth, showLabels)
         end
     end
 
-    -- ------------------------------------------------
-    -- Public Functions
-    -- ------------------------------------------------
-
     ---
     -- This function will take a git modifier and apply it to a file.
     -- If it encounters the 'A' modifier it will create a file at the
@@ -172,7 +168,7 @@ function Graph.new(ewidth, showLabels)
     -- @param path
     -- @param file
     --
-    function self:applyGitStatus(modifier, path, file, mode)
+    local function applyGitStatus(modifier, path, file, mode)
         local targetNode = getNode(path);
 
         local modifiedFile;
@@ -195,6 +191,10 @@ function Graph.new(ewidth, showLabels)
             notify(EVENT_UPDATE_FILE, modifiedFile);
         end
     end
+
+    -- ------------------------------------------------
+    -- Public Functions
+    -- ------------------------------------------------
 
     function self:draw(camrot)
         root:draw(ewidth);
@@ -242,7 +242,7 @@ function Graph.new(ewidth, showLabels)
     --
     function self:receive(event, ...)
         if event == 'LOGREADER_CHANGED_FILE' then
-            self:applyGitStatus(...)
+            applyGitStatus(...)
         end
     end
 
