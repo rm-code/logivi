@@ -235,6 +235,17 @@ function Graph.new(ewidth, showLabels)
         observers[#observers + 1] = observer;
     end
 
+    ---
+    -- Receives a notification from an observable.
+    -- @param event
+    -- @param ...
+    --
+    function self:receive(event, ...)
+        if event == 'LOGREADER_CHANGED_FILE' then
+            self:applyGitStatus(...)
+        end
+    end
+
     -- ------------------------------------------------
     -- Getters
     -- ------------------------------------------------

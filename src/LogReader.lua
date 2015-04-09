@@ -25,6 +25,7 @@ local TAG_DATE = 'date: ';
 local ROOT_FOLDER = 'root';
 
 local EVENT_NEW_COMMIT = 'NEW_COMMIT';
+local EVENT_CHANGED_FILE = 'LOGREADER_CHANGED_FILE';
 
 -- ------------------------------------------------
 -- Module
@@ -182,7 +183,7 @@ local function readLogFile(path)
     return file;
 end
 
-local function applyNextCommit(graph)
+local function applyNextCommit()
     if index == #log then
         return;
     end
@@ -192,13 +193,11 @@ local function applyNextCommit(graph)
 
     for i = 1, #log[index] do
         local change = log[index][i];
-
-        -- Modify the graph based on the git file status we read from the log.
-        graph:applyGitStatus(change.modifier, change.path, change.file, 'normal');
+        notify(EVENT_CHANGED_FILE, change.modifier, change.path, change.file, 'normal');
     end
 end
 
-local function reverseCurCommit(graph)
+local function reverseCurCommit()
     if index == 0 then
         return;
     end
@@ -207,9 +206,7 @@ local function reverseCurCommit(graph)
 
     for i = 1, #log[index] do
         local change = log[index][i];
-
-        -- Modify the graph based on the git file status we read from the log.
-        graph:applyGitStatus(reverseGitStatus(change.modifier), change.path, change.file, 'normal');
+        notify(EVENT_CHANGED_FILE, reverseGitStatus(change.modifier), change.path, change.file, 'normal');
     end
 
     index = index - 1;
@@ -219,10 +216,9 @@ end
 -- Fast forwards the graph from the current position to the
 -- target position. We ignore author assigments and modifications
 -- and only are interested in additions and deletions.
--- @param graph -- The graph on which to apply these changes.
 -- @param to -- The index of the commit to go to.
 --
-local function fastForward(graph, to)
+local function fastForward(to)
     -- We start at index + 1 because the current index has already
     -- been loaded (or it was 0 and therefore nonrelevant anyway).
     for i = index + 1, to do
@@ -232,7 +228,7 @@ local function fastForward(graph, to)
             local change = commit[j];
             -- Ignore modifications we just need to know about additions and deletions.
             if change.modifier ~= 'M' then
-                graph:applyGitStatus(change.modifier, change.path, change.file, 'fast');
+                notify(EVENT_CHANGED_FILE, change.modifier, change.path, change.file, 'fast');
             end
         end
     end
@@ -242,10 +238,9 @@ end
 -- Quickly rewinds the graph from the current position to the
 -- target position. We ignore author assigments and modifications
 -- and only are interested in additions and deletions.
--- @param graph -- The graph on which to apply these changes.
 -- @param to -- The index of the commit to go to.
 --
-local function fastBackward(graph, to)
+local function fastBackward(to)
     -- We start at the current index, because it has already been loaded
     -- and we have to reverse it too.
     for i = index, to, -1 do
@@ -260,7 +255,7 @@ local function fastBackward(graph, to)
             local change = commit[j];
             -- Ignore modifications we just need to know about additions and deletions.
             if change.modifier ~= 'M' then
-                graph:applyGitStatus(reverseGitStatus(change.modifier), change.path, change.file, 'fast');
+                notify(EVENT_CHANGED_FILE, reverseGitStatus(change.modifier), change.path, change.file, 'fast');
             end
         end
     end
@@ -274,7 +269,7 @@ end
 -- Loads the file and stores it line for line in a lua table.
 -- @param logpath
 --
-function LogReader.init(logpath, delay, playmode, autoplay, graph)
+function LogReader.init(logpath, delay, playmode, autoplay)
     if not isLogFile(logpath) then
         return {};
     end
@@ -287,7 +282,7 @@ function LogReader.init(logpath, delay, playmode, autoplay, graph)
     if playmode == 'default' then
         rewind = false;
     elseif playmode == 'rewind' then
-        fastForward(graph, #log);
+        fastForward(#log);
         rewind = true;
     else
         error("Unsupported playmode '" .. playmode .. "' - please use either 'default' or 'rewind'");
@@ -299,15 +294,15 @@ function LogReader.init(logpath, delay, playmode, autoplay, graph)
     observers = {};
 end
 
-function LogReader.update(dt, graph)
+function LogReader.update(dt)
     if not play then return end
 
     commitTimer = commitTimer + dt;
     if commitTimer > commitDelay then
         if rewind then
-            reverseCurCommit(graph);
+            reverseCurCommit();
         else
-            applyNextCommit(graph);
+            applyNextCommit();
         end
         commitTimer = 0;
     end
@@ -321,14 +316,14 @@ function LogReader.toggleRewind()
     rewind = not rewind;
 end
 
-function LogReader.loadNextCommit(graph)
+function LogReader.loadNextCommit()
     play = false;
-    applyNextCommit(graph);
+    applyNextCommit();
 end
 
-function LogReader.loadPrevCommit(graph)
+function LogReader.loadPrevCommit()
     play = false;
-    reverseCurCommit(graph);
+    reverseCurCommit();
 end
 
 ---
@@ -339,14 +334,14 @@ end
 -- position. If the target commit is bigger than the 
 -- current one, we fast-forward instead.
 --
-function LogReader.setCurrentIndex(graph, ni)
+function LogReader.setCurrentIndex(ni)
     if log[ni] then
         if index == ni then
             return;
         elseif index < ni then
-            fastForward(graph, ni);
+            fastForward(ni);
         elseif index > ni then
-            fastBackward(graph, ni);
+            fastBackward(ni);
         end
     end
 end

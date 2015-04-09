@@ -210,8 +210,9 @@ function MainScreen.new()
         graph:register(AuthorManager);
 
         -- Initialise LogReader and register observers.
-        LogReader.init(LOG_FILE, config.options.commitDelay, config.options.mode, config.options.autoplay, graph);
+        LogReader.init(LOG_FILE, config.options.commitDelay, config.options.mode, config.options.autoplay);
         LogReader.register(AuthorManager);
+        LogReader.register(graph);
 
         -- Create the camera.
         camera = Camera.new();
@@ -236,7 +237,7 @@ function MainScreen.new()
     end
 
     function self:update(dt)
-        LogReader.update(dt, graph);
+        LogReader.update(dt);
 
         graph:update(dt);
 
@@ -267,9 +268,9 @@ function MainScreen.new()
         elseif key == toggleRewind then
             LogReader.toggleRewind();
         elseif key == loadNextCommit then
-            LogReader.loadNextCommit(graph);
+            LogReader.loadNextCommit();
         elseif key == loadPrevCommit then
-            LogReader.loadPrevCommit(graph);
+            LogReader.loadPrevCommit();
         elseif key == toggleFullscreen then
             love.window.setFullscreen(not love.window.getFullscreen());
         elseif key == toggleTimeline then
@@ -282,7 +283,7 @@ function MainScreen.new()
 
         local pos = timeline:getCommitAt(x, y);
         if pos then
-            LogReader.setCurrentIndex(graph, pos);
+            LogReader.setCurrentIndex(pos);
         end
     end
 
