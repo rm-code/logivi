@@ -174,10 +174,8 @@ function Graph.new(ewidth, showLabels)
         local modifiedFile;
         if modifier == MOD_ADD then
             modifiedFile = targetNode:addFile(file, File.new(file, targetNode:getX(), targetNode:getY()));
-            -- print('ADD file [' .. file .. '] to node: ' .. path);
         elseif modifier == MOD_DELETE then
             modifiedFile = targetNode:removeFile(file);
-            -- print('DEL file [' .. file .. '] from node: ' .. path);
 
             -- Remove the node if it doesn't contain files and only
             -- has a link to its parent.
