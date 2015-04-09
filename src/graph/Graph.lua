@@ -58,6 +58,8 @@ local spritebatch = love.graphics.newSpriteBatch(fileSprite, 10000, 'stream');
 function Graph.new(ewidth, showLabels)
     local self = {};
 
+    local observers = {};
+
     local nodes = { [ROOT_FOLDER] = Node.new(nil, ROOT_FOLDER, ROOT_FOLDER, 300, 200, spritebatch); };
     local root = nodes[ROOT_FOLDER];
 
@@ -66,6 +68,17 @@ function Graph.new(ewidth, showLabels)
     -- ------------------------------------------------
     -- Local Functions
     -- ------------------------------------------------
+
+    ---
+    -- Notify observers about the event.
+    -- @param event
+    -- @param ...
+    --
+    local function notify(event, ...)
+        for i = 1, #observers do
+            observers[i]:receive(event, ...);
+        end
+    end
 
     ---
     -- @param minX - The current minimum x position.
@@ -202,6 +215,14 @@ function Graph.new(ewidth, showLabels)
     --
     function self:toggleLabels()
         showLabels = not showLabels;
+    end
+
+    ---
+    -- Register an observer.
+    -- @param observer
+    --
+    function self:register(observer)
+        observers[#observers + 1] = observer;
     end
 
     -- ------------------------------------------------
