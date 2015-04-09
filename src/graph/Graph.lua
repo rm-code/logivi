@@ -44,6 +44,8 @@ local MOD_UNMERGE = 'U';
 local MOD_UNKNOWN = 'X';
 local MOD_BROKEN_PAIRING = 'B';
 
+local EVENT_UPDATE_CENTER = 'GRAPH_UPDATE_CENTER';
+
 -- ------------------------------------------------
 -- Local Variables
 -- ------------------------------------------------
@@ -208,6 +210,8 @@ function Graph.new(ewidth, showLabels)
 
             minX, maxX, minY, maxY = updateBoundaries(minX, maxX, minY, maxY, nodeA:update(dt));
         end
+
+        notify(EVENT_UPDATE_CENTER, self:getCenter());
     end
 
     ---

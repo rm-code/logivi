@@ -47,6 +47,8 @@ local visible;
 
 local activeAuthor;
 
+local graphCenterX, graphCenterY;
+
 -- ------------------------------------------------
 -- Local Functions
 -- ------------------------------------------------
@@ -107,6 +109,8 @@ function AuthorManager.init(naliases, avatarUrls, visibility)
     avatars = grabAvatars(avatarUrls);
 
     visible = visibility;
+
+    graphCenterX, graphCenterY = 0, 0;
 end
 
 ---
@@ -149,6 +153,8 @@ function AuthorManager.receive(self, event, ...)
         AuthorManager.setCommitAuthor(...);
     elseif event == 'MODIFY_FILE' then
         AuthorManager.addFileLink(...)
+    elseif event == 'GRAPH_UPDATE_CENTER' then
+        AuthorManager.setGraphCenter(...);
     end
 end
 
@@ -166,13 +172,13 @@ end
 -- @param cx
 -- @param cy
 --
-function AuthorManager.setCommitAuthor(nemail, nauthor, cx, cy)
+function AuthorManager.setCommitAuthor(nemail, nauthor)
     if activeAuthor then activeAuthor:resetLinks() end
 
     local nickname = aliases[nemail] or addresses[nemail] or nauthor;
     if not authors[nickname] then
         addresses[nemail] = nauthor; -- Store this name as the default for this email address.
-        authors[nickname] = Author.new(nickname, avatars[nickname] or avatars['default'], cx, cy);
+        authors[nickname] = Author.new(nickname, avatars[nickname] or avatars['default'], graphCenterX, graphCenterY);
     end
 
     activeAuthor = authors[nickname];
@@ -191,6 +197,14 @@ end
 --
 function AuthorManager.isVisible()
     return visible;
+end
+
+---
+-- @param ncx
+-- @param ncy
+--
+function AuthorManager.setGraphCenter(ncx, ncy)
+    graphCenterX, graphCenterY = ncx, ncy;
 end
 
 -- ------------------------------------------------

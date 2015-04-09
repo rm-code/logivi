@@ -207,6 +207,8 @@ function MainScreen.new()
         AuthorManager.init(config.aliases, config.avatars, config.options.showAuthors);
 
         graph = Graph.new(config.options.edgeWidth, config.options.showLabels);
+        graph:register(AuthorManager);
+
         -- Initialise LogReader and register observers.
         LogReader.init(LOG_FILE, config.options.commitDelay, config.options.mode, config.options.autoplay, graph);
         LogReader.register(AuthorManager);
