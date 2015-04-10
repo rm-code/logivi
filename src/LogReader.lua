@@ -270,12 +270,11 @@ end
 -- @param logpath
 --
 function LogReader.init(logpath, delay, playmode, autoplay)
-    if not isLogFile(logpath) then
-        return {};
+    if isLogFile(logpath) then
+        log = splitCommits(readLogFile(logpath));
+    else
+        log = {};
     end
-
-    local logFile = readLogFile(logpath);
-    log = splitCommits(logFile);
 
     -- Set default values.
     index = 0;
