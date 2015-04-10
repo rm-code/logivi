@@ -14,15 +14,19 @@ return {
         -- ['author'] = 'urlToAvatar',
     },
     options = {
+        mode = 'default',       -- 'default' or 'rewind'
+        autoplay = true,
         showFileList = true,
         showAuthors = true,
+        showLabels = true,
+        showTimeline = true,
         commitDelay = 0.2,
         edgeWidth = 5,
         backgroundColor = { 0, 0, 0 },
         removeTmpFiles = false,
-        screenWidth = 800,
-        screenHeight = 600,
-        fullscreen = false,
+        screenWidth = 0,
+        screenHeight = 0,
+        fullscreen = true,
         fullscreenType = 'desktop',
         vsync = true,
         msaa = 0,
@@ -42,6 +46,15 @@ return {
 
         toggleAuthors = '1',     -- Hide / Show authors
         toggleFileList = '2',    -- Hide / Show file panel
+        toggleLabels = '3',      -- Hide / Show folder labels
+        toggleTimeline = '4',    -- Hide / Show timeline
+
+        toggleSimulation = ' ',  -- Stop / Play the simulation
+        toggleRewind = 'backspace',  -- Make simulation run backwards
+        loadNextCommit = 'right',    -- Manually load the next commit
+        loadPrevCommit = 'left',     -- Manually load the previous commit
+
+        toggleFullscreen = 'f',  -- Toggle fullscreen
     },
 };
 ]]

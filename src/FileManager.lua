@@ -34,6 +34,7 @@ local SCND_OFFSET = 50;
 -- ------------------------------------------------
 
 local extensions = {};
+local sortedList = {};
 local totalFiles = 0;
 
 -- ------------------------------------------------
@@ -41,18 +42,30 @@ local totalFiles = 0;
 -- ------------------------------------------------
 
 ---
--- Splits the extension from a file.
+-- Returns the extension of a file (or '.?' if it doesn't have one).
 -- @param fileName
 --
 local function splitExtension(fileName)
-    local tmp = fileName:reverse();
-    local pos = tmp:find('%.');
-    if pos then
-        return tmp:sub(1, pos):reverse():lower();
-    else
-        -- Prevents issues with files sans extension.
-        return '.?';
+    return fileName:match("(%.[^.]+)$") or '.?';
+end
+
+---
+-- Takes the extensions list and creates a list
+-- which is sorted by the amount of files per extension.
+-- @param extensions
+--
+local function createSortedList(extensions)
+    for k in pairs(sortedList) do
+        sortedList[k] = nil;
     end
+
+    for ext, tbl in pairs(extensions) do
+        sortedList[#sortedList + 1] = tbl;
+    end
+
+    table.sort(sortedList, function(a, b)
+        return a.amount > b.amount;
+    end);
 end
 
 -- ------------------------------------------------
@@ -64,14 +77,12 @@ end
 -- a separate counter for each used file extension.
 --
 function FileManager.draw(x, y)
-    local count = 0;
     love.graphics.print(totalFiles, x + FRST_OFFSET, y + 10);
     love.graphics.print('Files', x + SCND_OFFSET, y + 10);
-    for ext, tbl in pairs(extensions) do
-        count = count + 1;
+    for i, tbl in ipairs(sortedList) do
         love.graphics.setColor(tbl.color);
-        love.graphics.print(tbl.amount, x + FRST_OFFSET, y + 10 + count * 20);
-        love.graphics.print(ext, x + SCND_OFFSET, y + 10 + count * 20);
+        love.graphics.print(tbl.amount, x + FRST_OFFSET, y + 10 + i * 20);
+        love.graphics.print(tbl.extension, x + SCND_OFFSET, y + 10 + i * 20);
         love.graphics.setColor(255, 255, 255);
     end
 end
@@ -84,11 +95,14 @@ function FileManager.add(fileName)
     local ext = splitExtension(fileName);
     if not extensions[ext] then
         extensions[ext] = {};
+        extensions[ext].extension = ext;
         extensions[ext].amount = 0;
         extensions[ext].color = { love.math.random(0, 255), love.math.random(0, 255), love.math.random(0, 255) };
     end
     extensions[ext].amount = extensions[ext].amount + 1;
     totalFiles = totalFiles + 1;
+
+    createSortedList(extensions);
 
     return extensions[ext].color;
 end
@@ -110,6 +124,8 @@ function FileManager.remove(fileName)
     if extensions[ext].amount == 0 then
         extensions[ext] = nil;
     end
+
+    createSortedList(extensions);
 end
 
 -- ------------------------------------------------

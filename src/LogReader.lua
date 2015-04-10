@@ -22,6 +22,10 @@
 
 local TAG_AUTHOR = 'author: ';
 local TAG_DATE = 'date: ';
+local ROOT_FOLDER = 'root';
+
+local EVENT_NEW_COMMIT = 'NEW_COMMIT';
+local EVENT_CHANGED_FILE = 'LOGREADER_CHANGED_FILE';
 
 -- ------------------------------------------------
 -- Module
@@ -42,17 +46,24 @@ You can view the wiki (online) for more information on how to generate a proper 
 LoGiVi now will open the file directory in which to place the log.
 ]];
 
+local MOD_ADD = 'A';
+local MOD_DELETE = 'D';
+
+-- ------------------------------------------------
+-- Local Variables
+-- ------------------------------------------------
+
+local log;
+local index;
+local commitTimer;
+local commitDelay;
+local play;
+local rewind;
+local observers;
+
 -- ------------------------------------------------
 -- Local Functions
 -- ------------------------------------------------
-
----
--- Remove leading and trailing whitespace.
--- @param str
---
-local function trim(str)
-    return str:match("^%s*(.-)%s*$");
-end
 
 ---
 -- Remove the specified tag from the line.
@@ -72,6 +83,17 @@ local function splitLine(line, delimiter)
         return line:sub(1, pos - 1), line:sub(pos + 1);
     else
         return line;
+    end
+end
+
+---
+-- Notify observers about the event.
+-- @param event
+-- @param ...
+--
+local function notify(event, ...)
+    for i = 1, #observers do
+        observers[i]:receive(event, ...);
     end
 end
 
@@ -97,34 +119,33 @@ local function splitCommits(log)
             commits[index].date = string.format("%02d:%02d:%02d - %02d-%02d-%04d",
                 date.hour, date.min, date.sec,
                 date.day, date.month, date.year);
-        elseif line:len() ~= 0 and commits[index] then
-            -- Split the file information into the modifier, which determines
-            -- what has happened to the file since the last commit and the actual
-            -- filepath / name.
-            local modifier = line:sub(1, 1);
-            local path = line:sub(2);
-            path = trim(path);
-
-            if path:find('/') then
-                path = path:reverse();
-                local pos = path:find('/');
-
-                -- Reverse string and cut off the end to get the file's name.
-                local file = path:sub(1, pos - 1);
-                file = file:reverse();
-
-                -- Remove the file from the path and reverse it again.
-                path = path:sub(pos);
-                path = path:reverse();
-
-                commits[index][#commits[index] + 1] = { modifier = modifier, path = path, file = file };
-            else
-                commits[index][#commits[index] + 1] = { modifier = modifier, path = '', file = path };
+        elseif commits[index] then
+            -- Split the whole change line into modifier, file name and file path fields.
+            local path = line:gsub("^(%a)%s*", ''); -- Remove modifier and whitespace.
+            local file = path:match("/?([^/]+)$");  -- Get the the filename at the end.
+            path = path:gsub("/?([^/]+)$", '');     -- Remove the filename from the path.
+            if path ~= '' then
+                path = '/' .. path;
             end
+            commits[index][#commits[index] + 1] = { modifier = line:sub(1, 1), path = ROOT_FOLDER .. path, file = file };
         end
     end
 
     return commits;
+end
+
+---
+-- This function will take a git modifier and return the direct
+-- opposite of it.
+-- @param modifier
+--
+local function reverseGitStatus(modifier)
+    if modifier == MOD_ADD then
+        return MOD_DELETE;
+    elseif modifier == MOD_DELETE then
+        return MOD_ADD;
+    end
+    return modifier;
 end
 
 ---
@@ -148,25 +169,200 @@ local function isLogFile(name)
     return true;
 end
 
+---
+-- Reads the git log and returns it as a table.
+-- @param path
+--
+local function readLogFile(path)
+    local file = {};
+    for line in love.filesystem.lines(path) do
+        if line ~= '' then
+            file[#file + 1] = line;
+        end
+    end
+    return file;
+end
+
+local function applyNextCommit()
+    if index == #log then
+        return;
+    end
+    index = index + 1;
+
+    notify(EVENT_NEW_COMMIT, log[index].email, log[index].author);
+
+    for i = 1, #log[index] do
+        local change = log[index][i];
+        notify(EVENT_CHANGED_FILE, change.modifier, change.path, change.file, 'normal');
+    end
+end
+
+local function reverseCurCommit()
+    if index == 0 then
+        return;
+    end
+
+    notify(EVENT_NEW_COMMIT, log[index].email, log[index].author);
+
+    for i = 1, #log[index] do
+        local change = log[index][i];
+        notify(EVENT_CHANGED_FILE, reverseGitStatus(change.modifier), change.path, change.file, 'normal');
+    end
+
+    index = index - 1;
+end
+
+---
+-- Fast forwards the graph from the current position to the
+-- target position. We ignore author assigments and modifications
+-- and only are interested in additions and deletions.
+-- @param to -- The index of the commit to go to.
+--
+local function fastForward(to)
+    -- We start at index + 1 because the current index has already
+    -- been loaded (or it was 0 and therefore nonrelevant anyway).
+    for i = index + 1, to do
+        index = i; -- Update the index.
+        local commit = log[index];
+        for j = 1, #commit do
+            local change = commit[j];
+            -- Ignore modifications we just need to know about additions and deletions.
+            if change.modifier ~= 'M' then
+                notify(EVENT_CHANGED_FILE, change.modifier, change.path, change.file, 'fast');
+            end
+        end
+    end
+end
+
+---
+-- Quickly rewinds the graph from the current position to the
+-- target position. We ignore author assigments and modifications
+-- and only are interested in additions and deletions.
+-- @param to -- The index of the commit to go to.
+--
+local function fastBackward(to)
+    -- We start at the current index, because it has already been loaded
+    -- and we have to reverse it too.
+    for i = index, to, -1 do
+        index = i;
+
+        -- When we have reached the target commit, we update the index, but
+        -- don't reverse the changes it made.
+        if index == to then break end
+
+        local commit = log[index];
+        for j = #commit, 1, -1 do
+            local change = commit[j];
+            -- Ignore modifications we just need to know about additions and deletions.
+            if change.modifier ~= 'M' then
+                notify(EVENT_CHANGED_FILE, reverseGitStatus(change.modifier), change.path, change.file, 'fast');
+            end
+        end
+    end
+end
+
 -- ------------------------------------------------
 -- Public Functions
 -- ------------------------------------------------
 
 ---
 -- Loads the file and stores it line for line in a lua table.
--- @param name
+-- @param logpath
 --
-function LogReader.loadLog(name)
-    if not isLogFile(name) then
-        return {};
+function LogReader.init(logpath, delay, playmode, autoplay)
+    if isLogFile(logpath) then
+        log = splitCommits(readLogFile(logpath));
+    else
+        log = {};
     end
 
-    local log = {};
-    for line in love.filesystem.lines(name) do
-        log[#log + 1] = line;
+    -- Set default values.
+    index = 0;
+    if playmode == 'default' then
+        rewind = false;
+    elseif playmode == 'rewind' then
+        fastForward(#log);
+        rewind = true;
+    else
+        error("Unsupported playmode '" .. playmode .. "' - please use either 'default' or 'rewind'");
     end
+    commitTimer = 0;
+    commitDelay = delay;
+    play = autoplay;
 
-    return splitCommits(log);
+    observers = {};
+end
+
+function LogReader.update(dt)
+    if not play then return end
+
+    commitTimer = commitTimer + dt;
+    if commitTimer > commitDelay then
+        if rewind then
+            reverseCurCommit();
+        else
+            applyNextCommit();
+        end
+        commitTimer = 0;
+    end
+end
+
+function LogReader.toggleSimulation()
+    play = not play;
+end
+
+function LogReader.toggleRewind()
+    rewind = not rewind;
+end
+
+function LogReader.loadNextCommit()
+    play = false;
+    applyNextCommit();
+end
+
+function LogReader.loadPrevCommit()
+    play = false;
+    reverseCurCommit();
+end
+
+---
+-- Sets the reader to a new commit index. If the
+-- index is the same as the current one, the input is
+-- ignored. If the target commit is smaller (aka older)
+-- as the current one we fast-rewind the graph to that
+-- position. If the target commit is bigger than the 
+-- current one, we fast-forward instead.
+--
+function LogReader.setCurrentIndex(ni)
+    if log[ni] then
+        if index == ni then
+            return;
+        elseif index < ni then
+            fastForward(ni);
+        elseif index > ni then
+            fastBackward(ni);
+        end
+    end
+end
+
+function LogReader.getTotalCommits()
+    return #log;
+end
+
+function LogReader.getCurrentIndex()
+    return index;
+end
+
+function LogReader.getCurrentDate()
+    return index ~= 0 and log[index].date or '';
+end
+
+---
+-- Register an observer.
+-- @param observer
+--
+function LogReader.register(observer)
+    observers[#observers + 1] = observer;
 end
 
 -- ------------------------------------------------

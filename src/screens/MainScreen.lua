@@ -28,6 +28,7 @@ local AuthorManager = require('src.AuthorManager');
 local FileManager = require('src.FileManager');
 local Graph = require('src.graph.Graph');
 local Panel = require('src.ui.Panel');
+local Timeline = require('src.ui.Timeline');
 
 -- ------------------------------------------------
 -- Constants
@@ -57,6 +58,15 @@ local camera_w;
 
 local toggleAuthors;
 local toggleFilePanel;
+local toggleLabels;
+local toggleTimeline;
+
+local toggleSimulation;
+local toggleRewind;
+local loadNextCommit;
+local loadPrevCommit;
+
+local toggleFullscreen;
 
 -- ------------------------------------------------
 -- Module
@@ -71,14 +81,7 @@ local MainScreen = {};
 function MainScreen.new()
     local self = Screen.new();
 
-    local commits;
-    local index = 0;
-    local date = '';
-    local previousAuthor;
-    local commitTimer = 0;
     local graph;
-
-    local commitDelay;
 
     local camera;
     local cx, cy;
@@ -86,31 +89,11 @@ function MainScreen.new()
     local zoom = 1;
 
     local filePanel;
+    local timeline;
 
     -- ------------------------------------------------
     -- Private Functions
     -- ------------------------------------------------
-
-    local function nextCommit()
-        if index == #commits then
-            return;
-        end
-        index = index + 1;
-
-        local commitAuthor = AuthorManager.add(commits[index].email, commits[index].author, graph:getCenter());
-        previousAuthor = commitAuthor; -- Store author so we can reset him when the next commit is loaded.
-
-        date = commits[index].date;
-        for i = 1, #commits[index] do
-            local change = commits[index][i];
-
-            -- Modify the graph based on the git file status we read from the log.
-            local file = graph:applyGitStatus(change.modifier, change.path, change.file);
-
-            -- Add a link from the file to the author of the commit.
-            commitAuthor:addLink(file);
-        end
-    end
 
     ---
     -- Processes camera related controls and updates the camera.
@@ -165,6 +148,34 @@ function MainScreen.new()
         return cx, cy, ox, oy;
     end
 
+    ---
+    -- Assigns keybindings loaded from the config file to a
+    -- local variable for faster access.
+    -- @param config
+    --
+    local function assignKeyBindings(config)
+        camera_zoomIn = config.keyBindings.camera_zoomIn;
+        camera_zoomOut = config.keyBindings.camera_zoomOut;
+        camera_rotateL = config.keyBindings.camera_rotateL;
+        camera_rotateR = config.keyBindings.camera_rotateR;
+        camera_n = config.keyBindings.camera_n;
+        camera_s = config.keyBindings.camera_s;
+        camera_e = config.keyBindings.camera_e;
+        camera_w = config.keyBindings.camera_w;
+
+        toggleAuthors = config.keyBindings.toggleAuthors;
+        toggleFilePanel = config.keyBindings.toggleFileList;
+        toggleLabels = config.keyBindings.toggleLabels;
+        toggleTimeline = config.keyBindings.toggleTimeline;
+
+        toggleSimulation = config.keyBindings.toggleSimulation;
+        toggleRewind = config.keyBindings.toggleRewind;
+        loadNextCommit = config.keyBindings.loadNextCommit;
+        loadPrevCommit = config.keyBindings.loadPrevCommit;
+
+        toggleFullscreen = config.keyBindings.toggleFullscreen;
+    end
+
     local function setWindowMode(options)
         local w, h, flags = love.window.getMode();
 
@@ -186,20 +197,8 @@ function MainScreen.new()
     function self:init()
         local config = ConfigReader.init();
 
-        commitDelay = config.options.commitDelay;
-
-        -- Load key bindings.
-        camera_zoomIn = config.keyBindings.camera_zoomIn;
-        camera_zoomOut = config.keyBindings.camera_zoomOut;
-        camera_rotateL = config.keyBindings.camera_rotateL;
-        camera_rotateR = config.keyBindings.camera_rotateR;
-        camera_n = config.keyBindings.camera_n;
-        camera_s = config.keyBindings.camera_s;
-        camera_e = config.keyBindings.camera_e;
-        camera_w = config.keyBindings.camera_w;
-
-        toggleAuthors = config.keyBindings.toggleAuthors;
-        toggleFilePanel = config.keyBindings.toggleFileList;
+        -- Load keybindings.
+        assignKeyBindings(config);
 
         -- Set the background color based on the option in the config file.
         love.graphics.setBackgroundColor(config.options.backgroundColor);
@@ -207,9 +206,13 @@ function MainScreen.new()
 
         AuthorManager.init(config.aliases, config.avatars, config.options.showAuthors);
 
-        commits = LogReader.loadLog(LOG_FILE);
+        graph = Graph.new(config.options.edgeWidth, config.options.showLabels);
+        graph:register(AuthorManager);
 
-        graph = Graph.new(config.options.edgeWidth);
+        -- Initialise LogReader and register observers.
+        LogReader.init(LOG_FILE, config.options.commitDelay, config.options.mode, config.options.autoplay);
+        LogReader.register(AuthorManager);
+        LogReader.register(graph);
 
         -- Create the camera.
         camera = Camera.new();
@@ -219,6 +222,8 @@ function MainScreen.new()
         -- Create panel.
         filePanel = Panel.new(0, 0, 150, 400);
         filePanel:setVisible(config.options.showFileList);
+
+        timeline = Timeline.new(config.options.showTimeline, LogReader.getTotalCommits(), LogReader.getCurrentDate());
     end
 
     function self:draw()
@@ -228,23 +233,19 @@ function MainScreen.new()
         end);
 
         filePanel:draw(FileManager.draw);
+        timeline:draw();
     end
 
     function self:update(dt)
-        commitTimer = commitTimer + dt;
-        if commitTimer > commitDelay then
-            -- Reset links of the previous author.
-            if previousAuthor then
-                previousAuthor:resetLinks();
-            end
-            nextCommit();
-            commitTimer = 0;
-        end
+        LogReader.update(dt);
 
         graph:update(dt);
 
         AuthorManager.update(dt);
         filePanel:update(dt);
+        timeline:update(dt);
+        timeline:setCurrentCommit(LogReader.getCurrentIndex());
+        timeline:setCurrentDate(LogReader.getCurrentDate());
 
         cx, cy, ox, oy = updateCamera(cx, cy, ox, oy, dt);
     end
@@ -260,11 +261,30 @@ function MainScreen.new()
             AuthorManager.setVisible(not AuthorManager.isVisible());
         elseif key == toggleFilePanel then
             filePanel:setVisible(not filePanel:isVisible());
+        elseif key == toggleLabels then
+            graph:toggleLabels();
+        elseif key == toggleSimulation then
+            LogReader.toggleSimulation();
+        elseif key == toggleRewind then
+            LogReader.toggleRewind();
+        elseif key == loadNextCommit then
+            LogReader.loadNextCommit();
+        elseif key == loadPrevCommit then
+            LogReader.loadPrevCommit();
+        elseif key == toggleFullscreen then
+            love.window.setFullscreen(not love.window.getFullscreen());
+        elseif key == toggleTimeline then
+            timeline:toggle();
         end
     end
 
     function self:mousepressed(x, y, b)
         filePanel:mousepressed(x, y, b);
+
+        local pos = timeline:getCommitAt(x, y);
+        if pos then
+            LogReader.setCurrentIndex(pos);
+        end
     end
 
     function self:mousereleased(x, y, b)

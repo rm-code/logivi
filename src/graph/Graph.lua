@@ -33,7 +33,7 @@ local Graph = {};
 -- Constants
 -- ------------------------------------------------
 
-local ROOT = 'root/';
+local ROOT_FOLDER = 'root';
 local MOD_ADD = 'A';
 local MOD_COPY = 'C';
 local MOD_DELETE = 'D';
@@ -43,6 +43,9 @@ local MOD_CHANGE = 'T';
 local MOD_UNMERGE = 'U';
 local MOD_UNKNOWN = 'X';
 local MOD_BROKEN_PAIRING = 'B';
+
+local EVENT_UPDATE_CENTER = 'GRAPH_UPDATE_CENTER';
+local EVENT_UPDATE_FILE = 'GRAPH_UPDATE_FILE';
 
 -- ------------------------------------------------
 -- Local Variables
@@ -55,17 +58,30 @@ local spritebatch = love.graphics.newSpriteBatch(fileSprite, 10000, 'stream');
 -- Constructor
 -- ------------------------------------------------
 
-function Graph.new(ewidth)
+function Graph.new(ewidth, showLabels)
     local self = {};
 
-    local nodes = { [ROOT] = Node.new(nil, ROOT, 300, 200, spritebatch); };
-    local root = nodes[ROOT];
+    local observers = {};
+
+    local nodes = { [ROOT_FOLDER] = Node.new(nil, ROOT_FOLDER, ROOT_FOLDER, 300, 200, spritebatch); };
+    local root = nodes[ROOT_FOLDER];
 
     local minX, maxX, minY, maxY = root:getX(), root:getX(), root:getY(), root:getY();
 
     -- ------------------------------------------------
     -- Local Functions
     -- ------------------------------------------------
+
+    ---
+    -- Notify observers about the event.
+    -- @param event
+    -- @param ...
+    --
+    local function notify(event, ...)
+        for i = 1, #observers do
+            observers[i]:receive(event, ...);
+        end
+    end
 
     ---
     -- @param minX - The current minimum x position.
@@ -87,16 +103,16 @@ function Graph.new(ewidth)
     -- @param x
     -- @param y
     --
-    local function addNode(parentPath, nodePath)
+    local function addNode(parentPath, nodePath, folder)
         if not nodes[nodePath] then
             local parent = nodes[parentPath];
-            nodes[nodePath] = Node.new(parent, nodePath,
+            nodes[nodePath] = Node.new(parent, nodePath, folder,
                 parent:getX() + love.math.random(5, 40) * (love.math.random(0, 1) == 0 and -1 or 1),
                 parent:getY() + love.math.random(5, 40) * (love.math.random(0, 1) == 0 and -1 or 1),
                 spritebatch);
             parent:addChild(nodePath, nodes[nodePath]);
         end
-        return nodes[nodePath];
+        return nodes[nodePath], nodePath;
     end
 
     ---
@@ -108,33 +124,15 @@ function Graph.new(ewidth)
     -- @param path
     --
     local function getNode(path)
-        -- If we already have this path return it.
         if nodes[path] then
             return nodes[path];
         else
-            local lastPos = 1;
             local node;
-            while path:find('/') do
-                local pos = path:find('/', lastPos);
-
-                -- No more folders.
-                if not pos then
-                    break;
+            local ppath = ROOT_FOLDER;
+            for part in path:gmatch('[^/]+') do
+                if part ~= ROOT_FOLDER then
+                    node, ppath = addNode(ppath, ppath .. '/' .. part, part);
                 end
-
-                -- Get the parent folder from the path. The topmost folder
-                -- will always have 'root' as a parent.
-                local parentPath = path:sub(1, lastPos - 1);
-                if parentPath == '' then
-                    parentPath = ROOT;
-                end
-
-                -- Extract the folder path.
-                local folderPath = path:sub(1, pos);
-                lastPos = pos + 1;
-
-                -- Add the folder node to our graph.
-                node = addNode(parentPath, folderPath);
             end
             return node;
         end
@@ -150,20 +148,18 @@ function Graph.new(ewidth)
         if targetNode:getFileCount() == 0 and targetNode:getChildCount() == 0 then
             -- print('DEL node [' .. path .. ']');
             local parent = nodes[path]:getParent();
-            parent:removeChild(path);
-            nodes[path] = nil;
+            if parent then
+                parent:removeChild(path);
+                nodes[path] = nil;
 
-            -- Recursively check if we also need to remove the parent.
-            removeDeadNode(parent, parent:getName());
+                -- Recursively check if we also need to remove the parent.
+                removeDeadNode(parent, parent:getPath());
+            end
         end
     end
 
-    -- ------------------------------------------------
-    -- Public Functions
-    -- ------------------------------------------------
-
     ---
-    -- This function will take a git modifer and apply it to a file.
+    -- This function will take a git modifier and apply it to a file.
     -- If it encounters the 'A' modifier it will create a file at the
     -- specified path. If it encounters the 'D' modifier it will remove
     -- the file from the path. Nodes will be created and removed based
@@ -172,30 +168,39 @@ function Graph.new(ewidth)
     -- @param path
     -- @param file
     --
-    function self:applyGitStatus(modifier, path, file)
-        if path == '' then path = ROOT; end
-
+    local function applyGitModifier(modifier, path, file, mode)
         local targetNode = getNode(path);
 
+        local modifiedFile;
         if modifier == MOD_ADD then
-            return targetNode:addFile(file, File.new(file, targetNode:getX(), targetNode:getY()));
-            -- print('ADD file [' .. file .. '] to node: ' .. path);
+            modifiedFile = targetNode:addFile(file, File.new(file, targetNode:getX(), targetNode:getY()));
         elseif modifier == MOD_DELETE then
-            local tmp = targetNode:removeFile(file);
-            -- print('DEL file [' .. file .. '] from node: ' .. path);
+            modifiedFile = targetNode:removeFile(file);
 
             -- Remove the node if it doesn't contain files and only
             -- has a link to its parent.
             removeDeadNode(targetNode, path);
-            return tmp;
         elseif modifier == MOD_MODIFY then
-            return targetNode:modifyFile(file);
+            modifiedFile = targetNode:modifyFile(file);
+        end
+
+        -- We only notify observers if the graph isn't modifed in fast forward / rewind mode.
+        if mode == 'normal' then
+            notify(EVENT_UPDATE_FILE, modifiedFile);
         end
     end
 
+    -- ------------------------------------------------
+    -- Public Functions
+    -- ------------------------------------------------
+
     function self:draw(camrot)
-        root:draw(ewidth, camrot);
+        root:draw(ewidth);
         love.graphics.draw(spritebatch);
+
+        if showLabels then
+            root:drawLabel(camrot);
+        end
     end
 
     function self:update(dt)
@@ -204,18 +209,38 @@ function Graph.new(ewidth)
         spritebatch:clear();
         for _, nodeA in pairs(nodes) do
             for _, nodeB in pairs(nodes) do
-                if nodeA ~= nodeB then
-                    if nodeA:isConnectedTo(nodeB) then
-                        nodeA:attract(nodeB);
-                    end
-                    nodeA:repel(nodeB);
-                end
+                nodeA:calculateForces(nodeB);
             end
 
-            nodeA:damp(0.95);
-            nodeA:update(dt);
-            local nx, ny = nodeA:move(dt);
-            minX, maxX, minY, maxY = updateBoundaries(minX, maxX, minY, maxY, nx, ny);
+            minX, maxX, minY, maxY = updateBoundaries(minX, maxX, minY, maxY, nodeA:update(dt));
+        end
+
+        notify(EVENT_UPDATE_CENTER, self:getCenter());
+    end
+
+    ---
+    -- Activate / Deactivate folder labels.
+    --
+    function self:toggleLabels()
+        showLabels = not showLabels;
+    end
+
+    ---
+    -- Register an observer.
+    -- @param observer
+    --
+    function self:register(observer)
+        observers[#observers + 1] = observer;
+    end
+
+    ---
+    -- Receives a notification from an observable.
+    -- @param event
+    -- @param ...
+    --
+    function self:receive(event, ...)
+        if event == 'LOGREADER_CHANGED_FILE' then
+            applyGitModifier(...)
         end
     end
 

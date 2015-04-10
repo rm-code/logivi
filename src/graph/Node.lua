@@ -37,11 +37,13 @@ local FORCE_CHARGE = 10000000;
 local LABEL_FONT = love.graphics.newFont('res/fonts/SourceCodePro-Medium.otf', 20);
 local DEFAULT_FONT = love.graphics.newFont(12);
 
+local DAMPING_FACTOR = 0.95;
+
 -- ------------------------------------------------
 -- Constructor
 -- ------------------------------------------------
 
-function Node.new(parent, name, x, y, spritebatch)
+function Node.new(parent, path, name, x, y, spritebatch)
     local self = {};
 
     -- ------------------------------------------------
@@ -163,6 +165,18 @@ function Node.new(parent, name, x, y, spritebatch)
         return maxradius;
     end
 
+    ---
+    -- Update the node's position based on the calculated
+    -- velocity and acceleration.
+    --
+    local function move(dt)
+        velX = (velX + accX * dt * speed) * DAMPING_FACTOR;
+        velY = (velY + accY * dt * speed) * DAMPING_FACTOR;
+        posX = posX + velX;
+        posY = posY + velY;
+        accX, accY = 0, 0;
+    end
+
     -- ------------------------------------------------
     -- Public Functions
     -- ------------------------------------------------
@@ -178,28 +192,39 @@ function Node.new(parent, name, x, y, spritebatch)
         childCount = childCount - 1;
     end
 
-    function self:draw(ewidth, camrot)
-        love.graphics.setFont(LABEL_FONT);
-        love.graphics.print(name, posX, posY, -camrot, 1, 1, -radius, -radius);
-        love.graphics.setFont(DEFAULT_FONT);
+    function self:draw(ewidth)
         for _, node in pairs(children) do
             love.graphics.setColor(255, 255, 255, 55);
             love.graphics.setLineWidth(ewidth);
             love.graphics.line(posX, posY, node:getX(), node:getY());
             love.graphics.setLineWidth(1);
             love.graphics.setColor(255, 255, 255, 255);
-            node:draw(ewidth, camrot);
+            node:draw(ewidth);
+        end
+    end
+
+    function self:drawLabel(camrot)
+        love.graphics.setFont(LABEL_FONT);
+        love.graphics.print(name, posX, posY, -camrot, 1, 1, -radius, -radius);
+        love.graphics.setFont(DEFAULT_FONT);
+
+        for _, node in pairs(children) do
+            love.graphics.setFont(LABEL_FONT);
+            love.graphics.print(name, posX, posY, -camrot, 1, 1, -radius, -radius);
+            love.graphics.setFont(DEFAULT_FONT);
+            node:drawLabel(camrot);
         end
     end
 
     function self:update(dt)
-        -- Update files.
+        move(dt);
         for _, file in pairs(files) do
             file:update(dt);
             file:setPosition(posX, posY);
             spritebatch:setColor(file:getColor());
             spritebatch:add(file:getX(), file:getY(), 0, SPRITE_SIZE, SPRITE_SIZE, SPRITE_OFFSET, SPRITE_OFFSET);
         end
+        return posX, posY;
     end
 
     function self:addFile(name, file)
@@ -209,7 +234,7 @@ function Node.new(parent, name, x, y, spritebatch)
         end
 
         files[name] = file;
-        files[name]:setModified(true);
+        files[name]:modify('add');
         fileCount = fileCount + 1;
 
         -- Update layout of the files.
@@ -226,7 +251,7 @@ function Node.new(parent, name, x, y, spritebatch)
         -- Store a reference to the file which can be returned
         -- after the file has been removed from the table.
         local tmp = files[name];
-        files[name]:setModified(true);
+        files[name]:modify('del');
         files[name]:remove();
         files[name] = nil;
         fileCount = fileCount - 1;
@@ -242,64 +267,33 @@ function Node.new(parent, name, x, y, spritebatch)
             return;
         end
 
-        files[name]:setModified(true);
+        files[name]:modify('mod');
         return files[name];
     end
 
     ---
-    -- Apply the calculated acceleration to the node.
+    -- Calculate and apply attraction and repulsion forces.
+    -- @param node
     --
-    function self:move(dt)
-        velX = velX + accX * dt * speed;
-        velY = velY + accY * dt * speed;
+    function self:calculateForces(node)
+        if self == node then return end
 
-        posX = posX + velX;
-        posY = posY + velY;
-
-        accX, accY = 0, 0;
-        return posX, posY;
-    end
-
-    function self:damp(f)
-        velX, velY = velX * f, velY * f;
-    end
-
-    ---
-    -- Attracts the node towards nodeB based on a spring force.
-    -- @param nodeB
-    --
-    function self:attract(nodeB)
-        local dx, dy = posX - nodeB:getX(), posY - nodeB:getY();
+        -- Calculate distance vector and normalise it.
+        local dx, dy = posX - node:getX(), posY - node:getY();
         local distance = math.sqrt(dx * dx + dy * dy);
-
-        -- Normalise vector.
         dx = dx / distance;
         dy = dy / distance;
 
-        -- Calculate spring force and apply it.
-        local force = FORCE_SPRING * distance;
-        applyForce(dx * force, dy * force);
-    end
+        -- Attract to node if they are connected.
+        local strength;
+        if self:isConnectedTo(node) then
+            strength = FORCE_SPRING * distance;
+            applyForce(dx * strength, dy * strength);
+        end
 
-    ---
-    -- Repels the node from nodeB.
-    -- @param nodeB
-    --
-    function self:repel(nodeB)
-        -- Calculate distance vector.
-        local dx, dy = posX - nodeB:getX(), posY - nodeB:getY();
-        local distance = math.sqrt(dx * dx + dy * dy);
-
-        -- Normalise vector.
-        dx = dx / distance;
-        dy = dy / distance;
-
-        -- Calculate force's strength and apply it to the vector.
-        local strength = FORCE_CHARGE * ((self:getMass() * nodeB:getMass()) / (distance * distance));
-        dx = dx * strength;
-        dy = dy * strength;
-
-        applyForce(dx, dy);
+        -- Repel unconnected nodes.
+        strength = FORCE_CHARGE * ((self:getMass() * node:getMass()) / (distance * distance));
+        applyForce(dx * strength, dy * strength);
     end
 
     -- ------------------------------------------------
@@ -326,8 +320,8 @@ function Node.new(parent, name, x, y, spritebatch)
         return posY;
     end
 
-    function self:getName()
-        return name;
+    function self:getPath()
+        return path;
     end
 
     function self:getParent()
@@ -339,14 +333,12 @@ function Node.new(parent, name, x, y, spritebatch)
     end
 
     function self:isConnectedTo(node)
-        if parent == node then
-            return true;
-        end
         for _, child in pairs(children) do
             if node == child then
                 return true;
             end
         end
+        return parent == node;
     end
 
     return self;

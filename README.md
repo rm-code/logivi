@@ -1,6 +1,6 @@
 # LoGiVi
 
-LoGiVi the "lovely Git-Viewer" is a git-repository visualisation tool inspired by [Gource](https://code.google.com/p/gource/). It was written from scratch using [Lua](http://www.lua.org/) and the [LÖVE](https://love2d.org/) framework.
+LoGiVi is a git-repository visualisation tool inspired by [Gource](https://code.google.com/p/gource/) and __currently in development__. It was written from scratch using [Lua](http://www.lua.org/) and the [LÖVE](https://love2d.org/) framework.
 
 # Instructions
 LoGiVi can't read from a .git repository directly ([yet](https://github.com/rm-code/logivi/issues/3)). Instead you will have to create a git-log which needs to have a specific format. Please use this command to create the file:

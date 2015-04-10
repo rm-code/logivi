@@ -45,6 +45,10 @@ local aliases;
 local addresses;
 local visible;
 
+local activeAuthor;
+
+local graphCenterX, graphCenterY;
+
 -- ------------------------------------------------
 -- Local Functions
 -- ------------------------------------------------
@@ -105,6 +109,8 @@ function AuthorManager.init(naliases, avatarUrls, visibility)
     avatars = grabAvatars(avatarUrls);
 
     visible = visibility;
+
+    graphCenterX, graphCenterY = 0, 0;
 end
 
 ---
@@ -129,27 +135,53 @@ function AuthorManager.update(dt)
 end
 
 ---
--- Adds a new author to the list using his name as a key. Before storing the
--- author the function checks the config file to see if an alias is associated
--- with the specific email address. If it is, it will use the alias and ignore
--- the name found in the log file.
+-- Adds a link from the current author to a file.
+-- @param file
+--
+function AuthorManager.addFileLink(file)
+    activeAuthor:addLink(file)
+end
+
+---
+-- Receives a notification from an observable.
+-- @param self
+-- @param event
+-- @param ...
+--
+function AuthorManager.receive(self, event, ...)
+    if event == 'NEW_COMMIT' then
+        AuthorManager.setCommitAuthor(...);
+    elseif event == 'GRAPH_UPDATE_FILE' then
+        AuthorManager.addFileLink(...)
+    elseif event == 'GRAPH_UPDATE_CENTER' then
+        AuthorManager.setGraphCenter(...);
+    end
+end
+
+---
+-- Sets the author of the currently processed commit and resets the previously
+-- active one. If he doesn't exist yet he will be created and added to the list
+-- of authors for. Before storing the author the function checks the config file
+-- to see if an alias is associated with the specific email address.
+-- If it is, it will use the alias and ignore the name found in the log file.
 -- If there isn't an alias, it will check if there already is another nickname
--- stored for that email address. If there isn't, it will use the nickname
--- found in the log.
+-- stored for that email address. If there isn't, it will use the nickname found
+-- in the log.
 -- @param nemail
 -- @param nauthor
 -- @param cx
 -- @param cy
 --
-function AuthorManager.add(nemail, nauthor, cx, cy)
-    local nickname = aliases[nemail] or addresses[nemail] or nauthor;
+function AuthorManager.setCommitAuthor(nemail, nauthor)
+    if activeAuthor then activeAuthor:resetLinks() end
 
+    local nickname = aliases[nemail] or addresses[nemail] or nauthor;
     if not authors[nickname] then
         addresses[nemail] = nauthor; -- Store this name as the default for this email address.
-        authors[nickname] = Author.new(nickname, avatars[nickname] or avatars['default'], cx, cy);
+        authors[nickname] = Author.new(nickname, avatars[nickname] or avatars['default'], graphCenterX, graphCenterY);
     end
 
-    return authors[nickname];
+    activeAuthor = authors[nickname];
 end
 
 ---
@@ -165,6 +197,14 @@ end
 --
 function AuthorManager.isVisible()
     return visible;
+end
+
+---
+-- @param ncx
+-- @param ncy
+--
+function AuthorManager.setGraphCenter(ncx, ncy)
+    graphCenterX, graphCenterY = ncx, ncy;
 end
 
 -- ------------------------------------------------
