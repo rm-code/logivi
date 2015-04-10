@@ -22,6 +22,7 @@
 
 local Screen = require('lib.screenmanager.Screen');
 local LogReader = require('src.LogReader');
+local LogLoader = require('src.LogLoader');
 local Camera = require('src.ui.CamWrapper');
 local ConfigReader = require('src.conf.ConfigReader');
 local AuthorManager = require('src.AuthorManager');
@@ -30,12 +31,6 @@ local Graph = require('src.graph.Graph');
 local Panel = require('src.ui.Panel');
 local Timeline = require('src.ui.Timeline');
 local InputHandler = require('src.InputHandler');
-
--- ------------------------------------------------
--- Constants
--- ------------------------------------------------
-
-local LOG_FILE = 'log.txt';
 
 -- ------------------------------------------------
 -- Controls
@@ -137,8 +132,11 @@ function MainScreen.new()
         graph:register(AuthorManager);
         graph:register(camera);
 
+        -- Intitialise LogLoader. Returns true if at least one log has been found.
+        local success = LogLoader.init();
+
         -- Initialise LogReader and register observers.
-        LogReader.init(LOG_FILE, config.options.commitDelay, config.options.mode, config.options.autoplay);
+        LogReader.init(success and LogLoader.load('log') or {}, config.options.commitDelay, config.options.mode, config.options.autoplay);
         LogReader.register(AuthorManager);
         LogReader.register(graph);
 
