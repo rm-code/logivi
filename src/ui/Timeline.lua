@@ -50,7 +50,7 @@ function Timeline.new(v, totalCommits, date)
     -- @param x - The clicked x-position
     --
     local function calculateCommitIndex(x)
-        return math.floor(totalCommits / (TOTAL_STEPS / (x / stepWidth)));
+        return math.floor(totalCommits / (TOTAL_STEPS / math.floor((x / stepWidth))));
     end
 
     ---
