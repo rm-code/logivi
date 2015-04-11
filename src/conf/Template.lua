@@ -47,17 +47,17 @@ return {
         camera_zoomIn  = {'+', '='},  -- Zoom in
         camera_zoomOut = '-',         -- Zoom out
 
-        toggleAuthors = '1',     -- Hide / Show authors
-        toggleFileList = '2',    -- Hide / Show file panel
-        toggleLabels = '3',      -- Hide / Show folder labels
-        toggleTimeline = '4',    -- Hide / Show timeline
+        toggleAuthors = '1',          -- Hide / Show authors
+        toggleFileList = '2',         -- Hide / Show file panel
+        toggleLabels = '3',           -- Hide / Show folder labels
+        toggleTimeline = '4',         -- Hide / Show timeline
 
-        toggleSimulation = ' ',  -- Stop / Play the simulation
-        toggleRewind = 'backspace',  -- Make simulation run backwards
-        loadNextCommit = 'right',    -- Manually load the next commit
-        loadPrevCommit = 'left',     -- Manually load the previous commit
+        toggleSimulation = ' ',       -- Stop / Play the simulation
+        toggleRewind = 'backspace',   -- Make simulation run backwards
+        loadNextCommit = 'right',     -- Manually load the next commit
+        loadPrevCommit = 'left',      -- Manually load the previous commit
 
-        toggleFullscreen = 'f',  -- Toggle fullscreen
+        toggleFullscreen = 'f',       -- Toggle fullscreen
     },
 };
 ]]
