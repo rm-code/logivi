@@ -13,6 +13,9 @@ return {
     avatars = {
         -- ['author'] = 'urlToAvatar',
     },
+
+    repository = 'example',
+
     options = {
         mode = 'default',       -- 'default' or 'rewind'
         autoplay = true,

@@ -136,7 +136,7 @@ function MainScreen.new()
         local success = LogLoader.init();
 
         -- Initialise LogReader and register observers.
-        LogReader.init(success and LogLoader.load('log') or {}, config.options.commitDelay, config.options.mode, config.options.autoplay);
+        LogReader.init(success and LogLoader.load(config.repository) or {}, config.options.commitDelay, config.options.mode, config.options.autoplay);
         LogReader.register(AuthorManager);
         LogReader.register(graph);
 
