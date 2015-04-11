@@ -21,8 +21,8 @@
 --==================================================================================================
 
 local Screen = require('lib.screenmanager.Screen');
-local LogReader = require('src.LogReader');
-local LogLoader = require('src.LogLoader');
+local LogReader = require('src.logfactory.LogReader');
+local LogLoader = require('src.logfactory.LogLoader');
 local Camera = require('src.ui.CamWrapper');
 local ConfigReader = require('src.conf.ConfigReader');
 local AuthorManager = require('src.AuthorManager');
