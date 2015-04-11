@@ -58,6 +58,8 @@ return {
         loadPrevCommit = 'left',      -- Manually load the previous commit
 
         toggleFullscreen = 'f',       -- Toggle fullscreen
+
+        exit = 'escape',              -- Exit logivi
     },
 };
 ]]

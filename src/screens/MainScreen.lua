@@ -53,6 +53,8 @@ local loadPrevCommit;
 
 local toggleFullscreen;
 
+local exit;
+
 -- ------------------------------------------------
 -- Module
 -- ------------------------------------------------
@@ -92,6 +94,8 @@ function MainScreen.new()
         loadPrevCommit = config.keyBindings.loadPrevCommit;
 
         toggleFullscreen = config.keyBindings.toggleFullscreen;
+
+        exit = config.keyBindings.exit;
     end
 
     local function setWindowMode(options)
@@ -194,6 +198,8 @@ function MainScreen.new()
             love.window.setFullscreen(not love.window.getFullscreen());
         elseif InputHandler.isPressed(key, toggleTimeline) then
             timeline:toggle();
+        elseif InputHandler.isPressed(key, exit) then
+            love.event.quit();
         end
     end
 
