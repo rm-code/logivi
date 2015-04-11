@@ -96,6 +96,41 @@ function MainScreen.new()
     -- ------------------------------------------------
 
     ---
+    -- Determines if a key constant or if any in a table of key constants are down.
+    -- @param constant - The key constant or table of constants.
+    --
+    local function isKeyDown(constant)
+        if type(constant) == "table" then
+            for _, keyToCheck in ipairs(constant) do
+                if love.keyboard.isDown(keyToCheck) then
+                    return true;
+                end
+            end
+            return false;
+        else
+            return love.keyboard.isDown(constant);
+        end
+    end
+
+    ---
+    -- Determines if a key constant or if any in a table of key constants was pressed.
+    -- @param key      - The key to check for.
+    -- @param constant - The key constant or table of constants.
+    --
+    local function checkKey(key, constant)
+        if type(constant) == "table" then
+            for _, keyToCheck in ipairs(constant) do
+                if key == keyToCheck then
+                    return true;
+                end
+            end
+            return false;
+        else
+            return key == constant;
+        end
+    end
+
+    ---
     -- Processes camera related controls and updates the camera.
     -- @param cx - The current x-position the camera is looking at.
     -- @param cy - The current y-position the camera is looking at.
@@ -105,33 +140,33 @@ function MainScreen.new()
     --
     local function updateCamera(cx, cy, ox, oy, dt)
         -- Zoom.
-        if love.keyboard.isDown(camera_zoomIn) then
+        if isKeyDown(camera_zoomIn) then
             zoom = zoom + CAMERA_ZOOM_SPEED * dt;
-        elseif love.keyboard.isDown(camera_zoomOut) then
+        elseif isKeyDown(camera_zoomOut) then
             zoom = zoom - CAMERA_ZOOM_SPEED * dt;
         end
         zoom = math.max(CAMERA_MAX_ZOOM, math.min(zoom, CAMERA_MIN_ZOOM));
         camera:zoomTo(zoom);
 
         -- Rotation.
-        if love.keyboard.isDown(camera_rotateL) then
+        if isKeyDown(camera_rotateL) then
             camera:rotate(CAMERA_ROTATION_SPEED * dt);
-        elseif love.keyboard.isDown(camera_rotateR) then
+        elseif isKeyDown(camera_rotateR) then
             camera:rotate(-CAMERA_ROTATION_SPEED * dt);
         end
 
         -- Horizontal Movement.
         local dx = 0;
-        if love.keyboard.isDown(camera_w) then
+        if isKeyDown(camera_w) then
             dx = dx - dt * CAMERA_TRANSLATION_SPEED;
-        elseif love.keyboard.isDown(camera_e) then
+        elseif isKeyDown(camera_e) then
             dx = dx + dt * CAMERA_TRANSLATION_SPEED;
         end
         -- Vertical Movement.
         local dy = 0;
-        if love.keyboard.isDown(camera_n) then
+        if isKeyDown(camera_n) then
             dy = dy - dt * CAMERA_TRANSLATION_SPEED;
-        elseif love.keyboard.isDown(camera_s) then
+        elseif isKeyDown(camera_s) then
             dy = dy + dt * CAMERA_TRANSLATION_SPEED;
         end
 
@@ -257,23 +292,23 @@ function MainScreen.new()
     end
 
     function self:keypressed(key)
-        if key == toggleAuthors then
+        if checkKey(key, toggleAuthors) then
             AuthorManager.setVisible(not AuthorManager.isVisible());
-        elseif key == toggleFilePanel then
+        elseif checkKey(key, toggleFilePanel) then
             filePanel:setVisible(not filePanel:isVisible());
-        elseif key == toggleLabels then
+        elseif checkKey(key, toggleLabels) then
             graph:toggleLabels();
-        elseif key == toggleSimulation then
+        elseif checkKey(key, toggleSimulation) then
             LogReader.toggleSimulation();
-        elseif key == toggleRewind then
+        elseif checkKey(key, toggleRewind) then
             LogReader.toggleRewind();
-        elseif key == loadNextCommit then
+        elseif checkKey(key, loadNextCommit) then
             LogReader.loadNextCommit();
-        elseif key == loadPrevCommit then
+        elseif checkKey(key, loadPrevCommit) then
             LogReader.loadPrevCommit();
-        elseif key == toggleFullscreen then
+        elseif checkKey(key, toggleFullscreen) then
             love.window.setFullscreen(not love.window.getFullscreen());
-        elseif key == toggleTimeline then
+        elseif checkKey(key, toggleTimeline) then
             timeline:toggle();
         end
     end
