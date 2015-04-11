@@ -35,14 +35,14 @@ return {
 
     -- See https://love2d.org/wiki/KeyConstant for a list of possible keycodes.
     keyBindings = {
-        camera_n = 'w',          -- Move camera up
-        camera_w = 'a',          -- Move camera left
-        camera_s = 's',          -- Move camera down
-        camera_e = 'd',          -- Move camera right
-        camera_rotateL = 'q',    -- Rotate camera left
-        camera_rotateR = 'e',    -- Rotate camera right
-        camera_zoomIn  = '+',    -- Zoom in
-        camera_zoomOut = '-',    -- Zoom out
+        camera_n = 'w',               -- Move camera up
+        camera_w = 'a',               -- Move camera left
+        camera_s = 's',               -- Move camera down
+        camera_e = 'd',               -- Move camera right
+        camera_rotateL = 'q',         -- Rotate camera left
+        camera_rotateR = 'e',         -- Rotate camera right
+        camera_zoomIn  = {'+', '='},  -- Zoom in
+        camera_zoomOut = '-',         -- Zoom out
 
         toggleAuthors = '1',     -- Hide / Show authors
         toggleFileList = '2',    -- Hide / Show file panel
