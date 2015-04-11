@@ -189,9 +189,9 @@ function LogLoader.init()
         elseif pressedbutton == 3 then
             love.system.openURL('https://github.com/rm-code/logivi/wiki#instructions');
         end
-        return false;
+        return {};
     end
-    return true;
+    return list;
 end
 
 ---

@@ -88,10 +88,11 @@ function love.load()
     print("===================")
 
     local screens = {
+        selection = require('src.screens.SelectionScreen');
         main = require('src.screens.MainScreen');
     };
 
-    ScreenManager.init(screens, 'main');
+    ScreenManager.init(screens, 'selection');
 end
 
 function love.draw()

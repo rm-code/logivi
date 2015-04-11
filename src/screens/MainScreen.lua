@@ -132,12 +132,8 @@ function MainScreen.new()
         graph:register(AuthorManager);
         graph:register(camera);
 
-        -- Intitialise LogLoader. Returns true if at least one log has been found.
-        local success = LogLoader.init();
-        LogLoader.setActiveLog(config.repository)
-
         -- Initialise LogReader and register observers.
-        LogReader.init(success and LogLoader.loadActiveLog() or {}, config.options.commitDelay, config.options.mode, config.options.autoplay);
+        LogReader.init(LogLoader.loadActiveLog(), config.options.commitDelay, config.options.mode, config.options.autoplay);
         LogReader.register(AuthorManager);
         LogReader.register(graph);
 
