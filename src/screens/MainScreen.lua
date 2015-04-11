@@ -177,17 +177,18 @@ function MainScreen.new()
     end
 
     local function setWindowMode(options)
-        local w, h, flags = love.window.getMode();
+        local _, _, flags = love.window.getMode();
 
         flags.fullscreen = options.fullscreen;
         flags.fullscreentype = options.fullscreenType;
         flags.vsync = options.vsync;
         flags.msaa = options.msaa;
         flags.display = options.display;
-        flags.x = 0;
-        flags.y = 0;
 
         love.window.setMode(options.screenWidth, options.screenHeight, flags);
+
+        local sw, sh = love.window.getDesktopDimensions();
+        love.window.setPosition(sw * 0.5 - love.graphics.getWidth() * 0.5, sh * 0.5 - love.graphics.getHeight() * 0.5);
     end
 
     -- ------------------------------------------------
