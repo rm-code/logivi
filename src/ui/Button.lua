@@ -20,10 +20,18 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
+local Button = {};
+
+-- ------------------------------------------------
+-- Constants
+-- ------------------------------------------------
+
 local LABEL_FONT = love.graphics.newFont('res/fonts/SourceCodePro-Medium.otf', 20);
 local DEFAULT_FONT = love.graphics.newFont(12);
 
-local Button = {};
+-- ------------------------------------------------
+-- Constructor
+-- ------------------------------------------------
 
 function Button.new(id, x, y, w, h)
     local self = {};
@@ -34,6 +42,10 @@ function Button.new(id, x, y, w, h)
 
     local realX, realY = x, y;
     local offsetY = realY;
+
+    -- ------------------------------------------------
+    -- Private Functions
+    -- ------------------------------------------------
 
     function self:draw(scrollOffset)
         love.graphics.setFont(LABEL_FONT);
@@ -49,6 +61,10 @@ function Button.new(id, x, y, w, h)
         focus = x < mx and x + w > mx and offsetY < my and offsetY + h > my;
     end
 
+    -- ------------------------------------------------
+    -- Getters
+    -- ------------------------------------------------
+
     function self:getId()
         return id;
     end
@@ -56,7 +72,11 @@ function Button.new(id, x, y, w, h)
     function self:hasFocus()
         return focus;
     end
-    
+
+    -- ------------------------------------------------
+    -- Setters
+    -- ------------------------------------------------
+
     function self:setScrollOffset(noy)
         offsetY = realY + noy;
     end

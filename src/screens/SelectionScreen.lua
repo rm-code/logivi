@@ -27,7 +27,15 @@ local InfoPanel = require('src.ui.InfoPanel');
 local ConfigReader = require('src.conf.ConfigReader');
 local InputHandler = require('src.InputHandler');
 
+-- ------------------------------------------------
+-- Module
+-- ------------------------------------------------
+
 local SelectionScreen = {};
+
+-- ------------------------------------------------
+-- Constructor
+-- ------------------------------------------------
 
 function SelectionScreen.new()
     local self = Screen.new();
@@ -41,6 +49,14 @@ function SelectionScreen.new()
     local uiElementOffsetY = 20;
     local uiElementMargin = 5;
 
+    -- ------------------------------------------------
+    -- Private Functions
+    -- ------------------------------------------------
+
+    ---
+    -- Updates the project's window settings based on the config file.
+    -- @param options
+    --
     local function setWindowMode(options)
         local _, _, flags = love.window.getMode();
 
@@ -56,6 +72,10 @@ function SelectionScreen.new()
         love.window.setPosition(sw * 0.5 - love.graphics.getWidth() * 0.5, sh * 0.5 - love.graphics.getHeight() * 0.5);
     end
 
+    -- ------------------------------------------------
+    -- Public Functions
+    -- ------------------------------------------------
+
     function self:init()
         config = ConfigReader.init();
 
@@ -66,9 +86,11 @@ function SelectionScreen.new()
         -- Intitialise LogLoader.
         logList = LogLoader.init();
 
+        -- A scrollable list of buttons which can be used to select a certain log.
         buttonList = ButtonList.new(uiElementOffsetX, uiElementOffsetY, uiElementMargin);
         buttonList:init(logList);
 
+        -- The info panel which displays more information about a selected log.
         infoPanel = InfoPanel.new(uiElementOffsetX + (2 * uiElementMargin) + buttonList:getButtonWidth(), uiElementOffsetY);
         infoPanel:setInfo(logList[1].name);
     end

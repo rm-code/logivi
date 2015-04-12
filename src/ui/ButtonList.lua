@@ -22,7 +22,15 @@
 
 local Button = require('src.ui.Button');
 
+-- ------------------------------------------------
+-- Module
+-- ------------------------------------------------
+
 local ButtonList = {};
+
+-- ------------------------------------------------
+-- Constructor
+-- ------------------------------------------------
 
 function ButtonList.new(offsetX, offsetY, margin)
     local self = {};
@@ -34,6 +42,10 @@ function ButtonList.new(offsetX, offsetY, margin)
     local buttonW = 200;
     local buttonH = 40;
     local listLength = 0;
+
+    -- ------------------------------------------------
+    -- Public Functions
+    -- ------------------------------------------------
 
     function self:init(logList)
         buttons = {};

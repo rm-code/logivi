@@ -24,16 +24,32 @@ local ScreenManager = require('lib.screenmanager.ScreenManager');
 local LogLoader = require('src.logfactory.LogLoader');
 local Button = require('src.ui.Button');
 
+-- ------------------------------------------------
+-- Module
+-- ------------------------------------------------
+
+local InfoPanel = {};
+
+-- ------------------------------------------------
+-- Constants
+-- ------------------------------------------------
+
 local HEADER_FONT = love.graphics.newFont('res/fonts/SourceCodePro-Bold.otf', 35);
 local DEFAULT_FONT = love.graphics.newFont(12);
 
-local InfoPanel = {};
+-- ------------------------------------------------
+-- Constructor
+-- ------------------------------------------------
 
 function InfoPanel.new(x, y)
     local self = {};
 
     local info = {};
     local watchButton = Button.new('Watch', love.graphics.getWidth() - 20 - 80 - 5, love.graphics.getHeight() - 85, 80, 40);
+
+    -- ------------------------------------------------
+    -- Public Functions
+    -- ------------------------------------------------
 
     function self:update(dt)
         watchButton:update(dt, love.mouse.getPosition());
@@ -62,6 +78,10 @@ function InfoPanel.new(x, y)
             end
         end
     end
+
+    -- ------------------------------------------------
+    -- Setters
+    -- ------------------------------------------------
 
     function self:setInfo(name)
         info.name = name or '';
