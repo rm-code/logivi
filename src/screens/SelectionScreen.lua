@@ -66,7 +66,7 @@ function SelectionScreen.new()
 
         buttons = {};
         for i, log in ipairs(logList) do
-            buttons[#buttons + 1] = Button.new(log.name, 20, 20 + (i - 1) * (buttonH) + margin * i, buttonW, buttonH);
+            buttons[#buttons + 1] = Button.new(log.name, 20, 20 + (i - 1) * (buttonH) + margin * (i - 1), buttonW, buttonH);
         end
     end
 
