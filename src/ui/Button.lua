@@ -40,8 +40,7 @@ function Button.new(id, x, y, w, h)
     local col = { 100, 100, 100, 100 };
     local hlcol = { 150, 150, 150, 150 };
 
-    local realX, realY = x, y;
-    local offsetY = realY;
+    local offsetY = y;
 
     -- ------------------------------------------------
     -- Private Functions
@@ -78,7 +77,7 @@ function Button.new(id, x, y, w, h)
     -- ------------------------------------------------
 
     function self:setScrollOffset(noy)
-        offsetY = realY + noy;
+        offsetY = y + noy;
     end
 
     return self;
