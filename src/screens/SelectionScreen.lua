@@ -20,10 +20,9 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
-local ScreenManager = require('lib.screenmanager.ScreenManager');
 local Screen = require('lib.screenmanager.Screen');
 local LogLoader = require('src.logfactory.LogLoader');
-local Button = require('src.ui.Button');
+local ButtonList = require('src.ui.ButtonList');
 local ConfigReader = require('src.conf.ConfigReader');
 local InputHandler = require('src.InputHandler');
 
@@ -34,9 +33,7 @@ function SelectionScreen.new()
 
     local config;
     local logList;
-    local buttons;
-    local buttonH = 40;
-    local buttonW = 200;
+    local buttonList;
 
     local uiElementOffsetX = 20;
     local uiElementOffsetY = 20;
@@ -67,33 +64,21 @@ function SelectionScreen.new()
         -- Intitialise LogLoader.
         logList = LogLoader.init();
 
-        buttons = {};
-        for i, log in ipairs(logList) do
-            buttons[#buttons + 1] = Button.new(log.name, uiElementOffsetX, uiElementOffsetY + (i - 1) * (buttonH) + uiElementMargin * (i - 1), buttonW, buttonH);
-        end
+        buttonList = ButtonList.new(uiElementOffsetX, uiElementOffsetY, uiElementMargin);
+        buttonList:init(logList);
     end
 
     function self:update(dt)
-        local mx, my = love.mouse.getPosition();
-        for _, button in ipairs(buttons) do
-            button:update(dt, mx, my);
-        end
+        buttonList:update(dt);
     end
 
     function self:draw()
-        for _, button in ipairs(buttons) do
-            button:draw();
-        end
+        buttonList:draw();
         love.graphics.print('Work in Progress (v' .. getVersion() .. ')', uiElementOffsetX, love.graphics.getHeight() - uiElementOffsetY);
     end
 
     function self:mousepressed(x, y, b)
-        for _, button in ipairs(buttons) do
-            if button:hasFocus() then
-                LogLoader.setActiveLog(button:getId());
-                ScreenManager.switch('main');
-            end
-        end
+        buttonList:pressed(x, y, b);
     end
 
     function self:keypressed(key)

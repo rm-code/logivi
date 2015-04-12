@@ -32,18 +32,21 @@ function Button.new(id, x, y, w, h)
     local col = { 100, 100, 100, 100 };
     local hlcol = { 150, 150, 150, 150 };
 
-    function self:draw()
+    local realX, realY = x, y;
+    local offsetY = 0;
+
+    function self:draw(scrollOffset)
         love.graphics.setFont(LABEL_FONT);
         love.graphics.setColor(focus and hlcol or col);
-        love.graphics.rectangle('fill', x, y, w, h);
+        love.graphics.rectangle('fill', x, offsetY, w, h);
         love.graphics.setColor(255, 255, 255, 100);
-        love.graphics.rectangle('line', x, y, w, h);
-        love.graphics.print(id, x + 10, y + 10);
+        love.graphics.rectangle('line', x, offsetY, w, h);
+        love.graphics.print(id, x + 10, offsetY + 10);
         love.graphics.setFont(DEFAULT_FONT);
     end
 
     function self:update(dt, mx, my)
-        focus = x < mx and x + w > mx and y < my and y + h > my;
+        focus = x < mx and x + w > mx and offsetY < my and offsetY + h > my;
     end
 
     function self:getId()
@@ -52,6 +55,10 @@ function Button.new(id, x, y, w, h)
 
     function self:hasFocus()
         return focus;
+    end
+    
+    function self:setScrollOffset(noy)
+        offsetY = realY + noy;
     end
 
     return self;
