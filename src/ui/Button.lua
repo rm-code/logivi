@@ -33,7 +33,7 @@ function Button.new(id, x, y, w, h)
     local hlcol = { 150, 150, 150, 150 };
 
     local realX, realY = x, y;
-    local offsetY = 0;
+    local offsetY = realY;
 
     function self:draw(scrollOffset)
         love.graphics.setFont(LABEL_FONT);
