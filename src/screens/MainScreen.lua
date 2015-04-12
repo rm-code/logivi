@@ -20,6 +20,7 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
+local ScreenManager = require('lib.screenmanager.ScreenManager');
 local Screen = require('lib.screenmanager.Screen');
 local LogReader = require('src.logfactory.LogReader');
 local LogLoader = require('src.logfactory.LogLoader');
@@ -175,7 +176,7 @@ function MainScreen.new()
         elseif InputHandler.isPressed(key, toggleTimeline) then
             timeline:toggle();
         elseif InputHandler.isPressed(key, exit) then
-            love.event.quit();
+            ScreenManager.switch('selection');
         end
     end
 
