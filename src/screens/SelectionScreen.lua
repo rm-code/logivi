@@ -37,7 +37,10 @@ function SelectionScreen.new()
     local buttons;
     local buttonH = 40;
     local buttonW = 200;
-    local margin = 5;
+
+    local uiElementOffsetX = 20;
+    local uiElementOffsetY = 20;
+    local uiElementMargin = 5;
 
     local function setWindowMode(options)
         local _, _, flags = love.window.getMode();
@@ -66,7 +69,7 @@ function SelectionScreen.new()
 
         buttons = {};
         for i, log in ipairs(logList) do
-            buttons[#buttons + 1] = Button.new(log.name, 20, 20 + (i - 1) * (buttonH) + margin * (i - 1), buttonW, buttonH);
+            buttons[#buttons + 1] = Button.new(log.name, uiElementOffsetX, uiElementOffsetY + (i - 1) * (buttonH) + uiElementMargin * (i - 1), buttonW, buttonH);
         end
     end
 
@@ -81,7 +84,7 @@ function SelectionScreen.new()
         for _, button in ipairs(buttons) do
             button:draw();
         end
-        love.graphics.print('Work in Progress (v' .. getVersion() .. ')', 20, love.graphics.getHeight() - 30);
+        love.graphics.print('Work in Progress (v' .. getVersion() .. ')', uiElementOffsetX, love.graphics.getHeight() - uiElementOffsetY);
     end
 
     function self:mousepressed(x, y, b)
