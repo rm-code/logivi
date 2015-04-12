@@ -54,7 +54,7 @@ end
 -- ------------------------------------------------
 
 function ConfigReader.init()
-    config = loadFile(FILE_NAME, FILE_TEMPLATE);
+    config = config and config or loadFile(FILE_NAME, FILE_TEMPLATE);
     return config;
 end
 
