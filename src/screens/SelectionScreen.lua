@@ -25,12 +25,14 @@ local Screen = require('lib.screenmanager.Screen');
 local LogLoader = require('src.logfactory.LogLoader');
 local Button = require('src.ui.Button');
 local ConfigReader = require('src.conf.ConfigReader');
+local InputHandler = require('src.InputHandler');
 
 local SelectionScreen = {};
 
 function SelectionScreen.new()
     local self = Screen.new();
 
+    local config;
     local logList;
     local buttons;
     local buttonH = 40;
@@ -53,7 +55,7 @@ function SelectionScreen.new()
     end
 
     function self:init()
-        local config = ConfigReader.init();
+        config = ConfigReader.init();
 
         -- Set the background color based on the option in the config file.
         love.graphics.setBackgroundColor(config.options.backgroundColor);
@@ -88,6 +90,12 @@ function SelectionScreen.new()
                 LogLoader.setActiveLog(button:getId());
                 ScreenManager.switch('main');
             end
+        end
+    end
+
+    function self:keypressed(key)
+        if InputHandler.isPressed(key, config.keyBindings.exit) then
+            love.event.quit();
         end
     end
 
