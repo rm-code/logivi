@@ -33,7 +33,6 @@ function Button.new(id, x, y, w, h)
     local hlcol = { 150, 150, 150, 150 };
 
     function self:draw()
-        love.graphics.setScissor(x, y, w, h);
         love.graphics.setFont(LABEL_FONT);
         love.graphics.setColor(focus and hlcol or col);
         love.graphics.rectangle('fill', x, y, w, h);
@@ -41,7 +40,6 @@ function Button.new(id, x, y, w, h)
         love.graphics.rectangle('line', x, y, w, h);
         love.graphics.print(id, x + 10, y + 10);
         love.graphics.setFont(DEFAULT_FONT);
-        love.graphics.setScissor();
     end
 
     function self:update(dt, mx, my)
