@@ -57,6 +57,7 @@ function SelectionScreen.new()
         for _, button in ipairs(buttons) do
             button:draw();
         end
+        love.graphics.print('Work in Progress (v' .. getVersion() .. ')', 20, love.graphics.getHeight() - 30);
     end
 
     function self:mousepressed(x, y, b)
