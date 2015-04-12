@@ -20,8 +20,6 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
-local ScreenManager = require('lib.screenmanager.ScreenManager');
-local LogLoader = require('src.logfactory.LogLoader');
 local Button = require('src.ui.Button');
 
 local ButtonList = {};
@@ -81,7 +79,7 @@ function ButtonList.new(offsetX, offsetY, margin)
         end
     end
 
-    function self:pressed(x, y, b)
+    function self:pressed(x, y, b, panel)
         if b == 'wu' then
             self:scroll(x, y, -scrollSpeed);
         elseif b == 'wd' then
@@ -90,11 +88,14 @@ function ButtonList.new(offsetX, offsetY, margin)
             for _, button in ipairs(buttons) do
                 if button:hasFocus() then
                     print('Select log: ' .. button:getId());
-                    LogLoader.setActiveLog(button:getId());
-                    ScreenManager.switch('main');
+                    panel:setInfo(button:getId());
                 end
             end
         end
+    end
+
+    function self:getButtonWidth()
+        return buttonW;
     end
 
     return self;

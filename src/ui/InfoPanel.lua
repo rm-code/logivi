@@ -20,82 +20,55 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
-local Screen = require('lib.screenmanager.Screen');
+local ScreenManager = require('lib.screenmanager.ScreenManager');
 local LogLoader = require('src.logfactory.LogLoader');
-local ButtonList = require('src.ui.ButtonList');
-local InfoPanel = require('src.ui.InfoPanel');
-local ConfigReader = require('src.conf.ConfigReader');
-local InputHandler = require('src.InputHandler');
+local Button = require('src.ui.Button');
 
-local SelectionScreen = {};
+local HEADER_FONT = love.graphics.newFont('res/fonts/SourceCodePro-Bold.otf', 35);
+local DEFAULT_FONT = love.graphics.newFont(12);
 
-function SelectionScreen.new()
-    local self = Screen.new();
+local InfoPanel = {};
 
-    local config;
-    local logList;
-    local buttonList;
-    local infoPanel;
+function InfoPanel.new(x, y)
+    local self = {};
 
-    local uiElementOffsetX = 20;
-    local uiElementOffsetY = 20;
-    local uiElementMargin = 5;
-
-    local function setWindowMode(options)
-        local _, _, flags = love.window.getMode();
-
-        flags.fullscreen = options.fullscreen;
-        flags.fullscreentype = options.fullscreenType;
-        flags.vsync = options.vsync;
-        flags.msaa = options.msaa;
-        flags.display = options.display;
-
-        love.window.setMode(options.screenWidth, options.screenHeight, flags);
-
-        local sw, sh = love.window.getDesktopDimensions();
-        love.window.setPosition(sw * 0.5 - love.graphics.getWidth() * 0.5, sh * 0.5 - love.graphics.getHeight() * 0.5);
-    end
-
-    function self:init()
-        config = ConfigReader.init();
-
-        -- Set the background color based on the option in the config file.
-        love.graphics.setBackgroundColor(config.options.backgroundColor);
-        setWindowMode(config.options);
-
-        -- Intitialise LogLoader.
-        logList = LogLoader.init();
-
-        buttonList = ButtonList.new(uiElementOffsetX, uiElementOffsetY, uiElementMargin);
-        buttonList:init(logList);
-
-        infoPanel = InfoPanel.new(uiElementOffsetX + (2 * uiElementMargin) + buttonList:getButtonWidth(), uiElementOffsetY);
-        infoPanel:setInfo(logList[1].name);
-    end
+    local info = {};
+    local watchButton = Button.new('Watch', love.graphics.getWidth() - 20 - 80 - 5, love.graphics.getHeight() - 85, 80, 40);
 
     function self:update(dt)
-        buttonList:update(dt);
-        infoPanel:update(dt);
+        watchButton:update(dt, love.mouse.getPosition());
     end
 
     function self:draw()
-        buttonList:draw();
-        infoPanel:draw();
-        love.graphics.print('Work in Progress (v' .. getVersion() .. ')', uiElementOffsetX, love.graphics.getHeight() - uiElementOffsetY);
+        love.graphics.setColor(100, 100, 100, 100);
+        love.graphics.rectangle('fill', x, y, love.graphics.getWidth() - x - 20, love.graphics.getHeight() - y - 40);
+        love.graphics.setColor(255, 255, 255, 100);
+        love.graphics.rectangle('line', x, y, love.graphics.getWidth() - x - 20, love.graphics.getHeight() - y - 40);
+        love.graphics.setFont(HEADER_FONT);
+        love.graphics.setColor(0, 0, 0, 100);
+        love.graphics.print(info.name, x + 25, y + 25);
+        love.graphics.setColor(255, 100, 100, 255);
+        love.graphics.print(info.name, x + 20, y + 20);
+        love.graphics.setColor(255, 255, 255, 255);
+        love.graphics.setFont(DEFAULT_FONT);
+
+        watchButton:draw();
     end
 
-    function self:mousepressed(x, y, b)
-        buttonList:pressed(x, y, b, infoPanel);
-        infoPanel:pressed(x, y, b, infoPanel);
-    end
-
-    function self:keypressed(key)
-        if InputHandler.isPressed(key, config.keyBindings.exit) then
-            love.event.quit();
+    function self:pressed(x, y, b)
+        if b == 'l' then
+            if watchButton:hasFocus() then
+                ScreenManager.switch('main');
+            end
         end
+    end
+
+    function self:setInfo(name)
+        info.name = name or '';
+        LogLoader.setActiveLog(info.name);
     end
 
     return self;
 end
 
-return SelectionScreen;
+return InfoPanel;
