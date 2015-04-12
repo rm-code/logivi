@@ -47,6 +47,7 @@ LoGiVi now will open the file directory in which to place the log.
 -- ------------------------------------------------
 
 local list;
+local activeLog;
 
 -- ------------------------------------------------
 -- Local Functions
@@ -160,10 +161,9 @@ end
 
 ---
 -- Try to load a certain log stored in the list.
--- @param name
 --
-function LogLoader.load(name)
-    local index = searchLog(name);
+function LogLoader.loadActiveLog()
+    local index = searchLog(activeLog);
     local rawLog = parseLog(list[index].path);
     return splitCommits(rawLog);
 end
@@ -192,6 +192,14 @@ function LogLoader.init()
         return false;
     end
     return true;
+end
+
+---
+-- Selects a log to be loaded later on.
+-- @param name
+--
+function LogLoader.setActiveLog(name)
+    activeLog = name;
 end
 
 return LogLoader;
