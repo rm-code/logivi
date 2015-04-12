@@ -24,6 +24,7 @@ local ScreenManager = require('lib.screenmanager.ScreenManager');
 local Screen = require('lib.screenmanager.Screen');
 local LogLoader = require('src.logfactory.LogLoader');
 local Button = require('src.ui.Button');
+local ConfigReader = require('src.conf.ConfigReader');
 
 local SelectionScreen = {};
 
@@ -36,7 +37,28 @@ function SelectionScreen.new()
     local buttonW = 200;
     local margin = 5;
 
+    local function setWindowMode(options)
+        local _, _, flags = love.window.getMode();
+
+        flags.fullscreen = options.fullscreen;
+        flags.fullscreentype = options.fullscreenType;
+        flags.vsync = options.vsync;
+        flags.msaa = options.msaa;
+        flags.display = options.display;
+
+        love.window.setMode(options.screenWidth, options.screenHeight, flags);
+
+        local sw, sh = love.window.getDesktopDimensions();
+        love.window.setPosition(sw * 0.5 - love.graphics.getWidth() * 0.5, sh * 0.5 - love.graphics.getHeight() * 0.5);
+    end
+
     function self:init()
+        local config = ConfigReader.init();
+
+        -- Set the background color based on the option in the config file.
+        love.graphics.setBackgroundColor(config.options.backgroundColor);
+        setWindowMode(config.options);
+
         -- Intitialise LogLoader.
         logList = LogLoader.init();
 

@@ -93,21 +93,6 @@ function MainScreen.new()
         exit = config.keyBindings.exit;
     end
 
-    local function setWindowMode(options)
-        local _, _, flags = love.window.getMode();
-
-        flags.fullscreen = options.fullscreen;
-        flags.fullscreentype = options.fullscreenType;
-        flags.vsync = options.vsync;
-        flags.msaa = options.msaa;
-        flags.display = options.display;
-
-        love.window.setMode(options.screenWidth, options.screenHeight, flags);
-
-        local sw, sh = love.window.getDesktopDimensions();
-        love.window.setPosition(sw * 0.5 - love.graphics.getWidth() * 0.5, sh * 0.5 - love.graphics.getHeight() * 0.5);
-    end
-
     -- ------------------------------------------------
     -- Public Functions
     -- ------------------------------------------------
@@ -117,10 +102,6 @@ function MainScreen.new()
 
         -- Load keybindings.
         assignKeyBindings(config);
-
-        -- Set the background color based on the option in the config file.
-        love.graphics.setBackgroundColor(config.options.backgroundColor);
-        setWindowMode(config.options);
 
         AuthorManager.init(config.aliases, config.avatars, config.options.showAuthors);
 
