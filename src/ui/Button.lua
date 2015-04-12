@@ -46,7 +46,7 @@ function Button.new(id, x, y, w, h)
     -- Private Functions
     -- ------------------------------------------------
 
-    function self:draw(scrollOffset)
+    function self:draw()
         love.graphics.setFont(LABEL_FONT);
         love.graphics.setColor(focus and hlcol or col);
         love.graphics.rectangle('fill', x, offsetY, w, h);
