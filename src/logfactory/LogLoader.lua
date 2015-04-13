@@ -212,7 +212,6 @@ function LogLoader.init()
     list = fetchProjectFolders(LOG_FOLDER);
 
     if not hasLogs() then
-        love.filesystem.createDirectory('logs');
         createExample();
         showWarning();
         return fetchProjectFolders(LOG_FOLDER);
