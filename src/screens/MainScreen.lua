@@ -124,6 +124,9 @@ function MainScreen.new()
         filePanel:setVisible(config.options.showFileList);
 
         timeline = Timeline.new(config.options.showTimeline, LogReader.getTotalCommits(), LogReader.getCurrentDate());
+
+        -- Run one complete cycle of garbage collection.
+        collectgarbage('collect');
     end
 
     function self:draw()
