@@ -91,7 +91,7 @@ function ButtonList.new(offsetX, offsetY, margin)
         end
     end
 
-    function self:pressed(x, y, b, panel)
+    function self:pressed(x, y, b)
         if b == 'wu' then
             self:scroll(x, y, -scrollSpeed);
         elseif b == 'wd' then
@@ -100,7 +100,7 @@ function ButtonList.new(offsetX, offsetY, margin)
             for _, button in ipairs(buttons) do
                 if button:hasFocus() then
                     print('Select log: ' .. button:getId());
-                    panel:setInfo(button:getId());
+                    return button:getId();
                 end
             end
         end
