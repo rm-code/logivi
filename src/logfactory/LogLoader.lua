@@ -177,6 +177,19 @@ local function showWarning()
     end
 end
 
+---
+-- Write an example log file to the save directory.
+--
+local function createExample()
+    love.filesystem.createDirectory('logs/example');
+    if not love.filesystem.isFile('logs/example/log.txt') then
+        love.filesystem.newFile('logs/example/log.txt');
+        for line in love.filesystem.lines('res/log/example_log.txt') do
+            love.filesystem.append('logs/example/log.txt', line .. '\n');
+        end
+    end
+end
+
 -- ------------------------------------------------
 -- Public Functions
 -- ------------------------------------------------
@@ -204,8 +217,9 @@ function LogLoader.init()
 
     if not hasLogs() then
         love.filesystem.createDirectory('logs');
+        createExample();
         showWarning();
-        return {};
+        return fetchProjectFolders(LOG_FOLDER);
     end
 
     return list;

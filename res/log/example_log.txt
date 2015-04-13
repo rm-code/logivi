@@ -1,0 +1,1222 @@
+author: John Doe|john.doe@gmail.com
+date: 1412164839
+
+A	Readme.md
+A	conf.lua
+A	lib/Screen.lua
+A	lib/ScreenManager.lua
+A	main.lua
+A	src/FileHandler.lua
+A	src/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1412165331
+
+M	src/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1412165654
+
+M	src/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1412166102
+
+M	src/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1412166546
+
+M	src/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1412168721
+
+A	res/fileNode.png
+A	src/FileObject.lua
+M	src/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1412261158
+
+M	src/FileHandler.lua
+M	src/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1412263695
+
+M	src/FileHandler.lua
+M	src/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1412264556
+
+A	res/folderNode.png
+M	src/FileHandler.lua
+A	src/FileNode.lua
+D	src/FileObject.lua
+A	src/FolderNode.lua
+M	src/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1412266778
+
+M	src/FolderNode.lua
+M	src/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1412266994
+
+M	src/FileHandler.lua
+M	src/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1412338837
+
+M	src/FileNode.lua
+M	src/FolderNode.lua
+M	src/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1412338894
+
+D	src/FileNode.lua
+D	src/FolderNode.lua
+M	src/MainScreen.lua
+A	src/nodes/FileNode.lua
+A	src/nodes/FolderNode.lua
+
+author: John Doe|john.doe@mail.com
+date: 1412339571
+
+M	src/nodes/FileNode.lua
+M	src/nodes/FolderNode.lua
+
+author: John Doe|john.doe@mail.com
+date: 1412344563
+
+M	src/MainScreen.lua
+M	src/nodes/FolderNode.lua
+
+author: John Doe|john.doe@mail.com
+date: 1413460386
+
+M	src/nodes/FileNode.lua
+M	src/nodes/FolderNode.lua
+
+author: John Doe|john.doe@mail.com
+date: 1413543677
+
+M	src/nodes/FileNode.lua
+M	src/nodes/FolderNode.lua
+A	src/nodes/Node.lua
+
+author: John Doe|john.doe@mail.com
+date: 1413545829
+
+M	src/nodes/FolderNode.lua
+
+author: John Doe|john.doe@mail.com
+date: 1413641316
+
+M	main.lua
+
+author: John Doe|john.doe@mail.com
+date: 1413647269
+
+M	src/nodes/FolderNode.lua
+
+author: John Doe|john.doe@mail.com
+date: 1413746796
+
+M	src/MainScreen.lua
+M	src/nodes/FolderNode.lua
+
+author: John Doe|john.doe@mail.com
+date: 1420035671
+
+M	src/FileHandler.lua
+
+author: John Doe|john.doe@mail.com
+date: 1420035782
+
+M	src/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1420036758
+
+M	Readme.md
+
+author: John Doe|john.doe@mail.com
+date: 1420119343
+
+M	src/nodes/FolderNode.lua
+
+author: John Doe|john.doe@mail.com
+date: 1420127901
+
+M	src/nodes/FolderNode.lua
+
+author: John Doe|john.doe@mail.com
+date: 1420128096
+
+M	src/nodes/FolderNode.lua
+
+author: John Doe|john.doe@mail.com
+date: 1420128221
+
+M	src/nodes/FolderNode.lua
+
+author: John Doe|john.doe@mail.com
+date: 1420142059
+
+M	lib/Screen.lua
+M	lib/ScreenManager.lua
+M	main.lua
+D	src/MainScreen.lua
+A	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1420148522
+
+A	lib/Camera.lua
+M	src/nodes/FolderNode.lua
+M	src/nodes/Node.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421154008
+
+M	src/nodes/FolderNode.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421154091
+
+M	src/nodes/FolderNode.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421170328
+
+A	src/Authors.lua
+M	src/FileHandler.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421170600
+
+M	conf.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421198671
+
+M	src/nodes/FolderNode.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421202411
+
+A	src/FileManager.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421205955
+
+D	src/FileHandler.lua
+A	src/LogReader.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421206481
+
+M	src/LogReader.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421227556
+
+M	res/fileNode.png
+M	src/FileManager.lua
+M	src/nodes/FileNode.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421231021
+
+M	Readme.md
+
+author: John Doe|john.doe@mail.com
+date: 1421396416
+
+M	src/Authors.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421401857
+
+M	src/LogReader.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421402864
+
+M	src/LogReader.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421408663
+
+M	Readme.md
+
+author: John Doe|john.doe@mail.com
+date: 1421509527
+
+A	src/AuthorManager.lua
+D	src/Authors.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421519652
+
+M	src/nodes/FileNode.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421523219
+
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421528929
+
+A	src/Author.lua
+M	src/AuthorManager.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421539184
+
+M	src/Author.lua
+M	src/AuthorManager.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421539872
+
+M	src/Author.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421540698
+
+M	src/AuthorManager.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421547891
+
+M	src/nodes/FolderNode.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421548797
+
+M	conf.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421549312
+
+M	conf.lua
+M	main.lua
+M	src/Author.lua
+M	src/AuthorManager.lua
+M	src/FileManager.lua
+M	src/LogReader.lua
+M	src/nodes/FileNode.lua
+M	src/nodes/FolderNode.lua
+M	src/nodes/Node.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421550122
+
+M	main.lua
+M	src/Author.lua
+M	src/AuthorManager.lua
+M	src/FileManager.lua
+M	src/LogReader.lua
+M	src/nodes/FileNode.lua
+M	src/nodes/FolderNode.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421579809
+
+M	src/LogReader.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421581498
+
+M	src/LogReader.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421587878
+
+M	conf.lua
+M	main.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421589831
+
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421590288
+
+D	res/folderNode.png
+M	src/nodes/FolderNode.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421591304
+
+M	src/nodes/FolderNode.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421596235
+
+M	src/AuthorManager.lua
+A	src/ConfigReader.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421596666
+
+M	src/ConfigReader.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421597404
+
+M	src/AuthorManager.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421600497
+
+D	lib/Screen.lua
+D	lib/ScreenManager.lua
+A	lib/screenmanager/Readme.md
+A	lib/screenmanager/Screen.lua
+A	lib/screenmanager/ScreenManager.lua
+M	main.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421603864
+
+M	main.lua
+M	src/ConfigReader.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421719866
+
+M	conf.lua
+M	src/ConfigReader.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421833270
+
+M	lib/Camera.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421838188
+
+A	res/file.png
+D	res/fileNode.png
+M	src/LogReader.lua
+A	src/graph/File.lua
+A	src/graph/Graph.lua
+A	src/graph/Node.lua
+D	src/nodes/FileNode.lua
+D	src/nodes/FolderNode.lua
+D	src/nodes/Node.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421972644
+
+A	res/user.png
+M	src/AuthorManager.lua
+
+author: John Doe|john.doe@mail.com
+date: 1421975143
+
+M	src/AuthorManager.lua
+
+author: John Doe|john.doe@mail.com
+date: 1422185971
+
+M	src/graph/Graph.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1422186427
+
+M	src/Author.lua
+M	src/AuthorManager.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1422786015
+
+M	src/AuthorManager.lua
+M	src/ConfigReader.lua
+M	src/LogReader.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1422837441
+
+M	src/graph/Node.lua
+
+author: John Doe|john.doe@mail.com
+date: 1422960161
+
+M	src/graph/Graph.lua
+M	src/graph/Node.lua
+
+author: John Doe|john.doe@mail.com
+date: 1422962666
+
+M	src/graph/Graph.lua
+
+author: John Doe|john.doe@mail.com
+date: 1422971825
+
+M	lib/screenmanager/ScreenManager.lua
+
+author: John Doe|john.doe@mail.com
+date: 1423320202
+
+M	src/graph/File.lua
+M	src/graph/Node.lua
+
+author: John Doe|john.doe@mail.com
+date: 1423403469
+
+M	src/graph/Graph.lua
+M	src/graph/Node.lua
+
+author: John Doe|john.doe@mail.com
+date: 1423445606
+
+M	src/FileManager.lua
+
+author: John Doe|john.doe@mail.com
+date: 1423445842
+
+M	src/FileManager.lua
+
+author: John Doe|john.doe@mail.com
+date: 1423446229
+
+M	main.lua
+
+author: John Doe|john.doe@mail.com
+date: 1423900936
+
+M	src/FileManager.lua
+
+author: John Doe|john.doe@mail.com
+date: 1423901214
+
+M	src/graph/File.lua
+M	src/graph/Graph.lua
+M	src/graph/Node.lua
+
+author: John Doe|john.doe@mail.com
+date: 1423992268
+
+M	src/LogReader.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427529076
+
+M	res/file.png
+M	src/graph/Node.lua
+
+author: rmcode|john.doe@mail.com
+date: 1427660215
+
+M	Readme.md
+
+author: John Doe|john.doe@mail.com
+date: 1427660238
+
+M	main.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427662791
+
+M	src/graph/Node.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427663671
+
+M	src/graph/Graph.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427663911
+
+M	src/graph/Graph.lua
+M	src/graph/Node.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427664089
+
+M	src/graph/Graph.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427664992
+
+M	src/graph/Graph.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427665463
+
+M	src/graph/Node.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427665685
+
+M	src/graph/Node.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427665887
+
+M	src/graph/Node.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427667043
+
+M	src/graph/Graph.lua
+M	src/graph/Node.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427667629
+
+M	src/graph/Graph.lua
+M	src/graph/Node.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427667755
+
+M	src/graph/Graph.lua
+M	src/graph/Node.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427667862
+
+M	src/graph/Node.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427669309
+
+M	src/graph/Graph.lua
+M	src/graph/Node.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427670123
+
+D	lib/Camera.lua
+A	lib/camera/Camera.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427674743
+
+M	res/user.png
+
+author: John Doe|john.doe@mail.com
+date: 1427674989
+
+M	conf.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427706266
+
+M	main.lua
+M	src/AuthorManager.lua
+M	src/graph/File.lua
+M	src/graph/Graph.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427706761
+
+M	src/graph/Node.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427711700
+
+M	src/graph/Graph.lua
+M	src/graph/Node.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427728116
+
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427728127
+
+M	src/graph/File.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427729076
+
+M	src/ConfigReader.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427730189
+
+M	src/LogReader.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427753588
+
+M	conf.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427753963
+
+M	src/graph/Node.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427755389
+
+M	src/graph/Graph.lua
+M	src/graph/Node.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427808901
+
+M	lib/screenmanager/Screen.lua
+M	lib/screenmanager/ScreenManager.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427816735
+
+M	src/Author.lua
+M	src/AuthorManager.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427818995
+
+M	main.lua
+M	src/FileManager.lua
+M	src/screens/MainScreen.lua
+A	src/ui/Panel.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427819306
+
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427837032
+
+M	src/Author.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427840420
+
+M	src/graph/Node.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427847257
+
+M	src/graph/Node.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427848414
+
+D	src/ConfigReader.lua
+A	src/conf/ConfigReader.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427849379
+
+M	src/conf/ConfigReader.lua
+A	src/conf/Template.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427850457
+
+M	src/conf/ConfigReader.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427850600
+
+M	src/conf/Template.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427851668
+
+M	src/AuthorManager.lua
+M	src/conf/Template.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427851674
+
+M	main.lua
+M	src/AuthorManager.lua
+M	src/conf/Template.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427851917
+
+M	src/AuthorManager.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427880295
+
+M	src/conf/Template.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427882656
+
+M	src/conf/Template.lua
+M	src/graph/Graph.lua
+M	src/graph/Node.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427883181
+
+M	src/conf/Template.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427883392
+
+M	src/conf/Template.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427884293
+
+M	src/Author.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427884826
+
+M	src/Author.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427885169
+
+A	LICENSE
+
+author: rmcode|john.doe@mail.com
+date: 1427885243
+
+A	README.md
+D	Readme.md
+
+author: John Doe|john.doe@mail.com
+date: 1427886399
+
+M	README.md
+
+author: John Doe|john.doe@mail.com
+date: 1427886841
+
+D	res/file.png
+A	res/img/file.png
+A	res/img/user.png
+D	res/user.png
+M	src/AuthorManager.lua
+M	src/graph/Graph.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427892008
+
+A	res/fonts/SIL Open Font License.txt
+A	res/fonts/SourceCodePro-Medium.otf
+M	src/graph/Graph.lua
+M	src/graph/Node.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427892194
+
+M	src/FileManager.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427892445
+
+M	src/FileManager.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427892644
+
+M	conf.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427894190
+
+M	conf.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427894264
+
+M	conf.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427897659
+
+M	src/conf/Template.lua
+M	src/graph/Graph.lua
+M	src/graph/Node.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427898068
+
+M	src/conf/Template.lua
+M	src/graph/Graph.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427936097
+
+M	src/LogReader.lua
+M	src/graph/Graph.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427936619
+
+M	src/graph/Graph.lua
+M	src/graph/Node.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427936897
+
+M	src/graph/Graph.lua
+M	src/graph/Node.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427976666
+
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427976679
+
+M	src/Author.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427993275
+
+M	src/AuthorManager.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427994856
+
+M	src/LogReader.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427995775
+
+M	src/LogReader.lua
+M	src/conf/Template.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1427995792
+
+M	src/LogReader.lua
+M	src/conf/Template.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428005944
+
+M	src/LogReader.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428015869
+
+M	src/LogReader.lua
+M	src/conf/Template.lua
+M	src/graph/Graph.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428015967
+
+M	src/graph/Graph.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428018314
+
+M	src/LogReader.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428018880
+
+M	src/LogReader.lua
+M	src/conf/Template.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428053610
+
+M	src/conf/Template.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428073565
+
+M	src/conf/Template.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428104660
+
+M	src/Author.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428105158
+
+M	src/graph/Graph.lua
+M	src/graph/Node.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428105654
+
+M	src/graph/Graph.lua
+M	src/graph/Node.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428106654
+
+M	src/graph/Graph.lua
+M	src/graph/Node.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428163411
+
+M	src/FileManager.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428188837
+
+M	src/LogReader.lua
+A	src/Timeline.lua
+M	src/conf/Template.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428191406
+
+D	src/Timeline.lua
+M	src/screens/MainScreen.lua
+A	src/ui/Timeline.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428196160
+
+M	src/graph/Graph.lua
+M	src/graph/Node.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428197088
+
+M	src/ui/Panel.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428198089
+
+M	src/graph/Node.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428198761
+
+M	src/graph/Node.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428224954
+
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428277319
+
+M	src/LogReader.lua
+M	src/conf/Template.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428279440
+
+M	src/LogReader.lua
+M	src/conf/Template.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428280587
+
+M	src/Author.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428309651
+
+M	src/LogReader.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428339053
+
+M	src/LogReader.lua
+M	src/screens/MainScreen.lua
+M	src/ui/Timeline.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428350427
+
+M	README.md
+
+author: John Doe|john.doe@mail.com
+date: 1428357571
+
+M	src/LogReader.lua
+M	src/ui/Timeline.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428363849
+
+M	src/FileManager.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428370108
+
+M	src/FileManager.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428399939
+
+M	src/LogReader.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428400533
+
+M	src/LogReader.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428401257
+
+M	src/LogReader.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428521580
+
+M	src/LogReader.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428535218
+
+M	src/AuthorManager.lua
+M	src/LogReader.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428535519
+
+M	src/AuthorManager.lua
+M	src/LogReader.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428571917
+
+M	src/LogReader.lua
+M	src/graph/Graph.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428578992
+
+M	src/graph/Graph.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428579312
+
+M	src/AuthorManager.lua
+M	src/graph/Graph.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428579477
+
+M	src/LogReader.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428581353
+
+M	src/AuthorManager.lua
+M	src/LogReader.lua
+M	src/graph/Graph.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428581987
+
+M	src/LogReader.lua
+M	src/graph/Graph.lua
+M	src/screens/MainScreen.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428583714
+
+M	src/graph/Graph.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428583741
+
+M	src/graph/Graph.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428583812
+
+M	src/graph/Graph.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428591387
+
+M	src/graph/File.lua
+M	src/graph/Node.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428592678
+
+M	src/graph/File.lua
+M	src/graph/Node.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428662955
+
+M	src/ui/Timeline.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428667958
+
+M	src/LogReader.lua
+
+author: John Doe|john.doe@mail.com
+date: 1428670174
+
+M	conf.lua
