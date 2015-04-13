@@ -35,11 +35,11 @@ local ROOT_FOLDER = 'root';
 
 local WARNING_TITLE = 'No git log found.';
 local WARNING_MESSAGE = [[
-To use LoGiVi you will have to generate a git log first.
+Looks like you are using LoGiVi for the first time. An example git log has been created in the save directory. Press 'Yes' to open the save directory.
 
-You can view the wiki (online) for more information on how to generate a proper log.
+Press 'Show Help' to view the wiki (online) for more information on how to generate a proper log.
 
-LoGiVi now will open the file directory in which to place the log.
+Press 'No' to proceed to the selection screen from where you can view the example project.
 ]];
 
 -- ------------------------------------------------
