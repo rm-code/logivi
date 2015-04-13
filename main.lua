@@ -111,6 +111,10 @@ function love.quit(q)
     ScreenManager.quit(q);
 end
 
+function love.resize(x, y)
+    ScreenManager.resize(x, y);
+end
+
 function love.keypressed(key)
     if key == 'f1' then
         showDebug = not showDebug;

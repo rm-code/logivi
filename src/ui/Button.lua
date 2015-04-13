@@ -80,6 +80,11 @@ function Button.new(id, x, y, w, h)
         offsetY = y + noy;
     end
 
+    function self:setPosition(nx, ny)
+        x = nx;
+        offsetY = ny;
+    end
+
     return self;
 end
 

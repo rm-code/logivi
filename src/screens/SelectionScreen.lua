@@ -100,6 +100,10 @@ function SelectionScreen.new()
         infoPanel:update(dt);
     end
 
+    function self:resize(x, y)
+        infoPanel:resize(x, y);
+    end
+
     function self:draw()
         buttonList:draw();
         infoPanel:draw();
