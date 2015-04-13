@@ -11,18 +11,17 @@ git log --reverse --numstat --pretty=format:"author: %an|%ae%ndate: %ct%n" --nam
 
 This will create a log file in the same directory as the .git repository (If you want to write the log to a different location add its path after the '>' in the command above).
 
-When you run LoGiVi for the first time it will automatically open the folder in which you need to place the log. Depending on your operating system this can be one of the following locations:
+When you run LoGiVi for the first time it will automatically open the folder in which you need to place the log. There should be an example folder showing you how to place your log. Make sure you place the log file in a subfolder in the 'logs' directory so it looks like this:
 
-- Windows XP: C:\Documents and Settings\user\Application Data\LOVE\rmcode_logivi
-- Windows Vista and 7: C:\Users\user\AppData\Roaming\LOVE\rmcode_logivi
-- Linux: $XDG_DATA_HOME/love/ or ~/.local/share/love/rmcode_logivi
-- Mac: /Users/user/Library/Application Support/LOVE/rmcode_logivi
+```
+rmcode_LoGiVi/logs/yourfolder/log.txt
+``` 
 
 For more information about the filesystem check the [LÖVE wiki](https://love2d.org/wiki/love.filesystem).
 
-As soon as the file is in the correct folder you can start LoGiVi and watch as it creates a visual representation of your git repository.
+As soon as the file is in the correct folder you can start LoGiVi and select it from the selection menu to watch the visualisation.
 
-Check the [wiki](https://github.com/rm-code/logivi/wiki) for instructions and further information.
+Check the [wiki](https://github.com/rm-code/logivi/wiki) for more instructions and further information.
 
 # License
 
