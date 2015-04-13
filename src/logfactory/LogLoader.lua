@@ -181,11 +181,13 @@ function LogLoader.init()
     end
 
     if #list == 0 then
+        love.filesystem.createDirectory('logs');
+
         local buttons = { "Yes", "No", "Show Help (Online)", enterbutton = 1, escapebutton = 2 };
 
         local pressedbutton = love.window.showMessageBox(WARNING_TITLE, WARNING_MESSAGE, buttons, 'warning', false);
         if pressedbutton == 1 then
-            love.system.openURL('file://' .. love.filesystem.getSaveDirectory());
+            love.system.openURL('file://' .. love.filesystem.getSaveDirectory() .. '/logs');
         elseif pressedbutton == 3 then
             love.system.openURL('https://github.com/rm-code/logivi/wiki#instructions');
         end
