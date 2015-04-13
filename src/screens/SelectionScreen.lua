@@ -45,8 +45,7 @@ function SelectionScreen.new()
     local buttonList;
     local infoPanel;
 
-    local uiElementOffsetX = 20;
-    local uiElementOffsetY = 20;
+    local uiElementPadding = 20;
     local uiElementMargin = 5;
 
     -- ------------------------------------------------
@@ -87,11 +86,11 @@ function SelectionScreen.new()
         logList = LogLoader.init();
 
         -- A scrollable list of buttons which can be used to select a certain log.
-        buttonList = ButtonList.new(uiElementOffsetX, uiElementOffsetY, uiElementMargin);
+        buttonList = ButtonList.new(uiElementPadding, uiElementPadding, uiElementMargin);
         buttonList:init(logList);
 
         -- The info panel which displays more information about a selected log.
-        infoPanel = InfoPanel.new(uiElementOffsetX + (2 * uiElementMargin) + buttonList:getButtonWidth(), uiElementOffsetY);
+        infoPanel = InfoPanel.new(uiElementPadding + (2 * uiElementMargin) + buttonList:getButtonWidth(), uiElementPadding);
         infoPanel:setInfo(logList[1].name);
     end
 
@@ -107,7 +106,7 @@ function SelectionScreen.new()
     function self:draw()
         buttonList:draw();
         infoPanel:draw();
-        love.graphics.print('Work in Progress (v' .. getVersion() .. ')', uiElementOffsetX, love.graphics.getHeight() - uiElementOffsetY);
+        love.graphics.print('Work in Progress (v' .. getVersion() .. ')', uiElementPadding, love.graphics.getHeight() - uiElementPadding);
     end
 
     function self:mousepressed(x, y, b)
