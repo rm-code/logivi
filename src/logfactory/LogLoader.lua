@@ -211,10 +211,6 @@ end
 function LogLoader.init()
     list = fetchProjectFolders(LOG_FOLDER);
 
-    for i, log in ipairs(list) do
-        print(i, log.name, log.path);
-    end
-
     if not hasLogs() then
         love.filesystem.createDirectory('logs');
         createExample();
