@@ -111,7 +111,7 @@ function SelectionScreen.new()
     end
 
     function self:mousepressed(x, y, b)
-        infoPanel:pressed(x, y, b, infoPanel);
+        infoPanel:pressed(x, y, b);
 
         local logId = buttonList:pressed(x, y, b);
         if logId then
