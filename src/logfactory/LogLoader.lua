@@ -214,7 +214,7 @@ function LogLoader.init()
     if not hasLogs() then
         createExample();
         showWarning();
-        return fetchProjectFolders(LOG_FOLDER);
+        list = fetchProjectFolders(LOG_FOLDER);
     end
 
     return list;
