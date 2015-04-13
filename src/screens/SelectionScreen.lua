@@ -114,6 +114,8 @@ function SelectionScreen.new()
     function self:keypressed(key)
         if InputHandler.isPressed(key, config.keyBindings.exit) then
             love.event.quit();
+        elseif InputHandler.isPressed(key, config.keyBindings.toggleFullscreen) then
+            love.window.setFullscreen(not love.window.getFullscreen());
         end
     end
 
