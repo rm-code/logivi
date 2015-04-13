@@ -155,6 +155,28 @@ local function searchLog(name)
     end
 end
 
+---
+-- Checks if the log folder exists and if it is empty or not.
+--
+local function hasLogs()
+    return (love.filesystem.isDirectory('logs') and #list ~= 0);
+end
+
+---
+-- Displays a warning message for the user which gives him the option
+-- to open the wiki page or the folder in which the logs need to be placed.
+--
+local function showWarning()
+    local buttons = { "Yes", "No", "Show Help (Online)", enterbutton = 1, escapebutton = 2 };
+
+    local pressedbutton = love.window.showMessageBox(WARNING_TITLE, WARNING_MESSAGE, buttons, 'warning', false);
+    if pressedbutton == 1 then
+        love.system.openURL('file://' .. love.filesystem.getSaveDirectory() .. '/logs');
+    elseif pressedbutton == 3 then
+        love.system.openURL('https://github.com/rm-code/logivi/wiki#instructions');
+    end
+end
+
 -- ------------------------------------------------
 -- Public Functions
 -- ------------------------------------------------
@@ -180,19 +202,12 @@ function LogLoader.init()
         print(i, log.name, log.path);
     end
 
-    if #list == 0 then
+    if not hasLogs() then
         love.filesystem.createDirectory('logs');
-
-        local buttons = { "Yes", "No", "Show Help (Online)", enterbutton = 1, escapebutton = 2 };
-
-        local pressedbutton = love.window.showMessageBox(WARNING_TITLE, WARNING_MESSAGE, buttons, 'warning', false);
-        if pressedbutton == 1 then
-            love.system.openURL('file://' .. love.filesystem.getSaveDirectory() .. '/logs');
-        elseif pressedbutton == 3 then
-            love.system.openURL('https://github.com/rm-code/logivi/wiki#instructions');
-        end
+        showWarning();
         return {};
     end
+
     return list;
 end
 
