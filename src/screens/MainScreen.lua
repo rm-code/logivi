@@ -110,6 +110,9 @@ function MainScreen.new()
         camera = Camera.new();
         camera:assignKeyBindings(config);
 
+        -- Load custom colors.
+        FileManager.setColorTable(config.colors);
+
         graph = Graph.new(config.options.edgeWidth, config.options.showLabels);
         graph:register(AuthorManager);
         graph:register(camera);

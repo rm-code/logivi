@@ -14,6 +14,10 @@ return {
         -- ['author'] = 'urlToAvatar',
     },
 
+    colors = {
+        -- ['.lua'] = { 255, 0, 0 },
+    },
+
     options = {
         mode = 'default',       -- 'default' or 'rewind'
         autoplay = true,
