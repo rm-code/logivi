@@ -75,7 +75,7 @@ function SelectionScreen.new()
     -- Public Functions
     -- ------------------------------------------------
 
-    function self:init()
+    function self:init(param)
         config = ConfigReader.init();
 
         -- Set the background color based on the option in the config file.
@@ -91,7 +91,7 @@ function SelectionScreen.new()
 
         -- The info panel which displays more information about a selected log.
         infoPanel = InfoPanel.new(uiElementPadding + (2 * uiElementMargin) + buttonList:getButtonWidth(), uiElementPadding);
-        infoPanel:setInfo(logList[1].name);
+        infoPanel:setInfo(param and param.log or logList[1].name);
     end
 
     function self:update(dt)

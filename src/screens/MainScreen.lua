@@ -68,6 +68,7 @@ function MainScreen.new()
     local camera;
     local filePanel;
     local timeline;
+    local log;
 
     -- ------------------------------------------------
     -- Private Functions
@@ -117,8 +118,11 @@ function MainScreen.new()
         graph:register(AuthorManager);
         graph:register(camera);
 
+        -- Store the name of the currently displayed log.
+        log = param.log;
+
         -- Initialise LogReader and register observers.
-        LogReader.init(LogLoader.load(param.log), config.options.commitDelay, config.options.mode, config.options.autoplay);
+        LogReader.init(LogLoader.load(log), config.options.commitDelay, config.options.mode, config.options.autoplay);
         LogReader.register(AuthorManager);
         LogReader.register(graph);
 
@@ -182,7 +186,7 @@ function MainScreen.new()
         elseif InputHandler.isPressed(key, toggleTimeline) then
             timeline:toggle();
         elseif InputHandler.isPressed(key, exit) then
-            ScreenManager.switch('selection');
+            ScreenManager.switch('selection', { log = log });
         end
     end
 
