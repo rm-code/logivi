@@ -98,7 +98,7 @@ function MainScreen.new()
     -- Public Functions
     -- ------------------------------------------------
 
-    function self:init()
+    function self:init(param)
         local config = ConfigReader.init();
 
         -- Load keybindings.
@@ -118,7 +118,7 @@ function MainScreen.new()
         graph:register(camera);
 
         -- Initialise LogReader and register observers.
-        LogReader.init(LogLoader.loadActiveLog(), config.options.commitDelay, config.options.mode, config.options.autoplay);
+        LogReader.init(LogLoader.load(param.log), config.options.commitDelay, config.options.mode, config.options.autoplay);
         LogReader.register(AuthorManager);
         LogReader.register(graph);
 

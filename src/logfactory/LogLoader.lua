@@ -46,7 +46,6 @@ Press 'No' to proceed to the selection screen from where you can view the exampl
 -- ------------------------------------------------
 
 local list;
-local activeLog;
 
 -- ------------------------------------------------
 -- Local Functions
@@ -196,8 +195,8 @@ end
 ---
 -- Try to load a certain log stored in the list.
 --
-function LogLoader.loadActiveLog()
-    local index = searchLog(activeLog);
+function LogLoader.load(log)
+    local index = searchLog(log);
     local rawLog = parseLog(list[index].path);
     return splitCommits(rawLog);
 end
@@ -217,14 +216,6 @@ function LogLoader.init()
     end
 
     return list;
-end
-
----
--- Selects a log to be loaded later on.
--- @param name
---
-function LogLoader.setActiveLog(name)
-    activeLog = name;
 end
 
 return LogLoader;

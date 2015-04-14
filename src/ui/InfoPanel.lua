@@ -21,7 +21,6 @@
 --==================================================================================================
 
 local ScreenManager = require('lib.screenmanager.ScreenManager');
-local LogLoader = require('src.logfactory.LogLoader');
 local Button = require('src.ui.Button');
 
 -- ------------------------------------------------
@@ -74,7 +73,7 @@ function InfoPanel.new(x, y)
     function self:pressed(x, y, b)
         if b == 'l' then
             if watchButton:hasFocus() then
-                ScreenManager.switch('main');
+                ScreenManager.switch('main', { log = info.name });
             end
         end
     end
@@ -89,7 +88,6 @@ function InfoPanel.new(x, y)
 
     function self:setInfo(name)
         info.name = name or '';
-        LogLoader.setActiveLog(info.name);
     end
 
     return self;
