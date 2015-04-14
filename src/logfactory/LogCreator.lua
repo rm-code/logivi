@@ -7,6 +7,7 @@ local LogCreator = {};
 local GIT_COMMAND = 'git log --reverse --numstat --pretty=format:"info: %an|%ae|%ct" --name-status --no-merges';
 local LOG_FOLDER = 'logs/';
 local LOG_FILE = '/log.txt';
+local INFO_FILE = '/project.lua';
 
 -- ------------------------------------------------
 -- Local Functions
@@ -46,6 +47,36 @@ function LogCreator.createGitLog(projectname, path)
         end
         handle:close();
         print('Done!');
+    end
+end
+
+function LogCreator.createInfoFile(projectname, path)
+    if not hasGit() then
+        print('Git isn\'t availalbe on your system.');
+    elseif love.filesystem.isFile(LOG_FOLDER .. projectname .. INFO_FILE) then
+        print('Info file for ' .. projectname .. ' already exists!');
+    else
+        love.filesystem.append(LOG_FOLDER .. projectname .. INFO_FILE, 'return {\r\n');
+
+        -- Project name.
+        love.filesystem.append(LOG_FOLDER .. projectname .. INFO_FILE, '    name = ' .. projectname .. ',\r\n');
+
+        -- First commit.
+        local handle = io.popen('cd ' .. path .. '&&git log --pretty=format:%ct|tail -1');
+        love.filesystem.append(LOG_FOLDER .. projectname .. INFO_FILE, '    firstCommit = ' .. handle:read('*a'):gsub('[%s]+', '') .. ',\r\n');
+        handle:close();
+
+        -- Latest commit.
+        local handle = io.popen('cd ' .. path .. '&&git log --pretty=format:%ct|head -1');
+        love.filesystem.append(LOG_FOLDER .. projectname .. INFO_FILE, '    latestCommit = ' .. handle:read('*a'):gsub('[%s]+', '') .. ',\r\n');
+        handle:close();
+
+        -- Number of commits.
+        local handle = io.popen('cd ' .. path .. '&&git rev-list HEAD --count');
+        love.filesystem.append(LOG_FOLDER .. projectname .. INFO_FILE, '    totalCommits = ' .. handle:read('*a'):gsub('[%s]+', '') .. '\r\n');
+        handle:close();
+
+        love.filesystem.append(LOG_FOLDER .. projectname .. INFO_FILE, '};\r\n');
     end
 end
 
