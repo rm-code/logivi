@@ -51,6 +51,9 @@ local function checkSupport()
     print("\n---- RENDERER  ---- ");
     local name, version, vendor, device = love.graphics.getRendererInfo()
     print(string.format("Name: %s \nVersion: %s \nVendor: %s \nDevice: %s", name, version, vendor, device));
+
+    print("\n----  SYSTEM   ---- ");
+    print(love.system.getOS());
 end
 
 local function drawStats()
