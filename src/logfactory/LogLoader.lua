@@ -29,8 +29,7 @@ local LogLoader = {};
 local LOG_FOLDER = 'logs';
 local LOG_FILE = 'log.txt';
 
-local TAG_AUTHOR = 'author: ';
-local TAG_DATE = 'date: ';
+local TAG_INFO = 'info: ';
 local ROOT_FOLDER = 'root';
 
 local WARNING_TITLE = 'No git log found.';
@@ -66,12 +65,11 @@ end
 -- @param author
 --
 local function splitLine(line, delimiter)
-    local pos = line:find(delimiter);
-    if pos then
-        return line:sub(1, pos - 1), line:sub(pos + 1);
-    else
-        return line;
+    local tmp = {}
+    for part in line:gmatch('[^' .. delimiter .. ']+') do
+        tmp[#tmp + 1] = part;
     end
+    return tmp;
 end
 
 ---
@@ -117,14 +115,15 @@ local function splitCommits(log)
     for i = 1, #log do
         local line = log[i];
 
-        if line:find(TAG_AUTHOR) then
+        if line:find(TAG_INFO) then
             index = index + 1;
             commits[index] = {};
-            commits[index].author, commits[index].email = splitLine(removeTag(line, TAG_AUTHOR), '|');
-        elseif line:find(TAG_DATE) then
+
+            local info = splitLine(removeTag(line, TAG_INFO), '|');
+            commits[index].author, commits[index].email, commits[index].date = info[1], info[2], info[3];
+
             -- Transform unix timestamp to a table containing a human-readable date.
-            local timestamp = removeTag(line, TAG_DATE);
-            local date = os.date('*t', tonumber(timestamp));
+            local date = os.date('*t', tonumber(commits[index].date));
             commits[index].date = string.format("%02d:%02d:%02d - %02d-%02d-%04d",
                 date.hour, date.min, date.sec,
                 date.day, date.month, date.year);
