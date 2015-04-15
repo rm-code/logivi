@@ -43,7 +43,7 @@ function LogCreator.createInfoFile(projectname, path)
         love.filesystem.append(LOG_FOLDER .. projectname .. INFO_FILE, 'return {\r\n');
 
         -- Project name.
-        love.filesystem.append(LOG_FOLDER .. projectname .. INFO_FILE, '    name = ' .. projectname .. ',\r\n');
+        love.filesystem.append(LOG_FOLDER .. projectname .. INFO_FILE, '    name = "' .. projectname .. '",\r\n');
 
         -- First commit.
         local handle = io.popen('cd ' .. path .. '&&git log --pretty=format:%ct|tail -1');
