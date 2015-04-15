@@ -41,7 +41,7 @@ end
 function LogCreator.createInfoFile(projectname, path, force)
     if not force and love.filesystem.isFile(LOG_FOLDER .. projectname .. INFO_FILE) then
         io.write('Info file for ' .. projectname .. ' already exists!\r\n');
-    else
+    elseif love.system.getOS() ~= 'Windows' then
         local fileContent = '';
         fileContent = fileContent .. 'return {\r\n';
 
