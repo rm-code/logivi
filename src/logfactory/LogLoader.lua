@@ -214,7 +214,10 @@ end
 --
 function LogLoader.loadInfo(name)
     if love.filesystem.isFile(LOG_FOLDER .. '/' .. name .. '/' .. INFO_FILE) then
-        return love.filesystem.load(LOG_FOLDER .. '/' .. name .. '/' .. INFO_FILE)();
+        local info = love.filesystem.load(LOG_FOLDER .. '/' .. name .. '/' .. INFO_FILE)()
+        info.firstCommit = createDateFromUnixTimestamp(info.firstCommit);
+        info.latestCommit = createDateFromUnixTimestamp(info.latestCommit);
+        return info;
     end
     return { name = name };
 end
