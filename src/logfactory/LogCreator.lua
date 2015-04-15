@@ -10,17 +10,6 @@ local LOG_FILE = '/log.txt';
 local INFO_FILE = '/project.lua';
 
 -- ------------------------------------------------
--- Local Functions
--- ------------------------------------------------
-
----
--- Checks if git is available on the system.
---
-local function hasGit()
-    return os.execute('git version') == 0;
-end
-
--- ------------------------------------------------
 -- Public Functions
 -- ------------------------------------------------
 
@@ -31,10 +20,7 @@ end
 -- @param path
 --
 function LogCreator.createGitLog(projectname, path)
-    print('Checking for git:')
-    if not hasGit() then
-        print('Git isn\'t availalbe on your system.');
-    elseif love.filesystem.isFile(LOG_FOLDER .. projectname .. LOG_FILE) then
+    if love.filesystem.isFile(LOG_FOLDER .. projectname .. LOG_FILE) then
         print('Git log for ' .. projectname .. ' already exists!');
     else
         print('Writing log for ' .. projectname .. '.');
@@ -51,9 +37,7 @@ function LogCreator.createGitLog(projectname, path)
 end
 
 function LogCreator.createInfoFile(projectname, path)
-    if not hasGit() then
-        print('Git isn\'t availalbe on your system.');
-    elseif love.filesystem.isFile(LOG_FOLDER .. projectname .. INFO_FILE) then
+    if love.filesystem.isFile(LOG_FOLDER .. projectname .. INFO_FILE) then
         print('Info file for ' .. projectname .. ' already exists!');
     else
         love.filesystem.append(LOG_FOLDER .. projectname .. INFO_FILE, 'return {\r\n');
@@ -79,5 +63,17 @@ function LogCreator.createInfoFile(projectname, path)
         love.filesystem.append(LOG_FOLDER .. projectname .. INFO_FILE, '};\r\n');
     end
 end
+
+-- ------------------------------------------------
+-- Getters
+-- ------------------------------------------------
+
+---
+-- Checks if git is available on the system.
+--
+function LogCreator.isGitAvailable()
+    return os.execute('git version') == 0;
+end
+
 
 return LogCreator;

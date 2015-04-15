@@ -84,9 +84,11 @@ function SelectionScreen.new()
         setWindowMode(config.options);
 
         -- Create git logs for repositories specified in the config file.
-        for name, path in pairs(config.repositories) do
-            LogCreator.createGitLog(name, path);
-            LogCreator.createInfoFile(name, path);
+        if LogCreator.isGitAvailable() then
+            for name, path in pairs(config.repositories) do
+                LogCreator.createGitLog(name, path);
+                LogCreator.createInfoFile(name, path);
+            end
         end
 
         -- Intitialise LogLoader.
