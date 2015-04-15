@@ -28,6 +28,7 @@ local LogLoader = {};
 
 local LOG_FOLDER = 'logs';
 local LOG_FILE = 'log.txt';
+local INFO_FILE = 'project.lua';
 
 local TAG_INFO = 'info: ';
 local ROOT_FOLDER = 'root';
@@ -199,6 +200,17 @@ function LogLoader.load(log)
     local index = searchLog(log);
     local rawLog = parseLog(list[index].path);
     return splitCommits(rawLog);
+end
+
+---
+-- Loads information about a git repository.
+-- @param name
+--
+function LogLoader.loadInfo(name)
+    if love.filesystem.isFile(LOG_FOLDER .. '/' .. name .. '/' .. INFO_FILE) then
+        return love.filesystem.load(LOG_FOLDER .. '/' .. name .. '/' .. INFO_FILE)();
+    end
+    return { name = name };
 end
 
 ---

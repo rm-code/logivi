@@ -86,8 +86,11 @@ function InfoPanel.new(x, y)
     -- Setters
     -- ------------------------------------------------
 
-    function self:setInfo(name)
-        info.name = name or '';
+    function self:setInfo(ninfo)
+        info.name = ninfo.name or '';
+        info.firstCommit = ninfo.firstCommit or '';
+        info.latestCommit = ninfo.latestCommit or '';
+        info.totalCommits = ninfo.totalCommits or '';
     end
 
     return self;

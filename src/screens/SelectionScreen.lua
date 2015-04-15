@@ -100,7 +100,7 @@ function SelectionScreen.new()
 
         -- The info panel which displays more information about a selected log.
         infoPanel = InfoPanel.new(uiElementPadding + (2 * uiElementMargin) + buttonList:getButtonWidth(), uiElementPadding);
-        infoPanel:setInfo(param and param.log or logList[1].name);
+        infoPanel:setInfo(LogLoader.loadInfo(param and param.log or logList[1].name));
     end
 
     function self:update(dt)
@@ -123,7 +123,7 @@ function SelectionScreen.new()
 
         local logId = buttonList:pressed(x, y, b);
         if logId then
-            infoPanel:setInfo(logId);
+            infoPanel:setInfo(LogLoader.loadInfo(logId));
         end
     end
 
