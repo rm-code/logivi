@@ -106,6 +106,15 @@ local function parseLog(path)
 end
 
 ---
+-- Turns a unix timestamp into a human readable date string.
+-- @param timestamp
+--
+local function createDateFromUnixTimestamp(timestamp)
+    local date = os.date('*t', tonumber(timestamp));
+    return string.format("%02d:%02d:%02d - %02d-%02d-%04d", date.hour, date.min, date.sec, date.day, date.month, date.year);
+end
+
+---
 -- Splits the log table into commits. Each commit is a new nested table.
 -- @param log
 --
@@ -123,10 +132,7 @@ local function splitCommits(log)
             commits[index].author, commits[index].email, commits[index].date = info[1], info[2], info[3];
 
             -- Transform unix timestamp to a table containing a human-readable date.
-            local date = os.date('*t', tonumber(commits[index].date));
-            commits[index].date = string.format("%02d:%02d:%02d - %02d-%02d-%04d",
-                date.hour, date.min, date.sec,
-                date.day, date.month, date.year);
+            commits[index].date = createDateFromUnixTimestamp(commits[index].date);
         elseif commits[index] then
             -- Split the whole change line into modifier, file name and file path fields.
             local path = line:gsub("^(%a)%s*", ''); -- Remove modifier and whitespace.
