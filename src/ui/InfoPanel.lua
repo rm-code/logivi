@@ -34,6 +34,7 @@ local InfoPanel = {};
 -- ------------------------------------------------
 
 local HEADER_FONT = love.graphics.newFont('res/fonts/SourceCodePro-Bold.otf', 35);
+local TEXT_FONT = love.graphics.newFont('res/fonts/SourceCodePro-Medium.otf', 15);
 local DEFAULT_FONT = love.graphics.newFont(12);
 
 -- ------------------------------------------------
@@ -59,12 +60,19 @@ function InfoPanel.new(x, y)
         love.graphics.rectangle('fill', x, y, love.graphics.getWidth() - x - 20, love.graphics.getHeight() - y - 40);
         love.graphics.setColor(255, 255, 255, 100);
         love.graphics.rectangle('line', x, y, love.graphics.getWidth() - x - 20, love.graphics.getHeight() - y - 40);
+
         love.graphics.setFont(HEADER_FONT);
         love.graphics.setColor(0, 0, 0, 100);
         love.graphics.print(info.name, x + 25, y + 25);
         love.graphics.setColor(255, 100, 100, 255);
         love.graphics.print(info.name, x + 20, y + 20);
         love.graphics.setColor(255, 255, 255, 255);
+
+        love.graphics.setFont(TEXT_FONT);
+        love.graphics.print('First commit:  ' .. info.firstCommit,   x + 25, y + 100);
+        love.graphics.print('Latest commit: ' .. info.latestCommit, x + 25, y + 125);
+        love.graphics.print('Total commits: ' .. info.totalCommits, x + 25, y + 150);
+
         love.graphics.setFont(DEFAULT_FONT);
 
         watchButton:draw();
