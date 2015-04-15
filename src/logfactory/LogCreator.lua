@@ -21,9 +21,9 @@ local INFO_FILE = '/info.lua';
 --
 function LogCreator.createGitLog(projectname, path, force)
     if not force and love.filesystem.isFile(LOG_FOLDER .. projectname .. LOG_FILE) then
-        print('Git log for ' .. projectname .. ' already exists!');
+        io.write('Git log for ' .. projectname .. ' already exists!\r\n');
     else
-        print('Writing log for ' .. projectname .. '.');
+        io.write('Writing log for ' .. projectname .. '.\r\n');
         love.filesystem.createDirectory(LOG_FOLDER .. projectname);
 
         local cmd = 'cd ' .. path .. '&&' .. GIT_COMMAND;
@@ -34,13 +34,13 @@ function LogCreator.createGitLog(projectname, path, force)
         end
         handle:close();
         love.filesystem.write(LOG_FOLDER .. projectname .. LOG_FILE, fileContent);
-        print('Done!');
+        io.write('Done!\r\n');
     end
 end
 
 function LogCreator.createInfoFile(projectname, path, force)
     if not force and love.filesystem.isFile(LOG_FOLDER .. projectname .. INFO_FILE) then
-        print('Info file for ' .. projectname .. ' already exists!');
+        io.write('Info file for ' .. projectname .. ' already exists!\r\n');
     else
         local fileContent = '';
         fileContent = fileContent .. 'return {\r\n';
