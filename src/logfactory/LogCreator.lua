@@ -7,7 +7,7 @@ local LogCreator = {};
 local GIT_COMMAND = 'git log --reverse --numstat --pretty=format:"info: %an|%ae|%ct" --name-status --no-merges';
 local LOG_FOLDER = 'logs/';
 local LOG_FILE = '/log.txt';
-local INFO_FILE = '/project.lua';
+local INFO_FILE = '/info.lua';
 
 -- ------------------------------------------------
 -- Public Functions
