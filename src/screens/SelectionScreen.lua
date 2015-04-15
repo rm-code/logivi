@@ -125,7 +125,7 @@ function SelectionScreen.new()
         end
 
         logId = infoPanel:pressed(x, y, b);
-        if logId and LogCreator.isGitAvailable() then
+        if logId and LogCreator.isGitAvailable() and config.repositories[logId] then
             local forceOverwrite = true;
             LogCreator.createGitLog(logId, config.repositories[logId], forceOverwrite);
             LogCreator.createInfoFile(logId, config.repositories[logId], forceOverwrite);
