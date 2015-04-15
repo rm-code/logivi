@@ -119,10 +119,16 @@ function SelectionScreen.new()
     end
 
     function self:mousepressed(x, y, b)
-        infoPanel:pressed(x, y, b);
-
         local logId = buttonList:pressed(x, y, b);
         if logId then
+            infoPanel:setInfo(LogLoader.loadInfo(logId));
+        end
+
+        logId = infoPanel:pressed(x, y, b);
+        if logId and LogCreator.isGitAvailable() then
+            local forceOverwrite = true;
+            LogCreator.createGitLog(logId, config.repositories[logId], forceOverwrite);
+            LogCreator.createInfoFile(logId, config.repositories[logId], forceOverwrite);
             infoPanel:setInfo(LogLoader.loadInfo(logId));
         end
     end

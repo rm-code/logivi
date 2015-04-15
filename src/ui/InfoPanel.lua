@@ -46,13 +46,16 @@ function InfoPanel.new(x, y)
 
     local info = {};
     local watchButton = Button.new('Watch', love.graphics.getWidth() - 20 - 80 - 5, love.graphics.getHeight() - 85, 80, 40);
+    local refreshButton = Button.new('Refresh', love.graphics.getWidth() - (20 + 80 + 5) * 2, love.graphics.getHeight() - 85, 100, 40);
 
     -- ------------------------------------------------
     -- Public Functions
     -- ------------------------------------------------
 
     function self:update(dt)
-        watchButton:update(dt, love.mouse.getPosition());
+        local mx, my = love.mouse.getPosition();
+        watchButton:update(dt, mx, my);
+        refreshButton:update(dt, mx, my);
     end
 
     function self:draw()
@@ -76,12 +79,15 @@ function InfoPanel.new(x, y)
         love.graphics.setFont(DEFAULT_FONT);
 
         watchButton:draw();
+        refreshButton:draw();
     end
 
     function self:pressed(x, y, b)
         if b == 'l' then
             if watchButton:hasFocus() then
                 ScreenManager.switch('main', { log = info.name });
+            elseif refreshButton:hasFocus() then
+                return info.name;
             end
         end
     end

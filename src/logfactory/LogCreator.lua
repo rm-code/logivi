@@ -19,8 +19,8 @@ local INFO_FILE = '/info.lua';
 -- @param projectname
 -- @param path
 --
-function LogCreator.createGitLog(projectname, path)
-    if love.filesystem.isFile(LOG_FOLDER .. projectname .. LOG_FILE) then
+function LogCreator.createGitLog(projectname, path, force)
+    if not force and love.filesystem.isFile(LOG_FOLDER .. projectname .. LOG_FILE) then
         print('Git log for ' .. projectname .. ' already exists!');
     else
         print('Writing log for ' .. projectname .. '.');
@@ -38,8 +38,8 @@ function LogCreator.createGitLog(projectname, path)
     end
 end
 
-function LogCreator.createInfoFile(projectname, path)
-    if love.filesystem.isFile(LOG_FOLDER .. projectname .. INFO_FILE) then
+function LogCreator.createInfoFile(projectname, path, force)
+    if not force and love.filesystem.isFile(LOG_FOLDER .. projectname .. INFO_FILE) then
         print('Info file for ' .. projectname .. ' already exists!');
     else
         local fileContent = '';
