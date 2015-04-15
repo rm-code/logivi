@@ -28,10 +28,12 @@ function LogCreator.createGitLog(projectname, path)
 
         local cmd = 'cd ' .. path .. '&&' .. GIT_COMMAND;
         local handle = io.popen(cmd);
+        local fileContent = '';
         for line in handle:lines() do
-            love.filesystem.append(LOG_FOLDER .. projectname .. LOG_FILE, line .. '\r\n');
+            fileContent = fileContent .. line .. '\r\n';
         end
         handle:close();
+        love.filesystem.write(LOG_FOLDER .. projectname .. LOG_FILE, fileContent);
         print('Done!');
     end
 end
@@ -40,27 +42,30 @@ function LogCreator.createInfoFile(projectname, path)
     if love.filesystem.isFile(LOG_FOLDER .. projectname .. INFO_FILE) then
         print('Info file for ' .. projectname .. ' already exists!');
     else
-        love.filesystem.append(LOG_FOLDER .. projectname .. INFO_FILE, 'return {\r\n');
+        local fileContent = '';
+        fileContent = fileContent .. 'return {\r\n';
 
         -- Project name.
-        love.filesystem.append(LOG_FOLDER .. projectname .. INFO_FILE, '    name = "' .. projectname .. '",\r\n');
+        fileContent = fileContent .. '    name = "' .. projectname .. '",\r\n';
 
         -- First commit.
         local handle = io.popen('cd ' .. path .. '&&git log --pretty=format:%ct|tail -1');
-        love.filesystem.append(LOG_FOLDER .. projectname .. INFO_FILE, '    firstCommit = ' .. handle:read('*a'):gsub('[%s]+', '') .. ',\r\n');
+        fileContent = fileContent .. '    firstCommit = ' .. handle:read('*a'):gsub('[%s]+', '') .. ',\r\n';
         handle:close();
 
         -- Latest commit.
         local handle = io.popen('cd ' .. path .. '&&git log --pretty=format:%ct|head -1');
-        love.filesystem.append(LOG_FOLDER .. projectname .. INFO_FILE, '    latestCommit = ' .. handle:read('*a'):gsub('[%s]+', '') .. ',\r\n');
+        fileContent = fileContent .. '    latestCommit = ' .. handle:read('*a'):gsub('[%s]+', '') .. ',\r\n';
         handle:close();
 
         -- Number of commits.
         local handle = io.popen('cd ' .. path .. '&&git rev-list HEAD --count');
-        love.filesystem.append(LOG_FOLDER .. projectname .. INFO_FILE, '    totalCommits = ' .. handle:read('*a'):gsub('[%s]+', '') .. '\r\n');
+        fileContent = fileContent .. '    totalCommits = ' .. handle:read('*a'):gsub('[%s]+', '') .. '\r\n';
         handle:close();
 
-        love.filesystem.append(LOG_FOLDER .. projectname .. INFO_FILE, '};\r\n');
+        fileContent = fileContent .. '};\r\n';
+
+        love.filesystem.write(LOG_FOLDER .. projectname .. INFO_FILE, fileContent);
     end
 end
 
