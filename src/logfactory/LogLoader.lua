@@ -28,7 +28,7 @@ local LogLoader = {};
 
 local LOG_FOLDER = 'logs';
 local LOG_FILE = 'log.txt';
-local INFO_FILE = 'project.lua';
+local INFO_FILE = 'info.lua';
 
 local TAG_INFO = 'info: ';
 local ROOT_FOLDER = 'root';
