@@ -39,13 +39,18 @@ local config;
 -- Local Functions
 -- ------------------------------------------------
 
-local function loadFile(name, default)
-    if not love.filesystem.isFile(name) then
-        local file = love.filesystem.newFile(name);
-        file:open('w');
-        file:write(default);
-        file:close();
-    end
+local function hasConfigFile()
+    return love.filesystem.isFile(FILE_NAME);
+end
+
+local function createConfigFile(name, default)
+    local file = love.filesystem.newFile(name);
+    file:open('w');
+    file:write(default);
+    file:close();
+end
+
+local function loadFile(name)
     return love.filesystem.load(name)();
 end
 
@@ -54,7 +59,11 @@ end
 -- ------------------------------------------------
 
 function ConfigReader.init()
-    config = config and config or loadFile(FILE_NAME, FILE_TEMPLATE);
+    if not hasConfigFile() then
+        createConfigFile(FILE_NAME, FILE_TEMPLATE);
+    end
+
+    config = config and config or loadFile(FILE_NAME);
     return config;
 end
 
