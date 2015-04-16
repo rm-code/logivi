@@ -26,8 +26,8 @@ local ConfigReader = {};
 -- Constants
 -- ------------------------------------------------
 
-local FILE_NAME = 'config.lua';
-local FILE_TEMPLATE = require('res.templates.SettingsTemplate');
+local FILE_NAME = 'settings.cfg';
+local TEMPLATE_PATH = 'res/templates/settings.cfg';
 
 -- ------------------------------------------------
 -- Local Variables
@@ -44,14 +44,51 @@ local function hasConfigFile()
 end
 
 local function createConfigFile(name, default)
-    local file = love.filesystem.newFile(name);
-    file:open('w');
-    file:write(default);
-    file:close();
+    for line in love.filesystem.lines(default) do
+        love.filesystem.append(name, line .. '\r\n');
+    end
 end
 
-local function loadFile(name)
-    return love.filesystem.load(name)();
+local function toType(value)
+    value = value:match('^%s*(.-)%s*$');
+    if value == 'true' then
+        return true;
+    elseif value == 'false' then
+        return false;
+    elseif tonumber(value) then
+        return tonumber(value);
+    else
+        return value;
+    end
+end
+
+local function loadFile(file)
+    local config = {};
+    local section;
+    for line in love.filesystem.lines(file) do
+        if line == '' or line:find(';') == 1 then
+            -- Ignore comments and empty lines.
+        elseif line:match('^%[(%w*)%]$') then
+            -- Create a new section.
+            local header = line:match('^%[(%w*)%]$');
+            config[header] = {};
+            section = config[header];
+        else
+            -- Store values in the section.
+            local key, value = line:match('^([%w_]+)%s-=%s-(.+)');
+
+            -- Store multiple values in a table.
+            if value:find(',') then
+                section[key] = {};
+                for val in value:gmatch('[^, ]+') do
+                    section[key][#section[key] + 1] = toType(val);
+                end
+            else
+                section[key] = toType(value);
+            end
+        end
+    end
+    return config;
 end
 
 -- ------------------------------------------------
@@ -60,7 +97,7 @@ end
 
 function ConfigReader.init()
     if not hasConfigFile() then
-        createConfigFile(FILE_NAME, FILE_TEMPLATE);
+        createConfigFile(FILE_NAME, TEMPLATE_PATH);
     end
 
     config = config and config or loadFile(FILE_NAME);
