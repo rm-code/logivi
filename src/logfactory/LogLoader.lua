@@ -42,6 +42,9 @@ Press 'Show Help' to view the wiki (online) for more information on how to gener
 Press 'No' to proceed to the selection screen from where you can view the example project.
 ]];
 
+local EXAMPLE_TEMPLATE_PATH = 'res/templates/example_log.txt';
+local EXAMPLE_TARGET_PATH = 'logs/example/';
+
 -- ------------------------------------------------
 -- Local variables
 -- ------------------------------------------------
@@ -186,12 +189,10 @@ end
 -- Write an example log file to the save directory.
 --
 local function createExample()
-    love.filesystem.createDirectory('logs/example');
-    if not love.filesystem.isFile('logs/example/log.txt') then
-        love.filesystem.newFile('logs/example/log.txt');
-        for line in love.filesystem.lines('res/templates/example_log.txt') do
-            love.filesystem.append('logs/example/log.txt', line .. '\r\n');
-        end
+    love.filesystem.createDirectory(EXAMPLE_TARGET_PATH);
+    if not love.filesystem.isFile(EXAMPLE_TARGET_PATH .. LOG_FILE) then
+        local example = love.filesystem.read(EXAMPLE_TEMPLATE_PATH);
+        love.filesystem.write(EXAMPLE_TARGET_PATH .. LOG_FILE, example);
     end
 end
 
