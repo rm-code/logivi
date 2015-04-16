@@ -189,7 +189,7 @@ local function createExample()
     love.filesystem.createDirectory('logs/example');
     if not love.filesystem.isFile('logs/example/log.txt') then
         love.filesystem.newFile('logs/example/log.txt');
-        for line in love.filesystem.lines('res/log/example_log.txt') do
+        for line in love.filesystem.lines('res/templates/example_log.txt') do
             love.filesystem.append('logs/example/log.txt', line .. '\r\n');
         end
     end
