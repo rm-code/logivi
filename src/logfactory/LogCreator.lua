@@ -28,12 +28,8 @@ function LogCreator.createGitLog(projectname, path, force)
 
         local cmd = 'cd "' .. path .. '" && ' .. GIT_COMMAND;
         local handle = io.popen(cmd);
-        local fileContent = '';
-        for line in handle:lines() do
-            fileContent = fileContent .. line .. '\r\n';
-        end
+        love.filesystem.write(LOG_FOLDER .. projectname .. LOG_FILE, handle:read('*all'));
         handle:close();
-        love.filesystem.write(LOG_FOLDER .. projectname .. LOG_FILE, fileContent);
         io.write('Done!\r\n');
     end
 end
