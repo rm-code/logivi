@@ -88,6 +88,12 @@ local function loadFile(file)
             end
         end
     end
+
+    -- Validate file paths.
+    for project, path in pairs(config.repositories) do
+        config.repositories[project] = path:gsub('\\+', '/');
+    end
+
     return config;
 end
 
