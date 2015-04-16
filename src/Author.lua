@@ -32,8 +32,9 @@ local LINK_INACTIVITY_TIMER = 2;
 local FADE_FACTOR = 2;
 local DEFAULT_AVATAR_ALPHA = 255;
 local DEFAULT_LINK_ALPHA = 50;
-local DEFAULT_DAMPING_VALUE = 0.5;
-local MIN_DISTANCE = 400;
+local DAMPING_FACTOR = 0.90;
+local FORCE_MAX = 2;
+local FORCE_SPRING = -0.5;
 local BEAM_WIDTH = 3;
 
 -- ------------------------------------------------
@@ -43,7 +44,7 @@ local BEAM_WIDTH = 3;
 function Author.new(name, avatar, cx, cy)
     local self = {};
 
-    local posX, posY = cx + love.math.random(5, 40) * (love.math.random(0, 1) == 0 and -1 or 1), cy + love.math.random(5, 40) * (love.math.random(0, 1) == 0 and -1 or 1);
+    local posX, posY = cx + love.math.random(5, 200) * (love.math.random(0, 1) == 0 and -1 or 1), cy + love.math.random(5, 200) * (love.math.random(0, 1) == 0 and -1 or 1);
     local accX, accY = 0, 0;
     local velX, velY = 0, 0;
 
@@ -55,64 +56,30 @@ function Author.new(name, avatar, cx, cy)
     -- Avatar's width and height.
     local aw, ah = avatar:getWidth(), avatar:getHeight();
 
-    local dampingFactor = DEFAULT_DAMPING_VALUE;
-
     -- ------------------------------------------------
     -- Private Functions
     -- ------------------------------------------------
 
+    local function clamp(min, val, max)
+        return math.max(min, math.min(val, max));
+    end
+
     local function reactivate()
         inactivity = 0;
-        dampingFactor = DEFAULT_DAMPING_VALUE;
         avatarAlpha = DEFAULT_AVATAR_ALPHA;
         linkAlpha = DEFAULT_LINK_ALPHA;
     end
 
     local function move(dt)
-        local dx, dy;
-        local distance
-
-        for i = 1, #links do
-            local file = links[i];
-
-            -- Attract
-            dx, dy = posX - file:getX(), posY - file:getY();
-            distance = math.sqrt(dx * dx + dy * dy);
-
-            -- Normalise vector.
-            dx = dx / distance;
-            dy = dy / distance;
-
-            -- Attraction.
-            if distance > MIN_DISTANCE then
-                accX = dx * -distance * 5;
-                accY = dy * -distance * 5;
-            end
-
-            -- Repulsion.
-            accX = accX + (dx * distance);
-            accY = accY + (dy * distance);
-        end
-
-        -- Repel from the graph's center.
-        dx, dy = posX - cx, posY - cy;
-        distance = math.sqrt(dx * dx + dy * dy);
-        dx = dx / distance;
-        dy = dy / distance;
-        accX = accX + (dx * distance);
-        accY = accY + (dy * distance);
-
-        accX = math.max(-4, math.min(accX, 4));
-        accY = math.max(-4, math.min(accY, 4));
-
-        velX = velX + accX * dt * 16;
-        velY = velY + accY * dt * 16;
-
+        velX = (velX + accX * dt * 32) * DAMPING_FACTOR;
+        velY = (velY + accY * dt * 32) * DAMPING_FACTOR;
         posX = posX + velX;
         posY = posY + velY;
+    end
 
-        velX = velX * dampingFactor;
-        velY = velY * dampingFactor;
+    local function applyForce(fx, fy)
+        accX = clamp(-FORCE_MAX, accX + fx, FORCE_MAX);
+        accY = clamp(-FORCE_MAX, accY + fy, FORCE_MAX);
     end
 
     -- ------------------------------------------------
@@ -142,12 +109,22 @@ function Author.new(name, avatar, cx, cy)
         if inactivity > LINK_INACTIVITY_TIMER then
             linkAlpha = linkAlpha - linkAlpha * dt * FADE_FACTOR;
         end
-        dampingFactor = math.max(0.01, dampingFactor - dt);
+        if inactivity > 0.5 then
+            accX, accY = 0, 0;
+        end
     end
 
     function self:addLink(file)
         reactivate();
         links[#links + 1] = file;
+
+        local dx, dy = posX - file:getX(), posY - file:getY();
+        local distance = math.sqrt(dx * dx + dy * dy);
+        dx = dx / distance;
+        dy = dy / distance;
+
+        local strength = FORCE_SPRING * distance;
+        applyForce(dx * strength, dy * strength);
     end
 
     function self:resetLinks()
