@@ -105,7 +105,7 @@ function FileManager.add(fileName)
 
     createSortedList(extensions);
 
-    return extensions[ext].color;
+    return extensions[ext].color, ext;
 end
 
 ---

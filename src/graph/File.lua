@@ -48,7 +48,7 @@ function File.new(name, x, y)
 
     local posX, posY = x, y;
     local offX, offY = 0, 0;
-    local fileColor = FileManager.add(name);
+    local fileColor, extension = FileManager.add(name);
     local currentColor = {};
     local modified = false;
     local timer = MOD_TIMER;
@@ -116,6 +116,10 @@ function File.new(name, x, y)
 
     function self:getColor()
         return currentColor;
+    end
+
+    function self:getExtension()
+        return extension;
     end
 
     -- ------------------------------------------------
