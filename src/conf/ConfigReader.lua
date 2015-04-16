@@ -27,7 +27,7 @@ local ConfigReader = {};
 -- ------------------------------------------------
 
 local FILE_NAME = 'config.lua';
-local FILE_TEMPLATE = require('src.conf.SettingsTemplate');
+local FILE_TEMPLATE = require('res.templates.SettingsTemplate');
 
 -- ------------------------------------------------
 -- Local Variables
