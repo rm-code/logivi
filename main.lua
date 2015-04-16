@@ -119,6 +119,12 @@ function love.resize(x, y)
 end
 
 function love.keypressed(key)
+    if key == ' ' then
+        key = 'space';
+    elseif tonumber(key) then
+        key = tonumber(key);
+    end
+
     if key == 'f1' then
         showDebug = not showDebug;
     end
