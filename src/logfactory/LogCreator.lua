@@ -26,7 +26,7 @@ function LogCreator.createGitLog(projectname, path, force)
         io.write('Writing log for ' .. projectname .. '.\r\n');
         love.filesystem.createDirectory(LOG_FOLDER .. projectname);
 
-        local cmd = 'cd ' .. path .. '&&' .. GIT_COMMAND;
+        local cmd = 'cd "' .. path .. '" && ' .. GIT_COMMAND;
         local handle = io.popen(cmd);
         local fileContent = '';
         for line in handle:lines() do
@@ -49,17 +49,17 @@ function LogCreator.createInfoFile(projectname, path, force)
         fileContent = fileContent .. '    name = "' .. projectname .. '",\r\n';
 
         -- First commit.
-        local handle = io.popen('cd ' .. path .. '&&git log --pretty=format:%ct|tail -1');
+        local handle = io.popen('cd "' .. path .. '" && git log --pretty=format:%ct|tail -1');
         fileContent = fileContent .. '    firstCommit = ' .. handle:read('*a'):gsub('[%s]+', '') .. ',\r\n';
         handle:close();
 
         -- Latest commit.
-        local handle = io.popen('cd ' .. path .. '&&git log --pretty=format:%ct|head -1');
+        local handle = io.popen('cd "' .. path .. '" && git log --pretty=format:%ct|head -1');
         fileContent = fileContent .. '    latestCommit = ' .. handle:read('*a'):gsub('[%s]+', '') .. ',\r\n';
         handle:close();
 
         -- Number of commits.
-        local handle = io.popen('cd ' .. path .. '&&git rev-list HEAD --count');
+        local handle = io.popen('cd "' .. path .. '" && git rev-list HEAD --count');
         fileContent = fileContent .. '    totalCommits = ' .. handle:read('*a'):gsub('[%s]+', '') .. '\r\n';
         handle:close();
 
