@@ -23,6 +23,7 @@
 local Screen = require('lib.screenmanager.Screen');
 local LogCreator = require('src.logfactory.LogCreator');
 local LogLoader = require('src.logfactory.LogLoader');
+local Button = require('src.ui.Button');
 local ButtonList = require('src.ui.ButtonList');
 local InfoPanel = require('src.ui.InfoPanel');
 local ConfigReader = require('src.conf.ConfigReader');
@@ -44,6 +45,7 @@ function SelectionScreen.new()
     local config;
     local logList;
     local buttonList;
+    local saveDirButton;
     local infoPanel;
 
     local uiElementPadding = 20;
@@ -101,11 +103,15 @@ function SelectionScreen.new()
         -- The info panel which displays more information about a selected log.
         infoPanel = InfoPanel.new(uiElementPadding + (2 * uiElementMargin) + buttonList:getButtonWidth(), uiElementPadding);
         infoPanel:setInfo(LogLoader.loadInfo(param and param.log or logList[1].name));
+
+        -- Create a button which opens the save directory.
+        saveDirButton = Button.new('', uiElementPadding - 10, love.graphics.getHeight() - uiElementPadding - 10, uiElementPadding, uiElementPadding);
     end
 
     function self:update(dt)
         buttonList:update(dt);
         infoPanel:update(dt);
+        saveDirButton:update(dt, love.mouse.getPosition());
     end
 
     function self:resize(x, y)
@@ -115,6 +121,7 @@ function SelectionScreen.new()
     function self:draw()
         buttonList:draw();
         infoPanel:draw();
+        saveDirButton:draw();
         love.graphics.print('Work in Progress (v' .. getVersion() .. ')', love.graphics.getWidth() - 180, love.graphics.getHeight() - uiElementPadding);
     end
 
@@ -130,6 +137,10 @@ function SelectionScreen.new()
             LogCreator.createGitLog(logId, config.repositories[logId], forceOverwrite);
             LogCreator.createInfoFile(logId, config.repositories[logId], forceOverwrite);
             infoPanel:setInfo(LogLoader.loadInfo(logId));
+        end
+
+        if saveDirButton:hasFocus() then
+            love.system.openURL('file://' .. love.filesystem.getSaveDirectory());
         end
     end
 
