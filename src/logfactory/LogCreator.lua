@@ -4,7 +4,8 @@ local LogCreator = {};
 -- Constants
 -- ------------------------------------------------
 
-local GIT_COMMAND = 'git log --reverse --numstat --pretty=format:"info: %an|%ae|%ct" --name-status --no-merges';
+local GIT_COMMAND = 'git -C "'
+local LOG_COMMAND = '" log --reverse --numstat --pretty=format:"info: %an|%ae|%ct" --name-status --no-merges';
 local LOG_FOLDER = 'logs/';
 local LOG_FILE = '/log.txt';
 local INFO_FILE = '/info.lua';
@@ -26,7 +27,7 @@ function LogCreator.createGitLog(projectname, path, force)
         io.write('Writing log for ' .. projectname .. '.\r\n');
         love.filesystem.createDirectory(LOG_FOLDER .. projectname);
 
-        local cmd = 'cd "' .. path .. '" && ' .. GIT_COMMAND;
+        local cmd = GIT_COMMAND .. path .. LOG_COMMAND;
         local handle = io.popen(cmd);
         love.filesystem.write(LOG_FOLDER .. projectname .. LOG_FILE, handle:read('*all'));
         handle:close();
