@@ -160,6 +160,10 @@ function MainScreen.new()
         camera:move(dt);
     end
 
+    function self:close()
+        FileManager.reset();
+    end
+
     function self:quit()
         if ConfigReader.getConfig('options').removeTmpFiles then
             ConfigReader.removeTmpFiles();

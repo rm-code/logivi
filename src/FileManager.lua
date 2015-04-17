@@ -129,6 +129,13 @@ function FileManager.remove(fileName)
     createSortedList(extensions);
 end
 
+function FileManager.reset()
+    extensions = {};
+    sortedList = {};
+    totalFiles = 0;
+    colors = nil;
+end
+
 -- ------------------------------------------------
 -- Getters
 -- ------------------------------------------------
