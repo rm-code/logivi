@@ -6,6 +6,9 @@ local LogCreator = {};
 
 local GIT_COMMAND = 'git -C "'
 local LOG_COMMAND = '" log --reverse --numstat --pretty=format:"info: %an|%ae|%ct" --name-status --no-merges';
+local FIRST_COMMIT_COMMAND = '" log --pretty=format:%ct|tail -1';
+local LATEST_COMMIT_COMMAND = '" log --pretty=format:%ct|head -1';
+local TOTAL_COMMITS_COMMAND = '" rev-list HEAD --count';
 local LOG_FOLDER = 'logs/';
 local LOG_FILE = '/log.txt';
 local INFO_FILE = '/info.lua';
@@ -46,17 +49,17 @@ function LogCreator.createInfoFile(projectname, path, force)
         fileContent = fileContent .. '    name = "' .. projectname .. '",\r\n';
 
         -- First commit.
-        local handle = io.popen('cd "' .. path .. '" && git log --pretty=format:%ct|tail -1');
+        local handle = io.popen(GIT_COMMAND .. path .. FIRST_COMMIT_COMMAND);
         fileContent = fileContent .. '    firstCommit = ' .. handle:read('*a'):gsub('[%s]+', '') .. ',\r\n';
         handle:close();
 
         -- Latest commit.
-        local handle = io.popen('cd "' .. path .. '" && git log --pretty=format:%ct|head -1');
+        local handle = io.popen(GIT_COMMAND .. path .. LATEST_COMMIT_COMMAND);
         fileContent = fileContent .. '    latestCommit = ' .. handle:read('*a'):gsub('[%s]+', '') .. ',\r\n';
         handle:close();
 
         -- Number of commits.
-        local handle = io.popen('cd "' .. path .. '" && git rev-list HEAD --count');
+        local handle = io.popen(GIT_COMMAND .. path .. TOTAL_COMMITS_COMMAND);
         fileContent = fileContent .. '    totalCommits = ' .. handle:read('*a'):gsub('[%s]+', '') .. '\r\n';
         handle:close();
 
