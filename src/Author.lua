@@ -27,8 +27,8 @@ local Author = {};
 -- ------------------------------------------------
 
 local AVATAR_SIZE = 48;
-local AUTHOR_INACTIVITY_TIMER = 10;
-local LINK_INACTIVITY_TIMER = 3;
+local AUTHOR_INACTIVITY_TIMER = 2;
+local LINK_INACTIVITY_TIMER = 2;
 local FADE_FACTOR = 2;
 local DEFAULT_AVATAR_ALPHA = 255;
 local DEFAULT_LINK_ALPHA = 50;
