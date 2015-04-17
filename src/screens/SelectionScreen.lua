@@ -115,7 +115,7 @@ function SelectionScreen.new()
     function self:draw()
         buttonList:draw();
         infoPanel:draw();
-        love.graphics.print('Work in Progress (v' .. getVersion() .. ')', uiElementPadding, love.graphics.getHeight() - uiElementPadding);
+        love.graphics.print('Work in Progress (v' .. getVersion() .. ')', love.graphics.getWidth() - 180, love.graphics.getHeight() - uiElementPadding);
     end
 
     function self:mousepressed(x, y, b)
