@@ -138,8 +138,8 @@ end
 -- Adds a link from the current author to a file.
 -- @param file
 --
-function AuthorManager.addFileLink(file)
-    activeAuthor:addLink(file)
+function AuthorManager.addFileLink(file, modifier)
+    activeAuthor:addLink(file, modifier)
 end
 
 ---
