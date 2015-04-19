@@ -67,7 +67,7 @@ function ButtonList.new(offsetX, offsetY, margin)
     function self:update(dt)
         local mx, my = love.mouse.getPosition();
         for _, button in ipairs(buttons) do
-            button:setScrollOffset(scrollOffset);
+            button:setOffset(0, scrollOffset);
             button:update(dt, mx, my);
         end
     end

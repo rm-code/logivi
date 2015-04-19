@@ -40,7 +40,7 @@ function Button.new(id, x, y, w, h)
     local col = { 100, 100, 100, 100 };
     local hlcol = { 150, 150, 150, 150 };
 
-    local offsetY = y;
+    local offsetX, offsetY = 0, 0;
 
     -- ------------------------------------------------
     -- Private Functions
@@ -49,16 +49,16 @@ function Button.new(id, x, y, w, h)
     function self:draw()
         love.graphics.setFont(LABEL_FONT);
         love.graphics.setColor(focus and hlcol or col);
-        love.graphics.rectangle('fill', x, offsetY, w, h);
+        love.graphics.rectangle('fill', x + offsetX, y + offsetY, w, h);
         love.graphics.setColor(255, 255, 255, 100);
-        love.graphics.rectangle('line', x, offsetY, w, h);
-        love.graphics.print(id, x + 10, offsetY + 10);
+        love.graphics.rectangle('line', x + offsetX, y + offsetY, w, h);
+        love.graphics.print(id, x + offsetX + 10, y + offsetY + 10);
         love.graphics.setFont(DEFAULT_FONT);
         love.graphics.setColor(255, 255, 255, 255);
     end
 
     function self:update(dt, mx, my)
-        focus = x < mx and x + w > mx and offsetY < my and offsetY + h > my;
+        focus = x + offsetX < mx and x + w > mx + offsetX and y + offsetY < my and y + offsetY + h > my;
     end
 
     -- ------------------------------------------------
@@ -77,13 +77,12 @@ function Button.new(id, x, y, w, h)
     -- Setters
     -- ------------------------------------------------
 
-    function self:setScrollOffset(noy)
-        offsetY = y + noy;
+    function self:setOffset(nox, noy)
+        offsetX, offsetY = nox, noy;
     end
 
     function self:setPosition(nx, ny)
-        x = nx;
-        offsetY = ny;
+        x, y = nx, ny;
     end
 
     return self;
