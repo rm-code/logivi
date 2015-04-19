@@ -20,89 +20,29 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
-local Button = {};
+local Tooltip = {};
 
--- ------------------------------------------------
--- Constants
--- ------------------------------------------------
-
-local LABEL_FONT = love.graphics.newFont('res/fonts/SourceCodePro-Medium.otf', 20);
-local DEFAULT_FONT = love.graphics.newFont(12);
-
--- ------------------------------------------------
--- Constructor
--- ------------------------------------------------
-
-function Button.new(id, x, y, w, h)
+function Tooltip.new(text, x, y, w, h)
     local self = {};
 
-    local focus;
-    local focusTimer = 0;
-    local col = { 100, 100, 100, 100 };
-    local hlcol = { 150, 150, 150, 150 };
+    local col = { 100, 100, 100, 255 };
 
-    local offsetX, offsetY = 0, 0;
-
-    local tooltip;
-
-    -- ------------------------------------------------
-    -- Private Functions
-    -- ------------------------------------------------
+    function self:update(mx, my)
+        x = math.max(0, math.min(mx + 10, love.graphics.getWidth() - w));
+        y = math.max(0, math.min(my + 10, love.graphics.getHeight() - h));
+    end
 
     function self:draw()
-        love.graphics.setFont(LABEL_FONT);
-        love.graphics.setColor(focus and hlcol or col);
-        love.graphics.rectangle('fill', x + offsetX, y + offsetY, w, h);
+        love.graphics.setColor(col);
+        love.graphics.rectangle('fill', x, y, w, h);
         love.graphics.setColor(255, 255, 255, 100);
-        love.graphics.rectangle('line', x + offsetX, y + offsetY, w, h);
-        love.graphics.print(id, x + offsetX + 10, y + offsetY + 10);
-        love.graphics.setFont(DEFAULT_FONT);
+        love.graphics.rectangle('line', x, y, w, h);
         love.graphics.setColor(255, 255, 255, 255);
-
-        if focus and (tooltip and focusTimer > 0.3) then
-            tooltip:draw();
-        end
-    end
-
-    function self:update(dt, mx, my)
-        focus = x + offsetX < mx and x + w > mx + offsetX and y + offsetY < my and y + offsetY + h > my;
-
-        focusTimer = focus and focusTimer + dt or 0;
-
-        if tooltip then
-            tooltip:update(mx, my);
-        end
-    end
-
-    -- ------------------------------------------------
-    -- Getters
-    -- ------------------------------------------------
-
-    function self:getId()
-        return id;
-    end
-
-    function self:hasFocus()
-        return focus;
-    end
-
-    -- ------------------------------------------------
-    -- Setters
-    -- ------------------------------------------------
-
-    function self:setOffset(nox, noy)
-        offsetX, offsetY = nox, noy;
-    end
-
-    function self:setPosition(nx, ny)
-        x, y = nx, ny;
-    end
-
-    function self:setTooltip(ntooltip)
-        tooltip = ntooltip;
+        love.graphics.print(text, x + 10, y + 10);
+        love.graphics.setColor(255, 255, 255, 255);
     end
 
     return self;
 end
 
-return Button;
+return Tooltip;
