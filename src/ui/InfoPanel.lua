@@ -94,6 +94,7 @@ function InfoPanel.new(x, y)
 
     function self:resize(nx, ny)
         watchButton:setPosition(nx - 20 - 80 - 5, ny - 85);
+        refreshButton:setPosition(nx - (20 + 80 + 5) * 2, ny - 85);
     end
 
     -- ------------------------------------------------
