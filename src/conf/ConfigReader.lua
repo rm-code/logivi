@@ -79,12 +79,12 @@ local function loadFile(file)
             local key, value = line:match('^([%w_]+)%s-=%s-(.+)');
 
             -- Store multiple values in a table.
-            if value:find(',') then
+            if value and value:find(',') then
                 section[key] = {};
                 for val in value:gmatch('[^, ]+') do
                     section[key][#section[key] + 1] = toType(val);
                 end
-            else
+            elseif value then
                 section[key] = toType(value);
             end
         end
