@@ -54,6 +54,7 @@ function Button.new(id, x, y, w, h)
         love.graphics.rectangle('line', x, offsetY, w, h);
         love.graphics.print(id, x + 10, offsetY + 10);
         love.graphics.setFont(DEFAULT_FONT);
+        love.graphics.setColor(255, 255, 255, 255);
     end
 
     function self:update(dt, mx, my)
