@@ -106,6 +106,10 @@ function Timeline.new(v, totalCommits, date)
         end
     end
 
+    function self:resize(nx, ny)
+        stepWidth = (nx - MARGIN_LEFT - MARGIN_RIGHT) / TOTAL_STEPS;
+    end
+
     return self;
 end
 
