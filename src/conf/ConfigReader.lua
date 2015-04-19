@@ -33,6 +33,7 @@ local TEMPLATE_PATH = 'res/templates/settings.cfg';
 -- Local Variables
 -- ------------------------------------------------
 
+local default;
 local config;
 
 -- ------------------------------------------------
@@ -97,16 +98,50 @@ local function loadFile(file)
     return config;
 end
 
+local function validateFile(default, loaded)
+    print('Validating configuration file ... ');
+    for skey, section in pairs(default) do
+
+        -- If loaded config file doesn't contain section return default.
+        if loaded[skey] == nil then
+            love.window.showMessageBox('Invalid config file', 'Seems like the loaded configuration file is missing the "' ..
+                    skey .. '" section. The default settings will be used instead.', 'warning', false);
+            return default;
+        end
+
+        if type(section) == 'table' then
+            for vkey, _ in pairs(section) do
+                if loaded[skey][vkey] == nil then
+                    love.window.showMessageBox('Invalid config file',
+                        'Seems like the loaded configuration file is missing the "' ..
+                                vkey .. '" value in the "' .. skey .. '" section. The default settings will be used instead.', 'warning', false);
+                    return default;
+                end
+            end
+        end
+    end
+
+    print('Done!');
+    return loaded;
+end
+
 -- ------------------------------------------------
 -- Public Functions
 -- ------------------------------------------------
 
 function ConfigReader.init()
+    default = loadFile(TEMPLATE_PATH);
+
     if not hasConfigFile() then
         createConfigFile(FILE_NAME, TEMPLATE_PATH);
     end
 
-    config = config and config or loadFile(FILE_NAME);
+    -- If the config hasn't been loaded yet, load and validate it.
+    if not config then
+        config = loadFile(FILE_NAME);
+        config = validateFile(default, config);
+    end
+
     return config;
 end
 
