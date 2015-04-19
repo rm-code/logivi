@@ -116,6 +116,7 @@ function SelectionScreen.new()
 
     function self:resize(x, y)
         infoPanel:resize(x, y);
+        saveDirButton:setPosition(uiElementPadding - 10, love.graphics.getHeight() - uiElementPadding - 10);
     end
 
     function self:draw()
