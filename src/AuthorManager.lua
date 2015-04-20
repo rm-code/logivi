@@ -34,6 +34,7 @@ local AuthorManager = {};
 -- ------------------------------------------------
 
 local PATH_AVATARS = 'tmp/avatars/';
+local PATH_DEFAULT_AVATAR = 'res/img/avatar.png';
 
 -- ------------------------------------------------
 -- Local Variables
@@ -89,7 +90,7 @@ local function grabAvatars(urlList)
     end
 
     -- Load the default user avatar.
-    avatars['default'] = love.graphics.newImage('res/img/avatar.png');
+    avatars['default'] = love.graphics.newImage(PATH_DEFAULT_AVATAR);
 
     return avatars;
 end
