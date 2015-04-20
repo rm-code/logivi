@@ -2,6 +2,8 @@
 
 LoGiVi is a git-repository visualisation tool inspired by [Gource](https://code.google.com/p/gource/) and __currently in development__. It was written from scratch using [Lua](http://www.lua.org/) and the [LÖVE](https://love2d.org/) framework.
 
+![Example Visualization](https://github.com/rm-code/logivi/wiki/media/logivi_0312.gif)
+
 # Instructions
 When you run LoGiVi for the first time it will set up all necessary folders, an example git log and a config file in the save directory on your harddrive. A dialog will pop up which allows you to view the save directory.
 
