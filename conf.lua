@@ -22,7 +22,7 @@
 
 local PROJECT_TITLE = "LoGiVi";
 
-local PROJECT_VERSION = "0204";
+local PROJECT_VERSION = "0312";
 
 local PROJECT_IDENTITY = "rmcode_LoGiVi";
 
