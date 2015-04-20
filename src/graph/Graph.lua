@@ -51,7 +51,7 @@ local EVENT_UPDATE_FILE = 'GRAPH_UPDATE_FILE';
 -- Local Variables
 -- ------------------------------------------------
 
-local fileSprite = love.graphics.newImage('res/img/file_new.png');
+local fileSprite = love.graphics.newImage('res/img/file.png');
 local spritebatch = love.graphics.newSpriteBatch(fileSprite, 10000, 'stream');
 
 -- ------------------------------------------------
