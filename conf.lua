@@ -28,13 +28,9 @@ local PROJECT_IDENTITY = "rmcode_LoGiVi";
 
 local LOVE_VERSION = "0.9.2";
 
--- ------------------------------------------------
--- Global Functions
--- ------------------------------------------------
-
 ---
 -- Initialise löve's config file.
--- @param _conf
+-- @param t
 --
 function love.conf(t)
     t.identity = PROJECT_IDENTITY;
