@@ -34,6 +34,7 @@ local AuthorManager = {};
 -- ------------------------------------------------
 
 local PATH_AVATARS = 'tmp/avatars/';
+local PATH_DEFAULT_AVATAR = 'res/img/avatar.png';
 
 -- ------------------------------------------------
 -- Local Variables
@@ -89,7 +90,7 @@ local function grabAvatars(urlList)
     end
 
     -- Load the default user avatar.
-    avatars['default'] = love.graphics.newImage('res/img/user.png');
+    avatars['default'] = love.graphics.newImage(PATH_DEFAULT_AVATAR);
 
     return avatars;
 end
@@ -138,8 +139,8 @@ end
 -- Adds a link from the current author to a file.
 -- @param file
 --
-function AuthorManager.addFileLink(file)
-    activeAuthor:addLink(file)
+function AuthorManager.addFileLink(file, modifier)
+    activeAuthor:addLink(file, modifier)
 end
 
 ---

@@ -20,97 +20,89 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
-local MARGIN_LEFT = 10;
-local MARGIN_RIGHT = 10;
-local HEIGHT = 30;
-local TOTAL_STEPS = 128;
+local Button = {};
 
 -- ------------------------------------------------
--- Module
+-- Constants
 -- ------------------------------------------------
 
-local Timeline = {};
+local LABEL_FONT = love.graphics.newFont('res/fonts/SourceCodePro-Medium.otf', 20);
+local DEFAULT_FONT = love.graphics.newFont(12);
 
 -- ------------------------------------------------
 -- Constructor
 -- ------------------------------------------------
 
-function Timeline.new(v, totalCommits, date)
+function Button.new(id, x, y, w, h)
     local self = {};
 
-    local stepWidth = (love.graphics.getWidth() - MARGIN_LEFT - MARGIN_RIGHT) / TOTAL_STEPS;
-    local currentStep = 0;
-    local highlighted = -1;
-    local visible = v;
-    local w, h = 2, -5;
+    local focus;
+    local focusTimer = 0;
+    local col = { 100, 100, 100, 100 };
+    local hlcol = { 150, 150, 150, 150 };
 
-    ---
-    -- Calculates which timestep the user has clicked on and returns the 
-    -- index of the commit which has been mapped to that location.
-    -- @param x - The clicked x-position
-    --
-    local function calculateCommitIndex(x)
-        return math.floor(totalCommits / (TOTAL_STEPS / math.floor((x / stepWidth))));
-    end
+    local offsetX, offsetY = 0, 0;
 
-    ---
-    -- Maps a certain commit to a timestep.
-    --
-    local function calculateTimelineIndex(cindex)
-        return math.floor((cindex / totalCommits) * (TOTAL_STEPS - 1) + 1);
-    end
+    local tooltip;
+
+    -- ------------------------------------------------
+    -- Private Functions
+    -- ------------------------------------------------
 
     function self:draw()
-        if not visible then return end
-        for i = 1, TOTAL_STEPS do
-            if i == highlighted then
-                love.graphics.setColor(200, 0, 0);
-                love.graphics.rectangle('fill', MARGIN_LEFT + (i - 1) * stepWidth, love.graphics.getHeight(), w * 2, h * 2.1);
-            elseif i == currentStep then
-                love.graphics.setColor(80, 80, 80);
-                love.graphics.rectangle('fill', MARGIN_LEFT + (i - 1) * stepWidth, love.graphics.getHeight(), w * 2, h * 2);
-            else
-                love.graphics.setColor(50, 50, 50);
-                love.graphics.rectangle('fill', MARGIN_LEFT + (i - 1) * stepWidth, love.graphics.getHeight(), w, h);
-            end
+        love.graphics.setFont(LABEL_FONT);
+        love.graphics.setColor(focus and hlcol or col);
+        love.graphics.rectangle('fill', x + offsetX, y + offsetY, w, h);
+        love.graphics.setColor(255, 255, 255, 100);
+        love.graphics.rectangle('line', x + offsetX, y + offsetY, w, h);
+        love.graphics.print(id, x + offsetX + 10, y + offsetY + 10);
+        love.graphics.setFont(DEFAULT_FONT);
+        love.graphics.setColor(255, 255, 255, 255);
 
-            love.graphics.setColor(100, 100, 100);
-            love.graphics.print(date, love.graphics.getWidth() * 0.5 - 70, love.graphics.getHeight() - 25);
-            love.graphics.setColor(255, 255, 255);
+        if focus and (tooltip and focusTimer > 0.3) then
+            tooltip:draw();
         end
     end
 
-    function self:update(dt)
-        if love.mouse.getY() > love.graphics.getHeight() - HEIGHT then
-            highlighted = math.floor(love.mouse.getX() / stepWidth);
-        else
-            highlighted = -1;
+    function self:update(dt, mx, my)
+        focus = x + offsetX < mx and x + w > mx + offsetX and y + offsetY < my and y + offsetY + h > my;
+
+        focusTimer = focus and focusTimer + dt or 0;
+
+        if tooltip then
+            tooltip:update(mx, my);
         end
     end
 
-    function self:setCurrentCommit(commit)
-        currentStep = calculateTimelineIndex(commit);
+    -- ------------------------------------------------
+    -- Getters
+    -- ------------------------------------------------
+
+    function self:getId()
+        return id;
     end
 
-    function self:setCurrentDate(ndate)
-        date = ndate;
+    function self:hasFocus()
+        return focus;
     end
 
-    function self:toggle()
-        visible = not visible;
+    -- ------------------------------------------------
+    -- Setters
+    -- ------------------------------------------------
+
+    function self:setOffset(nox, noy)
+        offsetX, offsetY = nox, noy;
     end
 
-    function self:getCommitAt(x, y)
-        if y > love.graphics.getHeight() - HEIGHT then
-            return calculateCommitIndex(x);
-        end
+    function self:setPosition(nx, ny)
+        x, y = nx, ny;
     end
 
-    function self:resize(nx, ny)
-        stepWidth = (nx - MARGIN_LEFT - MARGIN_RIGHT) / TOTAL_STEPS;
+    function self:setTooltip(ntooltip)
+        tooltip = ntooltip;
     end
 
     return self;
 end
 
-return Timeline;
+return Button;

@@ -20,70 +20,41 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
-local PROJECT_TITLE = "LoGiVi";
-
-local PROJECT_VERSION = "0312";
-
-local PROJECT_IDENTITY = "rmcode_LoGiVi";
-
-local LOVE_VERSION = "0.9.2";
+local InputHandler = {};
 
 ---
--- Initialise löve's config file.
--- @param t
+-- Determines if a key constant or if any in a table of key constants are down.
+-- @param constant - The key constant or table of constants.
 --
-function love.conf(t)
-    t.identity = PROJECT_IDENTITY;
-    t.version = LOVE_VERSION;
-    t.console = true;
-
-    t.window.title = PROJECT_TITLE;
-    t.window.icon = nil;
-    t.window.width = 800;
-    t.window.height = 600;
-    t.window.borderless = false;
-    t.window.resizable = true;
-    t.window.minwidth = 800;
-    t.window.minheight = 600;
-    t.window.fullscreen = false;
-    t.window.fullscreentype = "normal";
-    t.window.vsync = true;
-    t.window.fsaa = 0;
-    t.window.display = 1;
-    t.window.highdpi = false;
-    t.window.srgb = false;
-    t.window.x = nil;
-    t.window.y = nil;
-
-    t.modules.audio = true;
-    t.modules.event = true;
-    t.modules.graphics = true;
-    t.modules.image = true;
-    t.modules.joystick = true;
-    t.modules.keyboard = true;
-    t.modules.math = true;
-    t.modules.mouse = true;
-    t.modules.physics = true;
-    t.modules.sound = true;
-    t.modules.system = true;
-    t.modules.timer = true;
-    t.modules.window = true;
-end
-
----
--- Returns the project's version.
---
-function getVersion()
-    if PROJECT_VERSION then
-        return PROJECT_VERSION;
+function InputHandler.isDown(constant)
+    if type(constant) == 'table' then
+        for _, keyToCheck in ipairs(constant) do
+            if love.keyboard.isDown(keyToCheck) then
+                return true;
+            end
+        end
+        return false;
+    else
+        return love.keyboard.isDown(constant);
     end
 end
 
 ---
--- Returns the project's title.
+-- Determines if a key constant or if any in a table of key constants was pressed.
+-- @param key - The key to check for.
+-- @param constant - The key constant or table of constants.
 --
-function getTitle()
-    if PROJECT_TITLE then
-        return PROJECT_TITLE;
+function InputHandler.isPressed(key, constant)
+    if type(constant) == 'table' then
+        for _, keyToCheck in ipairs(constant) do
+            if key == keyToCheck then
+                return true;
+            end
+        end
+        return false;
+    else
+        return key == constant;
     end
 end
+
+return InputHandler;

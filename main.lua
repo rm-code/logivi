@@ -51,6 +51,9 @@ local function checkSupport()
     print("\n---- RENDERER  ---- ");
     local name, version, vendor, device = love.graphics.getRendererInfo()
     print(string.format("Name: %s \nVersion: %s \nVendor: %s \nDevice: %s", name, version, vendor, device));
+
+    print("\n----  SYSTEM   ---- ");
+    print(love.system.getOS());
 end
 
 local function drawStats()
@@ -88,10 +91,11 @@ function love.load()
     print("===================")
 
     local screens = {
+        selection = require('src.screens.SelectionScreen');
         main = require('src.screens.MainScreen');
     };
 
-    ScreenManager.init(screens, 'main');
+    ScreenManager.init(screens, 'selection');
 end
 
 function love.draw()
@@ -110,7 +114,17 @@ function love.quit(q)
     ScreenManager.quit(q);
 end
 
+function love.resize(x, y)
+    ScreenManager.resize(x, y);
+end
+
 function love.keypressed(key)
+    if key == ' ' then
+        key = 'space';
+    elseif tonumber(key) then
+        key = tonumber(key);
+    end
+
     if key == 'f1' then
         showDebug = not showDebug;
     end

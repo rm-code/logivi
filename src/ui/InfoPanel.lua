@@ -20,125 +20,95 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
-local FileManager = require('src.FileManager');
+local ScreenManager = require('lib.screenmanager.ScreenManager');
+local Button = require('src.ui.Button');
 
 -- ------------------------------------------------
 -- Module
 -- ------------------------------------------------
 
-local File = {};
+local InfoPanel = {};
 
 -- ------------------------------------------------
 -- Constants
 -- ------------------------------------------------
 
-local MOD_TIMER = 2;
-local MOD_COLOR = {
-    add = { 0, 255, 0 },
-    del = { 255, 0, 0 },
-    mod = { 254, 140, 0 },
-};
+local HEADER_FONT = love.graphics.newFont('res/fonts/SourceCodePro-Bold.otf', 35);
+local TEXT_FONT = love.graphics.newFont('res/fonts/SourceCodePro-Medium.otf', 15);
+local DEFAULT_FONT = love.graphics.newFont(12);
 
 -- ------------------------------------------------
 -- Constructor
 -- ------------------------------------------------
 
-function File.new(name, x, y)
+function InfoPanel.new(x, y)
     local self = {};
 
-    local posX, posY = x, y;
-    local offX, offY = 0, 0;
-    local fileColor, extension = FileManager.add(name);
-    local currentColor = {};
-    local modified = false;
-    local timer = MOD_TIMER;
-
-    -- ------------------------------------------------
-    -- Private Functions
-    -- ------------------------------------------------
-
-    local function lerp(a, b, t)
-        return a + (b - a) * t;
-    end
+    local info = {};
+    local watchButton = Button.new('Watch', love.graphics.getWidth() - 20 - 80 - 5, love.graphics.getHeight() - 85, 80, 40);
+    local refreshButton = Button.new('Refresh', love.graphics.getWidth() - (20 + 80 + 5) * 2, love.graphics.getHeight() - 85, 100, 40);
 
     -- ------------------------------------------------
     -- Public Functions
     -- ------------------------------------------------
 
-    ---
-    -- If the file is marked as modified the color will be lerped from
-    -- the modified color to the default file color.
-    -- @param dt
-    --
     function self:update(dt)
-        if timer > 0 and modified then
-            timer = timer - dt;
-            currentColor[1] = lerp(currentColor[1], fileColor[1], dt * 1.5);
-            currentColor[2] = lerp(currentColor[2], fileColor[2], dt * 1.5);
-            currentColor[3] = lerp(currentColor[3], fileColor[3], dt * 1.5);
-        else
-            -- Reset values.
-            timer = MOD_TIMER;
-            modified = false;
-            currentColor[1] = fileColor[1]
-            currentColor[2] = fileColor[2];
-            currentColor[3] = fileColor[3];
+        local mx, my = love.mouse.getPosition();
+        watchButton:update(dt, mx, my);
+        refreshButton:update(dt, mx, my);
+    end
+
+    function self:draw()
+        love.graphics.setColor(100, 100, 100, 100);
+        love.graphics.rectangle('fill', x, y, love.graphics.getWidth() - x - 20, love.graphics.getHeight() - y - 40);
+        love.graphics.setColor(255, 255, 255, 100);
+        love.graphics.rectangle('line', x, y, love.graphics.getWidth() - x - 20, love.graphics.getHeight() - y - 40);
+
+        love.graphics.setFont(HEADER_FONT);
+        love.graphics.setColor(0, 0, 0, 100);
+        love.graphics.print(info.name, x + 25, y + 25);
+        love.graphics.setColor(255, 100, 100, 255);
+        love.graphics.print(info.name, x + 20, y + 20);
+        love.graphics.setColor(255, 255, 255, 255);
+
+        love.graphics.setFont(TEXT_FONT);
+        love.graphics.print('First commit:  ' .. info.firstCommit,   x + 25, y + 100);
+        love.graphics.print('Latest commit: ' .. info.latestCommit, x + 25, y + 125);
+        love.graphics.print('Total commits: ' .. info.totalCommits, x + 25, y + 150);
+
+        love.graphics.setFont(DEFAULT_FONT);
+
+        watchButton:draw();
+        refreshButton:draw();
+    end
+
+    function self:pressed(x, y, b)
+        if b == 'l' then
+            if watchButton:hasFocus() then
+                ScreenManager.switch('main', { log = info.name });
+            elseif refreshButton:hasFocus() then
+                return info.name;
+            end
         end
     end
 
-    function self:remove()
-        FileManager.remove(name);
-    end
-
-    ---
-    -- Marks the file as modified and changes the
-    -- current color to the modified color.
-    -- @param mod
-    --
-    function self:modify(mod)
-        modified = true;
-        currentColor[1] = MOD_COLOR[mod][1];
-        currentColor[2] = MOD_COLOR[mod][2];
-        currentColor[3] = MOD_COLOR[mod][3];
-    end
-
-    -- ------------------------------------------------
-    -- Getters
-    -- ------------------------------------------------
-
-    function self:getX()
-        return posX + offX;
-    end
-
-    function self:getY()
-        return posY + offY;
-    end
-
-    function self:getColor()
-        return currentColor;
-    end
-
-    function self:getExtension()
-        return extension;
+    function self:resize(nx, ny)
+        watchButton:setPosition(nx - 20 - 80 - 5, ny - 85);
+        refreshButton:setPosition(nx - (20 + 80 + 5) * 2, ny - 85);
     end
 
     -- ------------------------------------------------
     -- Setters
     -- ------------------------------------------------
 
-    function self:setOffset(ox, oy)
-        offX, offY = ox, oy;
-    end
-
-    function self:setPosition(nx, ny)
-        posX, posY = nx, ny;
+    function self:setInfo(ninfo)
+        info.name = ninfo.name or '';
+        info.firstCommit = ninfo.firstCommit or '';
+        info.latestCommit = ninfo.latestCommit or '';
+        info.totalCommits = ninfo.totalCommits or '';
     end
 
     return self;
 end
 
--- ------------------------------------------------
--- Return Module
--- ------------------------------------------------
-
-return File;
+return InfoPanel;

@@ -36,6 +36,7 @@ local SCND_OFFSET = 50;
 local extensions = {};
 local sortedList = {};
 local totalFiles = 0;
+local colors;
 
 -- ------------------------------------------------
 -- Local Functions
@@ -97,14 +98,14 @@ function FileManager.add(fileName)
         extensions[ext] = {};
         extensions[ext].extension = ext;
         extensions[ext].amount = 0;
-        extensions[ext].color = { love.math.random(0, 255), love.math.random(0, 255), love.math.random(0, 255) };
+        extensions[ext].color = colors[ext] or { love.math.random(0, 255), love.math.random(0, 255), love.math.random(0, 255) };
     end
     extensions[ext].amount = extensions[ext].amount + 1;
     totalFiles = totalFiles + 1;
 
     createSortedList(extensions);
 
-    return extensions[ext].color;
+    return extensions[ext].color, ext;
 end
 
 ---
@@ -128,6 +129,13 @@ function FileManager.remove(fileName)
     createSortedList(extensions);
 end
 
+function FileManager.reset()
+    extensions = {};
+    sortedList = {};
+    totalFiles = 0;
+    colors = nil;
+end
+
 -- ------------------------------------------------
 -- Getters
 -- ------------------------------------------------
@@ -137,6 +145,17 @@ end
 --
 function FileManager.getColor(ext)
     return extensions[ext].color;
+end
+
+-- ------------------------------------------------
+-- Setters
+-- ------------------------------------------------
+
+---
+-- @param ncol
+--
+function FileManager.setColorTable(ncol)
+    colors = ncol;
 end
 
 -- ------------------------------------------------

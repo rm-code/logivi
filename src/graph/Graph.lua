@@ -185,8 +185,8 @@ function Graph.new(ewidth, showLabels)
         end
 
         -- We only notify observers if the graph isn't modifed in fast forward / rewind mode.
-        if mode == 'normal' then
-            notify(EVENT_UPDATE_FILE, modifiedFile);
+        if mode == 'normal' and modifiedFile then
+            notify(EVENT_UPDATE_FILE, modifiedFile, modifier);
         end
     end
 

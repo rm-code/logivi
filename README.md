@@ -3,26 +3,39 @@
 LoGiVi is a git-repository visualisation tool inspired by [Gource](https://code.google.com/p/gource/) and __currently in development__. It was written from scratch using [Lua](http://www.lua.org/) and the [LÖVE](https://love2d.org/) framework.
 
 # Instructions
-LoGiVi can't read from a .git repository directly ([yet](https://github.com/rm-code/logivi/issues/3)). Instead you will have to create a git-log which needs to have a specific format. Please use this command to create the file:
+When you run LoGiVi for the first time it will set up all necessary folders, an example git log and a config file in the save directory on your harddrive. A dialog will pop up which allows you to view the save directory.
+
+## Generating git logs automatically
+LoGiVi can generate git logs automatically when you specify a path to a git repository on your harddrive. Open the _settings.cfg_ file in the LoGiVi save directory and look for the _[repositories]_ section. Add the absolute path to the folder containing the git repository like this:
+
+```
+[repositories]
+logivi = /Users/Robert/Coding/Lua/LÖVE/LoGiVi/
+```
+The name on the left side of the equals sign will be used as the project name to identify this repository so make sure you use unique names here. 
+
+LoGiVi can also handle Windows paths:
+
+```
+[repositories]
+logivi = C:\Users\rmcode\Documents\Coding Projects\LoGiVi\
+```
+After you have added the paths of your project to the config file, the log and info files will be created the next time you run LoGiVi (this may take a few seconds depending on how large the repositories are). 
+
+## Generating git logs manually
+If you don't want the logs to be generated automatically, or if you don't have git in your PATH, you can also generate the git logs manually. 
+
+Open your terminal and type in the following command (replace the path with your own path leading to a git repository):
 
 ```bash
-git log --reverse --numstat --pretty=format:"author: %an|%ae%ndate: %ct%n" --name-status --no-merges > log.txt
+git -C "Path/To/Your/Repository" log --reverse --numstat --pretty=format:"info: %an|%ae|%ct" --name-status --no-merges > log.txt
 ```
+This will create the file _log.txt_ in the folder you are currently in. Take this newly created file and drop it into a folder in the _logs_ subfolder in the LoGiVi save directory:
 
-This will create a log file in the same directory as the .git repository (If you want to write the log to a different location add its path after the '>' in the command above).
-
-When you run LoGiVi for the first time it will automatically open the folder in which you need to place the log. Depending on your operating system this can be one of the following locations:
-
-- Windows XP: C:\Documents and Settings\user\Application Data\LOVE\rmcode_logivi
-- Windows Vista and 7: C:\Users\user\AppData\Roaming\LOVE\rmcode_logivi
-- Linux: $XDG_DATA_HOME/love/ or ~/.local/share/love/rmcode_logivi
-- Mac: /Users/user/Library/Application Support/LOVE/rmcode_logivi
-
-For more information about the filesystem check the [LÖVE wiki](https://love2d.org/wiki/love.filesystem).
-
-As soon as the file is in the correct folder you can start LoGiVi and watch as it creates a visual representation of your git repository.
-
-Check the [wiki](https://github.com/rm-code/logivi/wiki) for instructions and further information.
+```
+/Users/Robert/Library/Application Support/LOVE/rmcode_LoGiVi/logs/yourProject/log.txt
+```
+LoGiVi will use the folder's name to identify the log so make it informative.
 
 # License
 

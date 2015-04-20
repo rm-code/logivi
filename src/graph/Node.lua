@@ -28,8 +28,10 @@ local Node = {};
 
 local FORCE_MAX = 4;
 
-local SPRITE_SIZE = 0.45;
-local SPRITE_OFFSET = 15;
+local SPRITE_SIZE = 24;
+local SPRITE_SCALE_FACTOR = SPRITE_SIZE / 256;
+local SPRITE_OFFSET = 128;
+local MIN_ARC_SIZE = SPRITE_SIZE;
 
 local FORCE_SPRING = -0.005;
 local FORCE_CHARGE = 10000000;
@@ -102,10 +104,8 @@ function Node.new(parent, path, name, x, y, spritebatch)
     -- blueprint of how the files need to be arranged.
     --
     local function createOnionLayers(count)
-        local MIN_ARC_SIZE = 15;
-
         local fileCounter = 0;
-        local radius = -15; -- Radius of the circle around the node.
+        local radius = -SPRITE_SIZE; -- Radius of the circle around the node.
         local layers = {
             { radius = radius, amount = fileCounter }
         };
@@ -121,7 +121,7 @@ function Node.new(parent, path, name, x, y, spritebatch)
             -- of the current layer and the number of nodes that can be placed
             -- on that layer and move to the next layer.
             if arc < MIN_ARC_SIZE then
-                radius = radius + 15;
+                radius = radius + SPRITE_SIZE;
 
                 -- Create a new layer.
                 layers[#layers + 1] = { radius = radius, amount = 1 };
@@ -139,13 +139,23 @@ function Node.new(parent, path, name, x, y, spritebatch)
     -- @param files
     --
     local function plotCircle(files, count)
+        -- Sort files based on their extension before placing them.
+        local toSort = {};
+        for _, file in pairs(files) do
+            toSort[#toSort + 1] = { extension = file:getExtension(), file = file };
+        end
+        table.sort(toSort, function(a, b)
+            return a.extension > b.extension;
+        end)
+
         -- Get a blueprint of how the file nodes need to be distributed amongst different layers.
         local layers, maxradius = createOnionLayers(count);
 
         -- Update the position of the file nodes based on the previously calculated onion-layers.
         local fileCounter = 0;
         local layer = 1;
-        for _, file in pairs(files) do
+        for i = 1, #toSort do
+            local file = toSort[i].file;
             fileCounter = fileCounter + 1;
 
             -- If we have more files on the current layer than allowed, we "move"
@@ -222,7 +232,7 @@ function Node.new(parent, path, name, x, y, spritebatch)
             file:update(dt);
             file:setPosition(posX, posY);
             spritebatch:setColor(file:getColor());
-            spritebatch:add(file:getX(), file:getY(), 0, SPRITE_SIZE, SPRITE_SIZE, SPRITE_OFFSET, SPRITE_OFFSET);
+            spritebatch:add(file:getX(), file:getY(), 0, SPRITE_SCALE_FACTOR, SPRITE_SCALE_FACTOR, SPRITE_OFFSET, SPRITE_OFFSET);
         end
         return posX, posY;
     end
@@ -329,7 +339,7 @@ function Node.new(parent, path, name, x, y, spritebatch)
     end
 
     function self:getMass()
-        return 0.01 * (childCount + math.log(math.max(15, radius)));
+        return 0.015 * (childCount + math.log(math.max(SPRITE_SIZE, radius)));
     end
 
     function self:isConnectedTo(node)
