@@ -339,7 +339,7 @@ function Node.new(parent, path, name, x, y, spritebatch)
     end
 
     function self:getMass()
-        return 0.01 * (childCount + math.log(math.max(15, radius)));
+        return 0.015 * (childCount + math.log(math.max(SPRITE_SIZE, radius)));
     end
 
     function self:isConnectedTo(node)
