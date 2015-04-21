@@ -104,10 +104,10 @@ function Author.new(name, avatar, cx, cy)
             love.graphics.setColor(255, 255, 255, 255);
         end
         love.graphics.setColor(255, 255, 255, avatarAlpha);
-        love.graphics.setFont(LABEL_FONT);
-        love.graphics.print(name, posX - LABEL_FONT:getWidth(name) * 0.5, posY + 48, -rotation);
-        love.graphics.setFont(DEFAULT_FONT);
         love.graphics.draw(avatar, posX, posY, -rotation, AVATAR_SIZE / aw, AVATAR_SIZE / ah, aw * 0.5, ah * 0.5);
+        love.graphics.setFont(LABEL_FONT);
+        love.graphics.print(name, posX, posY, -rotation, 1, 1, LABEL_FONT:getWidth(name) * 0.5, - AVATAR_SIZE);
+        love.graphics.setFont(DEFAULT_FONT);
         love.graphics.setColor(255, 255, 255, 255);
     end
 
