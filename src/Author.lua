@@ -26,6 +26,9 @@ local Author = {};
 -- Constants
 -- ------------------------------------------------
 
+local LABEL_FONT = love.graphics.newFont('res/fonts/SourceCodePro-Medium.otf', 20);
+local DEFAULT_FONT = love.graphics.newFont(12);
+
 local AVATAR_SIZE = 48;
 local AUTHOR_INACTIVITY_TIMER = 2;
 local LINK_INACTIVITY_TIMER = 2;
@@ -101,6 +104,9 @@ function Author.new(name, avatar, cx, cy)
             love.graphics.setColor(255, 255, 255, 255);
         end
         love.graphics.setColor(255, 255, 255, avatarAlpha);
+        love.graphics.setFont(LABEL_FONT);
+        love.graphics.print(name, posX - LABEL_FONT:getWidth(name) * 0.5, posY + 48, -rotation);
+        love.graphics.setFont(DEFAULT_FONT);
         love.graphics.draw(avatar, posX, posY, -rotation, AVATAR_SIZE / aw, AVATAR_SIZE / ah, aw * 0.5, ah * 0.5);
         love.graphics.setColor(255, 255, 255, 255);
     end
