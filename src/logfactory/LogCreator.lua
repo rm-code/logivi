@@ -77,7 +77,11 @@ end
 -- Checks if git is available on the system.
 --
 function LogCreator.isGitAvailable()
-    return os.execute('git version') == 0;
+    local handle = io.popen('git version');
+    local result = handle:read('*a');
+    print(result);
+    handle:close();
+    return result:find('git version');
 end
 
 
