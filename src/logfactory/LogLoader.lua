@@ -223,7 +223,15 @@ function LogLoader.loadInfo(name)
         info.colors = info.colors or {};
         return info;
     end
-    return { name = name };
+    return {
+        name = name,
+        firstCommit = '<no information available>',
+        latestCommit = '<no information available>',
+        totalCommits = '<no information available>',
+        aliases = {},
+        avatars = {},
+        colors = {},
+    };
 end
 
 ---

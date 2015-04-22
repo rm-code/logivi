@@ -102,10 +102,7 @@ function InfoPanel.new(x, y)
     -- ------------------------------------------------
 
     function self:setInfo(ninfo)
-        info.name = ninfo.name or '<no information available>';
-        info.firstCommit = ninfo.firstCommit or '<no information available>';
-        info.latestCommit = ninfo.latestCommit or '<no information available>';
-        info.totalCommits = ninfo.totalCommits or '<no information available>';
+        info = ninfo;
     end
 
     return self;
