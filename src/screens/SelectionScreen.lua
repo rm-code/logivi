@@ -63,16 +63,21 @@ function SelectionScreen.new()
     local function setWindowMode(options)
         local _, _, flags = love.window.getMode();
 
-        flags.fullscreen = options.fullscreen;
-        flags.fullscreentype = options.fullscreenType;
-        flags.vsync = options.vsync;
-        flags.msaa = options.msaa;
-        flags.display = options.display;
+        -- Only update the window when the values are different from the ones set in the config file.
+        if flags.fullscreen ~= options.fullscreen or flags.fullscreentype ~= options.fullscreenType or
+                flags.vsync ~= options.vsync or flags.msaa ~= options.msaa or flags.display ~= options.display then
 
-        love.window.setMode(options.screenWidth, options.screenHeight, flags);
+            flags.fullscreen = options.fullscreen;
+            flags.fullscreentype = options.fullscreenType;
+            flags.vsync = options.vsync;
+            flags.msaa = options.msaa;
+            flags.display = options.display;
 
-        local sw, sh = love.window.getDesktopDimensions();
-        love.window.setPosition(sw * 0.5 - love.graphics.getWidth() * 0.5, sh * 0.5 - love.graphics.getHeight() * 0.5);
+            love.window.setMode(options.screenWidth, options.screenHeight, flags);
+
+            local sw, sh = love.window.getDesktopDimensions();
+            love.window.setPosition(sw * 0.5 - love.graphics.getWidth() * 0.5, sh * 0.5 - love.graphics.getHeight() * 0.5);
+        end
     end
 
     -- ------------------------------------------------
