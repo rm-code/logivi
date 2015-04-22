@@ -100,26 +100,27 @@ function MainScreen.new()
     -- ------------------------------------------------
 
     function self:init(param)
+        -- Store the name of the currently displayed log.
+        log = param.log;
+
         local config = ConfigReader.init();
+        local info = LogLoader.loadInfo(log);
 
         -- Load keybindings.
         assignKeyBindings(config);
 
-        AuthorManager.init(config.aliases, config.avatars, config.options.showAuthors);
+        AuthorManager.init(info.aliases, info.avatars, config.options.showAuthors);
 
         -- Create the camera.
         camera = Camera.new();
         camera:assignKeyBindings(config);
 
         -- Load custom colors.
-        FileManager.setColorTable(config.colors);
+        FileManager.setColorTable(info.colors);
 
         graph = Graph.new(config.options.edgeWidth, config.options.showLabels);
         graph:register(AuthorManager);
         graph:register(camera);
-
-        -- Store the name of the currently displayed log.
-        log = param.log;
 
         -- Initialise LogReader and register observers.
         LogReader.init(LogLoader.load(log), config.options.commitDelay, config.options.mode, config.options.autoplay);

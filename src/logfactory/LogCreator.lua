@@ -60,8 +60,12 @@ function LogCreator.createInfoFile(projectname, path, force)
 
         -- Number of commits.
         local handle = io.popen(GIT_COMMAND .. path .. TOTAL_COMMITS_COMMAND);
-        fileContent = fileContent .. '    totalCommits = ' .. handle:read('*a'):gsub('[%s]+', '') .. '\r\n';
+        fileContent = fileContent .. '    totalCommits = ' .. handle:read('*a'):gsub('[%s]+', '') .. ',\r\n';
         handle:close();
+
+        fileContent = fileContent .. '    aliases = {},\r\n';
+        fileContent = fileContent .. '    avatars = {},\r\n';
+        fileContent = fileContent .. '    colors = {}\r\n';
 
         fileContent = fileContent .. '};\r\n';
 
