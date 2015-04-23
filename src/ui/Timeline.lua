@@ -20,6 +20,8 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
+local TEXT_FONT = love.graphics.newFont('res/fonts/SourceCodePro-Medium.otf', 15);
+local DEFAULT_FONT = love.graphics.newFont(12);
 local MARGIN_LEFT = 10;
 local MARGIN_RIGHT = 10;
 local HEIGHT = 30;
@@ -75,7 +77,9 @@ function Timeline.new(v, totalCommits, date)
             end
 
             love.graphics.setColor(100, 100, 100);
+            love.graphics.setFont(TEXT_FONT);
             love.graphics.print(date, love.graphics.getWidth() * 0.5 - 70, love.graphics.getHeight() - 25);
+            love.graphics.setFont(DEFAULT_FONT)
             love.graphics.setColor(255, 255, 255);
         end
     end
