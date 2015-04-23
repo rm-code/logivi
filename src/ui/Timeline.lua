@@ -78,7 +78,7 @@ function Timeline.new(v, totalCommits, date)
 
             love.graphics.setColor(100, 100, 100);
             love.graphics.setFont(TEXT_FONT);
-            love.graphics.print(date, love.graphics.getWidth() * 0.5 - 70, love.graphics.getHeight() - 25);
+            love.graphics.print(date, love.graphics.getWidth() * 0.5 - TEXT_FONT:getWidth(date) * 0.5, love.graphics.getHeight() - 25);
             love.graphics.setFont(DEFAULT_FONT)
             love.graphics.setColor(255, 255, 255);
         end
