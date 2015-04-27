@@ -82,7 +82,7 @@ function InfoPanel.new(x, y)
         refreshButton:draw();
     end
 
-    function self:pressed(x, y, b)
+    function self:mousepressed(x, y, b)
         if b == 'l' then
             if watchButton:hasFocus() then
                 ScreenManager.switch('main', { log = info.name });
