@@ -24,7 +24,6 @@ local ScreenManager = require('lib.screenmanager.ScreenManager');
 local Screen = require('lib.screenmanager.Screen');
 local LogCreator = require('src.logfactory.LogCreator');
 local LogLoader = require('src.logfactory.LogLoader');
-local Tooltip = require('src.ui.Tooltip');
 local Button = require('src.ui.Button');
 local ButtonList = require('src.ui.ButtonList');
 local ConfigReader = require('src.conf.ConfigReader');
@@ -122,7 +121,6 @@ function SelectionScreen.new()
 
         -- Create a button which opens the save directory.
         saveDirButton = Button.new('', uiElementPadding - 10, love.graphics.getHeight() - uiElementPadding - 10, uiElementPadding, uiElementPadding);
-        saveDirButton:setTooltip(Tooltip.new('Opens the save directory', 10, 10, 180, 40));
     end
 
     function self:update(dt)

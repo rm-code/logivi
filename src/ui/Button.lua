@@ -37,13 +37,10 @@ function Button.new(id, x, y, w, h)
     local self = {};
 
     local focus;
-    local focusTimer = 0;
     local col = { 100, 100, 100, 100 };
     local hlcol = { 150, 150, 150, 150 };
 
     local offsetX, offsetY = 0, 0;
-
-    local tooltip;
 
     -- ------------------------------------------------
     -- Private Functions
@@ -58,20 +55,10 @@ function Button.new(id, x, y, w, h)
         love.graphics.print(id, x + offsetX + 10, y + offsetY + 10);
         love.graphics.setFont(DEFAULT_FONT);
         love.graphics.setColor(255, 255, 255, 255);
-
-        if focus and (tooltip and focusTimer > 0.3) then
-            tooltip:draw();
-        end
     end
 
     function self:update(dt, mx, my)
         focus = x + offsetX < mx and x + w > mx + offsetX and y + offsetY < my and y + offsetY + h > my;
-
-        focusTimer = focus and focusTimer + dt or 0;
-
-        if tooltip then
-            tooltip:update(mx, my);
-        end
     end
 
     -- ------------------------------------------------
@@ -96,10 +83,6 @@ function Button.new(id, x, y, w, h)
 
     function self:setPosition(nx, ny)
         x, y = nx, ny;
-    end
-
-    function self:setTooltip(ntooltip)
-        tooltip = ntooltip;
     end
 
     return self;
