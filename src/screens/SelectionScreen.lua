@@ -54,13 +54,13 @@ function SelectionScreen.new()
     local logList;
     local buttonList;
     local saveDirButton;
+    local watchButton;
+    local refreshButton;
 
     local uiElementPadding = 20;
     local uiElementMargin = 5;
 
     local info = {};
-    local watchButton = Button.new('Watch', love.graphics.getWidth() - 20 - 80 - 5, love.graphics.getHeight() - 85, 80, 40);
-    local refreshButton = Button.new('Refresh', love.graphics.getWidth() - (20 + 80 + 5) * 2, love.graphics.getHeight() - 85, 100, 40);
 
     -- ------------------------------------------------
     -- Private Functions
@@ -121,6 +121,8 @@ function SelectionScreen.new()
 
         -- Create a button which opens the save directory.
         saveDirButton = Button.new('Open', uiElementPadding + (3 * uiElementMargin) + buttonList:getButtonWidth(), love.graphics.getHeight() - 85, 100, 40);
+        watchButton = Button.new('Watch', love.graphics.getWidth() - 20 - 80 - 5, love.graphics.getHeight() - 85, 80, 40);
+        refreshButton = Button.new('Refresh', love.graphics.getWidth() - (20 + 80 + 5) * 2, love.graphics.getHeight() - 85, 100, 40);
     end
 
     function self:update(dt)
