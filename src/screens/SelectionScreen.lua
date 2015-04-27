@@ -20,13 +20,13 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
+local ScreenManager = require('lib.screenmanager.ScreenManager');
 local Screen = require('lib.screenmanager.Screen');
 local LogCreator = require('src.logfactory.LogCreator');
 local LogLoader = require('src.logfactory.LogLoader');
 local Tooltip = require('src.ui.Tooltip');
 local Button = require('src.ui.Button');
 local ButtonList = require('src.ui.ButtonList');
-local InfoPanel = require('src.ui.InfoPanel');
 local ConfigReader = require('src.conf.ConfigReader');
 local InputHandler = require('src.InputHandler');
 
@@ -35,6 +35,14 @@ local InputHandler = require('src.InputHandler');
 -- ------------------------------------------------
 
 local SelectionScreen = {};
+
+-- ------------------------------------------------
+-- Constants
+-- ------------------------------------------------
+
+local HEADER_FONT = love.graphics.newFont('res/fonts/SourceCodePro-Bold.otf', 35);
+local TEXT_FONT = love.graphics.newFont('res/fonts/SourceCodePro-Medium.otf', 15);
+local DEFAULT_FONT = love.graphics.newFont(12);
 
 -- ------------------------------------------------
 -- Constructor
@@ -47,10 +55,13 @@ function SelectionScreen.new()
     local logList;
     local buttonList;
     local saveDirButton;
-    local infoPanel;
 
     local uiElementPadding = 20;
     local uiElementMargin = 5;
+
+    local info = {};
+    local watchButton = Button.new('Watch', love.graphics.getWidth() - 20 - 80 - 5, love.graphics.getHeight() - 85, 80, 40);
+    local refreshButton = Button.new('Refresh', love.graphics.getWidth() - (20 + 80 + 5) * 2, love.graphics.getHeight() - 85, 100, 40);
 
     -- ------------------------------------------------
     -- Private Functions
@@ -106,9 +117,8 @@ function SelectionScreen.new()
         buttonList = ButtonList.new(uiElementPadding, uiElementPadding, uiElementMargin);
         buttonList:init(logList);
 
-        -- The info panel which displays more information about a selected log.
-        infoPanel = InfoPanel.new(uiElementPadding + (2 * uiElementMargin) + buttonList:getButtonWidth(), uiElementPadding);
-        infoPanel:setInfo(LogLoader.loadInfo(param and param.log or logList[1].name));
+        -- Load info about currently selected log.
+        info = LogLoader.loadInfo(param and param.log or logList[1].name);
 
         -- Create a button which opens the save directory.
         saveDirButton = Button.new('', uiElementPadding - 10, love.graphics.getHeight() - uiElementPadding - 10, uiElementPadding, uiElementPadding);
@@ -117,34 +127,64 @@ function SelectionScreen.new()
 
     function self:update(dt)
         buttonList:update(dt);
-        infoPanel:update(dt);
         saveDirButton:update(dt, love.mouse.getPosition());
+        watchButton:update(dt, love.mouse.getPosition());
+        refreshButton:update(dt, love.mouse.getPosition());
     end
 
-    function self:resize(x, y)
-        infoPanel:resize(x, y);
-        saveDirButton:setPosition(uiElementPadding - 10, y - uiElementPadding - 10);
+    function self:resize(nx, ny)
+        saveDirButton:setPosition(uiElementPadding - 10, ny - uiElementPadding - 10);
+        watchButton:setPosition(nx - 20 - 80 - 5, ny - 85);
+        refreshButton:setPosition(nx - (20 + 80 + 5) * 2, ny - 85);
     end
 
     function self:draw()
         buttonList:draw();
-        infoPanel:draw();
         saveDirButton:draw();
         love.graphics.print('Work in Progress (v' .. getVersion() .. ')', love.graphics.getWidth() - 180, love.graphics.getHeight() - uiElementPadding);
+
+        local x = uiElementPadding + (2 * uiElementMargin) + buttonList:getButtonWidth();
+        local y = uiElementPadding;
+        love.graphics.setColor(100, 100, 100, 100);
+        love.graphics.rectangle('fill', x, y, love.graphics.getWidth() - x - 20, love.graphics.getHeight() - y - 40);
+        love.graphics.setColor(255, 255, 255, 100);
+        love.graphics.rectangle('line', x, y, love.graphics.getWidth() - x - 20, love.graphics.getHeight() - y - 40);
+
+        love.graphics.setFont(HEADER_FONT);
+        love.graphics.setColor(0, 0, 0, 100);
+        love.graphics.print(info.name, x + 25, y + 25);
+        love.graphics.setColor(255, 100, 100, 255);
+        love.graphics.print(info.name, x + 20, y + 20);
+        love.graphics.setColor(255, 255, 255, 255);
+
+        love.graphics.setFont(TEXT_FONT);
+        love.graphics.print('First commit:  ' .. info.firstCommit, x + 25, y + 100);
+        love.graphics.print('Latest commit: ' .. info.latestCommit, x + 25, y + 125);
+        love.graphics.print('Total commits: ' .. info.totalCommits, x + 25, y + 150);
+
+        love.graphics.setFont(DEFAULT_FONT);
+
+        watchButton:draw();
+        refreshButton:draw();
     end
 
     function self:mousepressed(x, y, b)
-        local logId = buttonList:pressed(x, y, b);
-        if logId then
-            infoPanel:setInfo(LogLoader.loadInfo(logId));
+        if b == 'l' then
+            if watchButton:hasFocus() then
+                ScreenManager.switch('main', { log = info.name });
+            elseif refreshButton:hasFocus() then
+                if info.name and LogCreator.isGitAvailable() and config.repositories[info.name] then
+                    local forceOverwrite = true;
+                    LogCreator.createGitLog(info.name, config.repositories[info.name], forceOverwrite);
+                    LogCreator.createInfoFile(info.name, config.repositories[info.name], forceOverwrite);
+                    info = LogLoader.loadInfo(info.name);
+                end
+            end
         end
 
-        logId = infoPanel:mousepressed(x, y, b);
-        if logId and LogCreator.isGitAvailable() and config.repositories[logId] then
-            local forceOverwrite = true;
-            LogCreator.createGitLog(logId, config.repositories[logId], forceOverwrite);
-            LogCreator.createInfoFile(logId, config.repositories[logId], forceOverwrite);
-            infoPanel:setInfo(LogLoader.loadInfo(logId));
+        local logId = buttonList:pressed(x, y, b);
+        if logId then
+            info = LogLoader.loadInfo(logId);
         end
 
         if saveDirButton:hasFocus() then
