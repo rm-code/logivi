@@ -120,7 +120,7 @@ function SelectionScreen.new()
         info = LogLoader.loadInfo(param and param.log or logList[1].name);
 
         -- Create a button which opens the save directory.
-        saveDirButton = Button.new('', uiElementPadding - 10, love.graphics.getHeight() - uiElementPadding - 10, uiElementPadding, uiElementPadding);
+        saveDirButton = Button.new('Open', uiElementPadding + (3 * uiElementMargin) + buttonList:getButtonWidth(), love.graphics.getHeight() - 85, 100, 40);
     end
 
     function self:update(dt)
@@ -131,7 +131,7 @@ function SelectionScreen.new()
     end
 
     function self:resize(nx, ny)
-        saveDirButton:setPosition(uiElementPadding - 10, ny - uiElementPadding - 10);
+        saveDirButton:setPosition(uiElementPadding + (3 * uiElementMargin) + buttonList:getButtonWidth(), ny - 85);
         watchButton:setPosition(nx - 20 - 80 - 5, ny - 85);
         refreshButton:setPosition(nx - (20 + 80 + 5) * 2, ny - 85);
     end
