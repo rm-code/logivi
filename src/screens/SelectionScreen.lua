@@ -24,8 +24,10 @@ local ScreenManager = require('lib.screenmanager.ScreenManager');
 local Screen = require('lib.screenmanager.Screen');
 local LogCreator = require('src.logfactory.LogCreator');
 local LogLoader = require('src.logfactory.LogLoader');
-local Button = require('src.ui.Button');
 local ButtonList = require('src.ui.ButtonList');
+local Button = require('src.ui.components.Button');
+local Header = require('src.ui.components.Header');
+local StaticPanel = require('src.ui.components.StaticPanel');
 local ConfigReader = require('src.conf.ConfigReader');
 local InputHandler = require('src.InputHandler');
 local OpenFolderCommand = require('src.ui.commands.OpenFolderCommand');
@@ -42,7 +44,6 @@ local SelectionScreen = {};
 -- Constants
 -- ------------------------------------------------
 
-local HEADER_FONT = love.graphics.newFont('res/fonts/SourceCodePro-Bold.otf', 35);
 local TEXT_FONT = love.graphics.newFont('res/fonts/SourceCodePro-Medium.otf', 15);
 local DEFAULT_FONT = love.graphics.newFont(12);
 
@@ -55,10 +56,11 @@ function SelectionScreen.new()
 
     local config;
     local logList;
+
     local buttonList;
-    local saveDirButton;
-    local watchButton;
-    local refreshButton;
+    local buttons;
+    local header;
+    local panel;
 
     local uiElementPadding = 20;
     local uiElementMargin = 5;
@@ -122,43 +124,39 @@ function SelectionScreen.new()
         -- Load info about currently selected log.
         info = LogLoader.loadInfo(param and param.log or logList[1].name);
 
-        -- Create a button which opens the save directory.
-        saveDirButton = Button.new(OpenFolderCommand.new(), 'Open', uiElementPadding + (3 * uiElementMargin) + buttonList:getButtonWidth(), love.graphics.getHeight() - 85, 100, 40);
-        watchButton   = Button.new(WatchCommand.new(self), 'Watch', love.graphics.getWidth() - 20 - 80 - 5, love.graphics.getHeight() - 85, 80, 40);
-        refreshButton = Button.new(RefreshLogCommand.new(self), 'Refresh', love.graphics.getWidth() - (20 + 80 + 5) * 2, love.graphics.getHeight() - 85, 100, 40);
+        local sw, sh = love.graphics.getDimensions();
+        buttons = {
+            Button.new(OpenFolderCommand.new(love.filesystem.getSaveDirectory()), 'Open', uiElementPadding + (2 * uiElementMargin) + 220, sh - uiElementPadding - 10 - uiElementPadding - 40, 100, 40);
+            Button.new(WatchCommand.new(self), 'Watch', sw - uiElementPadding - 10 - 100, sh - uiElementPadding - 10 - uiElementPadding - 40, 100, 40);
+            Button.new(RefreshLogCommand.new(self), 'Refresh', sw - uiElementPadding - 20 - 200, sh - uiElementPadding - 10 - uiElementPadding - 40, 100, 40);
+        };
+
+        header = Header.new(info.name, uiElementPadding + (2 * uiElementMargin) + 200 + 25, uiElementPadding + 25);
+        panel = StaticPanel.new(uiElementPadding + (2 * uiElementMargin) + buttonList:getButtonWidth(), uiElementPadding, sw - (uiElementPadding + (2 * uiElementMargin) + 200) - 20, sh - uiElementPadding - 40);
     end
 
     function self:update(dt)
         buttonList:update(dt);
-        saveDirButton:update(dt, love.mouse.getPosition());
-        watchButton:update(dt, love.mouse.getPosition());
-        refreshButton:update(dt, love.mouse.getPosition());
+        for i = 1, #buttons do
+            buttons[i]:update(dt);
+        end
     end
 
-    function self:resize(nx, ny)
-        saveDirButton:setPosition(uiElementPadding + (3 * uiElementMargin) + buttonList:getButtonWidth(), ny - 85);
-        watchButton:setPosition(nx - 20 - 80 - 5, ny - 85);
-        refreshButton:setPosition(nx - (20 + 80 + 5) * 2, ny - 85);
+    function self:resize(nw, nh)
+        panel:setDimensions(nw - (uiElementPadding + (2 * uiElementMargin) + 200) - 20, nh - uiElementPadding - 40)
+        buttons[1]:setPosition(uiElementPadding + (2 * uiElementMargin) + 210, nh - uiElementPadding - 10 - uiElementPadding - 40);
+        buttons[2]:setPosition(nw - uiElementPadding - 10 - 100, nh - uiElementPadding - 10 - uiElementPadding - 40);
+        buttons[3]:setPosition(nw - uiElementPadding - 20 - 200, nh - uiElementPadding - 10 - uiElementPadding - 40);
     end
 
     function self:draw()
         buttonList:draw();
-        saveDirButton:draw();
-        love.graphics.print('Work in Progress (v' .. getVersion() .. ')', love.graphics.getWidth() - 180, love.graphics.getHeight() - uiElementPadding);
 
         local x = uiElementPadding + (2 * uiElementMargin) + buttonList:getButtonWidth();
         local y = uiElementPadding;
-        love.graphics.setColor(100, 100, 100, 100);
-        love.graphics.rectangle('fill', x, y, love.graphics.getWidth() - x - 20, love.graphics.getHeight() - y - 40);
-        love.graphics.setColor(255, 255, 255, 100);
-        love.graphics.rectangle('line', x, y, love.graphics.getWidth() - x - 20, love.graphics.getHeight() - y - 40);
 
-        love.graphics.setFont(HEADER_FONT);
-        love.graphics.setColor(0, 0, 0, 100);
-        love.graphics.print(info.name, x + 25, y + 25);
-        love.graphics.setColor(255, 100, 100, 255);
-        love.graphics.print(info.name, x + 20, y + 20);
-        love.graphics.setColor(255, 255, 255, 255);
+        panel:draw();
+        header:draw();
 
         love.graphics.setFont(TEXT_FONT);
         love.graphics.print('First commit:  ' .. info.firstCommit, x + 25, y + 100);
@@ -166,9 +164,11 @@ function SelectionScreen.new()
         love.graphics.print('Total commits: ' .. info.totalCommits, x + 25, y + 150);
 
         love.graphics.setFont(DEFAULT_FONT);
+        love.graphics.print('Work in Progress (v' .. getVersion() .. ')', love.graphics.getWidth() - 180, love.graphics.getHeight() - uiElementPadding);
 
-        watchButton:draw();
-        refreshButton:draw();
+        for i = 1, #buttons do
+            buttons[i]:draw();
+        end
     end
 
     function self:watchLog()
@@ -186,17 +186,20 @@ function SelectionScreen.new()
 
     function self:selectLog(name)
         info = LogLoader.loadInfo(name);
+        header = Header.new(info.name, uiElementPadding + (2 * uiElementMargin) + 200 + 25, uiElementPadding + 25);
     end
 
     function self:mousepressed(x, y, b)
-        local logId = buttonList:pressed(x, y, b);
-        if logId then
-            info = LogLoader.loadInfo(logId);
+        for i = 1, #buttons do
+            buttons[i]:mousepressed(x, y, b);
         end
+        buttonList:mousepressed(x, y, b);
+    end
 
-        saveDirButton:mousepressed(x, y, b);
-        watchButton:mousepressed(x, y, b);
-        refreshButton:mousepressed(x, y, b);
+    function self:mousereleased(x, y, b)
+        for i = 1, #buttons do
+            buttons[i]:mousereleased(x, y, b);
+        end
     end
 
     function self:keypressed(key)
