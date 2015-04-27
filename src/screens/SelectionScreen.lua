@@ -28,6 +28,9 @@ local Button = require('src.ui.Button');
 local ButtonList = require('src.ui.ButtonList');
 local ConfigReader = require('src.conf.ConfigReader');
 local InputHandler = require('src.InputHandler');
+local OpenFolderCommand = require('src.ui.commands.OpenFolderCommand');
+local RefreshLogCommand = require('src.ui.commands.RefreshLogCommand');
+local WatchCommand = require('src.ui.commands.WatchCommand');
 
 -- ------------------------------------------------
 -- Module
@@ -114,15 +117,15 @@ function SelectionScreen.new()
 
         -- A scrollable list of buttons which can be used to select a certain log.
         buttonList = ButtonList.new(uiElementPadding, uiElementPadding, uiElementMargin);
-        buttonList:init(logList);
+        buttonList:init(self, logList);
 
         -- Load info about currently selected log.
         info = LogLoader.loadInfo(param and param.log or logList[1].name);
 
         -- Create a button which opens the save directory.
-        saveDirButton = Button.new('Open', uiElementPadding + (3 * uiElementMargin) + buttonList:getButtonWidth(), love.graphics.getHeight() - 85, 100, 40);
-        watchButton = Button.new('Watch', love.graphics.getWidth() - 20 - 80 - 5, love.graphics.getHeight() - 85, 80, 40);
-        refreshButton = Button.new('Refresh', love.graphics.getWidth() - (20 + 80 + 5) * 2, love.graphics.getHeight() - 85, 100, 40);
+        saveDirButton = Button.new(OpenFolderCommand.new(), 'Open', uiElementPadding + (3 * uiElementMargin) + buttonList:getButtonWidth(), love.graphics.getHeight() - 85, 100, 40);
+        watchButton   = Button.new(WatchCommand.new(self), 'Watch', love.graphics.getWidth() - 20 - 80 - 5, love.graphics.getHeight() - 85, 80, 40);
+        refreshButton = Button.new(RefreshLogCommand.new(self), 'Refresh', love.graphics.getWidth() - (20 + 80 + 5) * 2, love.graphics.getHeight() - 85, 100, 40);
     end
 
     function self:update(dt)
@@ -168,28 +171,32 @@ function SelectionScreen.new()
         refreshButton:draw();
     end
 
-    function self:mousepressed(x, y, b)
-        if b == 'l' then
-            if watchButton:hasFocus() then
-                ScreenManager.switch('main', { log = info.name });
-            elseif refreshButton:hasFocus() then
-                if info.name and LogCreator.isGitAvailable() and config.repositories[info.name] then
-                    local forceOverwrite = true;
-                    LogCreator.createGitLog(info.name, config.repositories[info.name], forceOverwrite);
-                    LogCreator.createInfoFile(info.name, config.repositories[info.name], forceOverwrite);
-                    info = LogLoader.loadInfo(info.name);
-                end
-            end
-        end
+    function self:watchLog()
+        ScreenManager.switch('main', { log = info.name });
+    end
 
+    function self:refreshLog()
+        if info.name and LogCreator.isGitAvailable() and config.repositories[info.name] then
+            local forceOverwrite = true;
+            LogCreator.createGitLog(info.name, config.repositories[info.name], forceOverwrite);
+            LogCreator.createInfoFile(info.name, config.repositories[info.name], forceOverwrite);
+            info = LogLoader.loadInfo(info.name);
+        end
+    end
+
+    function self:selectLog(name)
+        info = LogLoader.loadInfo(name);
+    end
+
+    function self:mousepressed(x, y, b)
         local logId = buttonList:pressed(x, y, b);
         if logId then
             info = LogLoader.loadInfo(logId);
         end
 
-        if saveDirButton:hasFocus() then
-            love.system.openURL('file://' .. love.filesystem.getSaveDirectory());
-        end
+        saveDirButton:mousepressed(x, y, b);
+        watchButton:mousepressed(x, y, b);
+        refreshButton:mousepressed(x, y, b);
     end
 
     function self:keypressed(key)

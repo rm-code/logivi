@@ -20,74 +20,16 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
-local Button = {};
+local OpenFolderCommand = {};
 
--- ------------------------------------------------
--- Constants
--- ------------------------------------------------
-
-local LABEL_FONT = love.graphics.newFont('res/fonts/SourceCodePro-Medium.otf', 20);
-local DEFAULT_FONT = love.graphics.newFont(12);
-
--- ------------------------------------------------
--- Constructor
--- ------------------------------------------------
-
-function Button.new(command, id, x, y, w, h)
+function OpenFolderCommand.new()
     local self = {};
 
-    local focus;
-    local col = { 100, 100, 100, 100 };
-    local hlcol = { 150, 150, 150, 150 };
-
-    local offsetX, offsetY = 0, 0;
-
-    -- ------------------------------------------------
-    -- Private Functions
-    -- ------------------------------------------------
-
-    function self:draw()
-        love.graphics.setFont(LABEL_FONT);
-        love.graphics.setColor(focus and hlcol or col);
-        love.graphics.rectangle('fill', x + offsetX, y + offsetY, w, h);
-        love.graphics.setColor(255, 255, 255, 100);
-        love.graphics.rectangle('line', x + offsetX, y + offsetY, w, h);
-        love.graphics.print(id, x + offsetX + 10, y + offsetY + 10);
-        love.graphics.setFont(DEFAULT_FONT);
-        love.graphics.setColor(255, 255, 255, 255);
-    end
-
-    function self:update(dt, mx, my)
-        focus = x + offsetX < mx and x + w > mx + offsetX and y + offsetY < my and y + offsetY + h > my;
-    end
-
-    function self:mousepressed(mx, my, b)
-        if focus then
-            command:execute();
-        end
-    end
-
-    -- ------------------------------------------------
-    -- Getters
-    -- ------------------------------------------------
-
-    function self:hasFocus()
-        return focus;
-    end
-
-    -- ------------------------------------------------
-    -- Setters
-    -- ------------------------------------------------
-
-    function self:setOffset(nox, noy)
-        offsetX, offsetY = nox, noy;
-    end
-
-    function self:setPosition(nx, ny)
-        x, y = nx, ny;
+    function self:execute()
+        love.system.openURL('file://' .. love.filesystem.getSaveDirectory());
     end
 
     return self;
 end
 
-return Button;
+return OpenFolderCommand;

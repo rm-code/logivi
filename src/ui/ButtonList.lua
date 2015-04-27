@@ -21,6 +21,7 @@
 --==================================================================================================
 
 local Button = require('src.ui.Button');
+local SelectItemCommand = require('src.ui.commands.SelectItemCommand');
 
 -- ------------------------------------------------
 -- Module
@@ -47,10 +48,10 @@ function ButtonList.new(offsetX, offsetY, margin)
     -- Public Functions
     -- ------------------------------------------------
 
-    function self:init(logList)
+    function self:init(sscreen, logList)
         buttons = {};
         for i, log in ipairs(logList) do
-            buttons[#buttons + 1] = Button.new(log.name, offsetX, offsetY + (i - 1) * (buttonH) + margin * (i - 1), buttonW, buttonH);
+            buttons[#buttons + 1] = Button.new(SelectItemCommand.new(sscreen, log.name), log.name, offsetX, offsetY + (i - 1) * (buttonH) + margin * (i - 1), buttonW, buttonH);
         end
 
         listLength = listLength + offsetY + (#buttons - 1) * (buttonH) + margin * (#buttons - 1);
@@ -98,10 +99,7 @@ function ButtonList.new(offsetX, offsetY, margin)
             self:scroll(x, y, scrollSpeed);
         elseif b == 'l' then
             for _, button in ipairs(buttons) do
-                if button:hasFocus() then
-                    print('Select log: ' .. button:getId());
-                    return button:getId();
-                end
+                button:mousepressed(x, y, b);
             end
         end
     end
