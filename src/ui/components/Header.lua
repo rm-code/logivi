@@ -31,9 +31,9 @@ function Header.new(text, x, y, w, h)
 
     local HEADER_FONT = love.graphics.newFont('res/fonts/SourceCodePro-Bold.otf', 35);
 
-    local self = TextLabel.new(text, textCol, HEADER_FONT, 0, 0);
-    self:attach(TextLabel.new(text, shadowCol, HEADER_FONT, 5, 5));
-    self:attach(BaseComponent.new(x, y, w, h));
+    local self = TextLabel(text, textCol, HEADER_FONT, 0, 0);
+    self:attach(TextLabel(text, shadowCol, HEADER_FONT, 5, 5));
+    self:attach(BaseComponent(x, y, w, h));
 
     return self;
 end

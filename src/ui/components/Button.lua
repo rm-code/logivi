@@ -24,13 +24,13 @@ local BaseComponent = require('src.ui.components.BaseComponent');
 local BaseDecorator = require('src.ui.decorators.BaseDecorator');
 local BoxDecorator = require('src.ui.decorators.BoxDecorator');
 local MouseOverDecorator = require('src.ui.decorators.MouseOverDecorator');
-local ClickableDecorator = require('src.ui.decorators.ClickableDecorator');
+local Clickable = require('src.ui.decorators.Clickable');
 local TextLabel = require('src.ui.decorators.TextLabel');
 
 local Button = {};
 
 function Button.new(command, text, x, y, w, h)
-    local self = BaseDecorator.new(x, y, w, h);
+    local self = BaseDecorator(x, y, w, h);
 
     local bodyCol = { 60, 60, 60, 255 };
     local outlineCol = { 100, 100, 100, 255 };
@@ -42,12 +42,12 @@ function Button.new(command, text, x, y, w, h)
     local textX = w * 0.5 - LABEL_FONT:getWidth(text) * 0.5;
     local textY = h * 0.5 - LABEL_FONT:getHeight() * 0.5;
 
-    self:attach(ClickableDecorator.new(command, 0, 0, 0, 0));
-    self:attach(MouseOverDecorator.new(hlCol, 0, 0, 0, 0));
-    self:attach(TextLabel.new(text, textCol, LABEL_FONT, textX, textY));
-    self:attach(BoxDecorator.new('line', outlineCol, 0, 0, 0, 0));
-    self:attach(BoxDecorator.new('fill', bodyCol, 0, 0, 0, 0));
-    self:attach(BaseComponent.new(x, y, w, h));
+    self:attach(Clickable(command, 0, 0, 0, 0));
+    self:attach(MouseOverDecorator(hlCol, 0, 0, 0, 0));
+    self:attach(TextLabel(text, textCol, LABEL_FONT, textX, textY));
+    self:attach(BoxDecorator('line', outlineCol, 0, 0, 0, 0));
+    self:attach(BoxDecorator('fill', bodyCol, 0, 0, 0, 0));
+    self:attach(BaseComponent(x, y, w, h));
 
     return self;
 end

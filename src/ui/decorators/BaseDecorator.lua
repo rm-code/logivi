@@ -1,5 +1,5 @@
 --==================================================================================================
--- Copyright (C) 2014 - 2015 by Robert Machmer                                                     =
+-- Copyright (C) 2015 by Robert Machmer                                                            =
 --                                                                                                 =
 -- Permission is hereby granted, free of charge, to any person obtaining a copy                    =
 -- of this software and associated documentation files (the "Software"), to deal                   =
@@ -22,7 +22,7 @@
 
 local BaseDecorator = {};
 
-function BaseDecorator.new()
+local function new()
     local self = {
         child = nil;
     };
@@ -78,4 +78,4 @@ function BaseDecorator.new()
     return self;
 end
 
-return BaseDecorator;
+return setmetatable(BaseDecorator, { __call = new });

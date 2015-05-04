@@ -27,14 +27,14 @@ local BoxDecorator = require('src.ui.decorators.BoxDecorator');
 local StaticPanel = {};
 
 function StaticPanel.new(x, y, w, h)
-    local self = BaseDecorator.new(x, y, w, h);
+    local self = BaseDecorator(x, y, w, h);
 
     local bodyCol = { 40, 40, 40, 255 };
     local outlineCol = { 80, 80, 80, 255 };
 
-    self:attach(BoxDecorator.new('line', outlineCol, 0, 0, 0, 0));
-    self:attach(BoxDecorator.new('fill', bodyCol, 0, 0, 0, 0));
-    self:attach(BaseComponent.new(x, y, w, h));
+    self:attach(BoxDecorator('line', outlineCol, 0, 0, 0, 0));
+    self:attach(BoxDecorator('fill', bodyCol, 0, 0, 0, 0));
+    self:attach(BaseComponent(x, y, w, h));
 
     return self;
 end

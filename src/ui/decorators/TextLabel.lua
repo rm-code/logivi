@@ -1,5 +1,5 @@
 --==================================================================================================
--- Copyright (C) 2014 - 2015 by Robert Machmer                                                     =
+-- Copyright (C) 2015 by Robert Machmer                                                            =
 --                                                                                                 =
 -- Permission is hereby granted, free of charge, to any person obtaining a copy                    =
 -- of this software and associated documentation files (the "Software"), to deal                   =
@@ -24,8 +24,20 @@ local BaseDecorator = require('src.ui.decorators.BaseDecorator');
 
 local TextLabel = {};
 
-function TextLabel.new(text, rgba, font, x, y)
-    local self = BaseDecorator.new();
+---
+-- @param t - The class table.
+-- @param text - The text to display.
+-- @param rgba - The color to use when rendering text.
+-- @param font - The font to use when rendering text.
+-- @param x - The position of the decorator on the x-axis relative to its parent.
+-- @param y - The position of the decorator on the y-axis relative to its parent.
+-- @param fixedW - Determines wether to lock the width of the decorator or not.
+-- @param fixedH - Determines wether to lock the height of the decorator or not.
+-- @param fixedPosX - Determines wether to lock the position of the decorator or not.
+-- @param fixedPosY - Determines wether to lock the position of the decorator or not.
+--
+local function new(t, text, rgba, font, x, y, fixedW, fixedH, fixedPosX, fixedPosY)
+    local self = BaseDecorator();
 
     function self:draw()
         self.child:draw();
@@ -36,7 +48,16 @@ function TextLabel.new(text, rgba, font, x, y)
         love.graphics.setColor(255, 255, 255, 255);
     end
 
+    function self:setDimensions(nw, nh)
+        local pw, ph = self:getDimensions();
+        if fixedW then w = w + (pw - nw) end
+        if fixedH then h = h + (ph - nh) end
+        if fixedPosX then x = x - (pw - nw) end
+        if fixedPosY then y = y - (ph - nh) end
+        self.child:setDimensions(nw, nh);
+    end
+
     return self;
 end
 
-return TextLabel;
+return setmetatable(TextLabel, { __call = new });
