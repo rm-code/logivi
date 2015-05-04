@@ -36,7 +36,7 @@ local TextLabel = {};
 -- @param fixedPosX - Determines wether to lock the position of the decorator or not.
 -- @param fixedPosY - Determines wether to lock the position of the decorator or not.
 --
-local function new(t, text, rgba, font, x, y, fixedW, fixedH, fixedPosX, fixedPosY)
+local function new(t, text, rgba, font, x, y, fixedPosX, fixedPosY)
     local self = BaseDecorator();
 
     function self:draw()
@@ -50,8 +50,6 @@ local function new(t, text, rgba, font, x, y, fixedW, fixedH, fixedPosX, fixedPo
 
     function self:setDimensions(nw, nh)
         local pw, ph = self:getDimensions();
-        if fixedW then w = w + (pw - nw) end
-        if fixedH then h = h + (ph - nh) end
         if fixedPosX then x = x - (pw - nw) end
         if fixedPosY then y = y - (ph - nh) end
         self.child:setDimensions(nw, nh);

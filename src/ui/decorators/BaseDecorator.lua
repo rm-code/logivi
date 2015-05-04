@@ -75,7 +75,15 @@ local function new()
         return self.child:getDimensions();
     end
 
-    return self;
+    local meta = {};
+
+    function meta.__index(table, key)
+        if key ~= 'child' and self.child then
+            return self.child[key];
+        end
+    end
+
+    return setmetatable(self, meta);
 end
 
 return setmetatable(BaseDecorator, { __call = new });
