@@ -29,6 +29,8 @@ local TextLabel = require('src.ui.decorators.TextLabel');
 
 local Button = {};
 
+local LABEL_FONT = love.graphics.newFont('res/fonts/SourceCodePro-Medium.otf', 20);
+
 function Button.new(command, text, x, y, w, h)
     local self = BaseDecorator(x, y, w, h);
 
@@ -36,8 +38,6 @@ function Button.new(command, text, x, y, w, h)
     local outlineCol = { 100, 100, 100, 255 };
     local hlCol = { 255, 255, 255, 100 };
     local textCol = { 200, 200, 200, 255 };
-
-    local LABEL_FONT = love.graphics.newFont('res/fonts/SourceCodePro-Medium.otf', 20);
 
     local textX = w * 0.5 - LABEL_FONT:getWidth(text) * 0.5;
     local textY = h * 0.5 - LABEL_FONT:getHeight() * 0.5;
