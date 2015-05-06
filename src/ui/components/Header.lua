@@ -25,11 +25,11 @@ local TextLabel = require('src.ui.decorators.TextLabel');
 
 local Header = {};
 
+local HEADER_FONT = love.graphics.newFont('res/fonts/SourceCodePro-Bold.otf', 35);
+
 function Header.new(text, x, y, w, h)
     local shadowCol = { 0, 0, 0, 100 };
     local textCol = { 255, 100, 100, 255 };
-
-    local HEADER_FONT = love.graphics.newFont('res/fonts/SourceCodePro-Bold.otf', 35);
 
     local self = TextLabel(text, textCol, HEADER_FONT, 0, 0);
     self:attach(TextLabel(text, shadowCol, HEADER_FONT, 5, 5));
