@@ -40,31 +40,32 @@ local Timeline = {};
 function Timeline.new(v, totalCommits, date)
     local self = {};
 
-    local stepWidth = (love.graphics.getWidth() - MARGIN_LEFT - MARGIN_RIGHT) / TOTAL_STEPS;
+    local steps = totalCommits < TOTAL_STEPS and totalCommits or TOTAL_STEPS;
+    local stepWidth = (love.graphics.getWidth() - MARGIN_LEFT - MARGIN_RIGHT) / steps;
     local currentStep = 0;
     local highlighted = -1;
     local visible = v;
     local w, h = 2, -5;
 
     ---
-    -- Calculates which timestep the user has clicked on and returns the 
+    -- Calculates which timestep the user has clicked on and returns the
     -- index of the commit which has been mapped to that location.
     -- @param x - The clicked x-position
     --
     local function calculateCommitIndex(x)
-        return math.floor(totalCommits / (TOTAL_STEPS / math.floor((x / stepWidth))));
+        return math.floor(totalCommits / (steps / math.floor((x / stepWidth))));
     end
 
     ---
     -- Maps a certain commit to a timestep.
     --
     local function calculateTimelineIndex(cindex)
-        return math.floor((cindex / totalCommits) * (TOTAL_STEPS - 1) + 1);
+        return math.floor((cindex / totalCommits) * (steps - 1) + 1);
     end
 
     function self:draw()
         if not visible then return end
-        for i = 1, TOTAL_STEPS do
+        for i = 1, steps do
             if i == highlighted then
                 love.graphics.setColor(200, 0, 0);
                 love.graphics.rectangle('fill', MARGIN_LEFT + (i - 1) * stepWidth, love.graphics.getHeight(), w * 2, h * 2.1);
@@ -111,7 +112,7 @@ function Timeline.new(v, totalCommits, date)
     end
 
     function self:resize(nx, ny)
-        stepWidth = (nx - MARGIN_LEFT - MARGIN_RIGHT) / TOTAL_STEPS;
+        stepWidth = (nx - MARGIN_LEFT - MARGIN_RIGHT) / steps;
     end
 
     return self;
