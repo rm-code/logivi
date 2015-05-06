@@ -75,13 +75,13 @@ function Timeline.new(visible, totalCommits, date)
                 love.graphics.setColor(50, 50, 50);
                 love.graphics.rectangle('fill', MARGIN_LEFT + (i - 1) * stepWidth, love.graphics.getHeight(), w, h);
             end
-
-            love.graphics.setColor(100, 100, 100);
-            love.graphics.setFont(TEXT_FONT);
-            love.graphics.print(date, love.graphics.getWidth() * 0.5 - TEXT_FONT:getWidth(date) * 0.5, love.graphics.getHeight() - 25);
-            love.graphics.setFont(DEFAULT_FONT)
-            love.graphics.setColor(255, 255, 255);
         end
+
+        love.graphics.setColor(100, 100, 100);
+        love.graphics.setFont(TEXT_FONT);
+        love.graphics.print(date, love.graphics.getWidth() * 0.5 - TEXT_FONT:getWidth(date) * 0.5, love.graphics.getHeight() - 25);
+        love.graphics.setFont(DEFAULT_FONT)
+        love.graphics.setColor(255, 255, 255);
     end
 
     function self:update(dt)
