@@ -37,14 +37,13 @@ local Timeline = {};
 -- Constructor
 -- ------------------------------------------------
 
-function Timeline.new(v, totalCommits, date)
+function Timeline.new(visible, totalCommits, date)
     local self = {};
 
     local steps = totalCommits < TOTAL_STEPS and totalCommits or TOTAL_STEPS;
     local stepWidth = (love.graphics.getWidth() - MARGIN_LEFT - MARGIN_RIGHT) / steps;
     local currentStep = 0;
     local highlighted = -1;
-    local visible = v;
     local w, h = 2, -5;
 
     ---
