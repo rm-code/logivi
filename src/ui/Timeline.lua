@@ -24,8 +24,13 @@ local TEXT_FONT = love.graphics.newFont('res/fonts/SourceCodePro-Medium.otf', 15
 local DEFAULT_FONT = love.graphics.newFont(12);
 local MARGIN_LEFT = 10;
 local MARGIN_RIGHT = 10;
+local MARGIN_LABEL = 35;
 local HEIGHT = 30;
 local TOTAL_STEPS = 128;
+
+local DEFAULT_STEP_SCALE = 0.4;
+local HIGHLIGHT_STEP_SCALE = 0.7;
+local CURRENT_STEP_SCALE = 0.6;
 
 -- ------------------------------------------------
 -- Module
@@ -44,7 +49,15 @@ function Timeline.new(visible, totalCommits, date)
     local stepWidth = (love.graphics.getWidth() - MARGIN_LEFT - MARGIN_RIGHT) / steps;
     local currentStep = 0;
     local highlighted = -1;
-    local w, h = 2, -5;
+
+    local stepSprite = love.graphics.newImage('res/img/step.png');
+    local spritebatch = love.graphics.newSpriteBatch(stepSprite, TOTAL_STEPS, 'dynamic');
+    spritebatch:setColor(100, 100, 100, 255);
+
+    -- Create the timeline.
+    for i = 1, steps do
+        spritebatch:add(MARGIN_LEFT + (i - 1) * stepWidth, love.graphics.getHeight() - (stepSprite:getHeight() * DEFAULT_STEP_SCALE), 0, DEFAULT_STEP_SCALE, DEFAULT_STEP_SCALE);
+    end
 
     ---
     -- Calculates which timestep the user has clicked on and returns the
@@ -64,22 +77,17 @@ function Timeline.new(visible, totalCommits, date)
 
     function self:draw()
         if not visible then return end
-        for i = 1, steps do
-            if i == highlighted then
-                love.graphics.setColor(200, 0, 0);
-                love.graphics.rectangle('fill', MARGIN_LEFT + (i - 1) * stepWidth, love.graphics.getHeight(), w * 2, h * 2.1);
-            elseif i == currentStep then
-                love.graphics.setColor(80, 80, 80);
-                love.graphics.rectangle('fill', MARGIN_LEFT + (i - 1) * stepWidth, love.graphics.getHeight(), w * 2, h * 2);
-            else
-                love.graphics.setColor(50, 50, 50);
-                love.graphics.rectangle('fill', MARGIN_LEFT + (i - 1) * stepWidth, love.graphics.getHeight(), w, h);
-            end
-        end
+        love.graphics.draw(spritebatch);
+
+        love.graphics.setColor(120, 120, 120, 255);
+        love.graphics.draw(stepSprite, MARGIN_LEFT + (currentStep - 1) * stepWidth, love.graphics.getHeight() - (stepSprite:getHeight() * CURRENT_STEP_SCALE), 0, CURRENT_STEP_SCALE, CURRENT_STEP_SCALE);
+
+        love.graphics.setColor(255, 0, 0);
+        love.graphics.draw(stepSprite, MARGIN_LEFT + (highlighted - 1) * stepWidth, love.graphics.getHeight() - (stepSprite:getHeight() * HIGHLIGHT_STEP_SCALE), 0, HIGHLIGHT_STEP_SCALE, HIGHLIGHT_STEP_SCALE);
 
         love.graphics.setColor(100, 100, 100);
         love.graphics.setFont(TEXT_FONT);
-        love.graphics.print(date, love.graphics.getWidth() * 0.5 - TEXT_FONT:getWidth(date) * 0.5, love.graphics.getHeight() - 25);
+        love.graphics.print(date, love.graphics.getWidth() * 0.5 - TEXT_FONT:getWidth(date) * 0.5, love.graphics.getHeight() - MARGIN_LABEL);
         love.graphics.setFont(DEFAULT_FONT)
         love.graphics.setColor(255, 255, 255);
     end
@@ -112,6 +120,12 @@ function Timeline.new(visible, totalCommits, date)
 
     function self:resize(nx, ny)
         stepWidth = (nx - MARGIN_LEFT - MARGIN_RIGHT) / steps;
+
+        -- Recreate the spritebatch when the window is resized.
+        spritebatch:clear();
+        for i = 1, steps do
+            spritebatch:add(MARGIN_LEFT + (i - 1) * stepWidth, ny - (stepSprite:getHeight() * DEFAULT_STEP_SCALE), 0, DEFAULT_STEP_SCALE, DEFAULT_STEP_SCALE);
+        end
     end
 
     return self;
