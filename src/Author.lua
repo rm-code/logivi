@@ -104,7 +104,6 @@ function Author.new(name, avatar, cx, cy)
             for i = 1, #links do
                 love.graphics.setColor(LINK_COLOR[links[i].mod][1], LINK_COLOR[links[i].mod][2], LINK_COLOR[links[i].mod][3], linkAlpha);
                 love.graphics.line(posX, posY, links[i].file:getX(), links[i].file:getY());
-                love.graphics.setColor(255, 255, 255, 255);
             end
             love.graphics.setLineWidth(1);
 
