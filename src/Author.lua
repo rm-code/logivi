@@ -100,13 +100,14 @@ function Author.new(name, avatar, cx, cy)
 
     function self:draw(rotation)
         if active then
+            love.graphics.setLineWidth(BEAM_WIDTH);
             for i = 1, #links do
                 love.graphics.setColor(LINK_COLOR[links[i].mod][1], LINK_COLOR[links[i].mod][2], LINK_COLOR[links[i].mod][3], linkAlpha);
-                love.graphics.setLineWidth(BEAM_WIDTH);
                 love.graphics.line(posX, posY, links[i].file:getX(), links[i].file:getY());
-                love.graphics.setLineWidth(1);
                 love.graphics.setColor(255, 255, 255, 255);
             end
+            love.graphics.setLineWidth(1);
+
             love.graphics.setColor(255, 255, 255, avatarAlpha);
             love.graphics.draw(avatar, posX, posY, -rotation, AVATAR_SIZE / aw, AVATAR_SIZE / ah, aw * 0.5, ah * 0.5);
             love.graphics.setFont(LABEL_FONT);
