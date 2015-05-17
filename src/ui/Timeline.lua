@@ -20,6 +20,12 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
+local Timeline = {};
+
+-- ------------------------------------------------
+-- Constants
+-- ------------------------------------------------
+
 local TEXT_FONT = love.graphics.newFont('res/fonts/SourceCodePro-Medium.otf', 15);
 local DEFAULT_FONT = love.graphics.newFont(12);
 local MARGIN_LEFT = 10;
@@ -31,12 +37,6 @@ local TOTAL_STEPS = 128;
 local DEFAULT_STEP_SCALE = 0.4;
 local HIGHLIGHT_STEP_SCALE = 0.7;
 local CURRENT_STEP_SCALE = 0.6;
-
--- ------------------------------------------------
--- Module
--- ------------------------------------------------
-
-local Timeline = {};
 
 -- ------------------------------------------------
 -- Constructor
