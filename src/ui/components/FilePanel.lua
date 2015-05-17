@@ -28,7 +28,15 @@ local Scrollable = require('src.ui.decorators.Scrollable');
 local RenderArea = require('src.ui.decorators.RenderArea');
 local Toggleable = require('src.ui.decorators.Toggleable');
 
+-- ------------------------------------------------
+-- Module
+-- ------------------------------------------------
+
 local FilePanel = {};
+
+-- ------------------------------------------------
+-- Constructor
+-- ------------------------------------------------
 
 function FilePanel.new(render, update, x, y, w, h)
     local bodyBaseCol = { 80, 80, 80, 150 };

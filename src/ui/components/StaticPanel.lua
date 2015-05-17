@@ -24,7 +24,15 @@ local BaseComponent = require('src.ui.components.BaseComponent');
 local BaseDecorator = require('src.ui.decorators.BaseDecorator');
 local BoxDecorator = require('src.ui.decorators.BoxDecorator');
 
+-- ------------------------------------------------
+-- Module
+-- ------------------------------------------------
+
 local StaticPanel = {};
+
+-- ------------------------------------------------
+-- Constructor
+-- ------------------------------------------------
 
 function StaticPanel.new(x, y, w, h)
     local self = BaseDecorator(x, y, w, h);

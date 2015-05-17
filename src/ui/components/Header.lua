@@ -24,9 +24,21 @@ local BaseComponent = require('src.ui.components.BaseComponent');
 local TextLabel = require('src.ui.decorators.TextLabel');
 local Resources = require('src.Resources');
 
+-- ------------------------------------------------
+-- Module
+-- ------------------------------------------------
+
 local Header = {};
 
+-- ------------------------------------------------
+-- Constants
+-- ------------------------------------------------
+
 local HEADER_FONT = Resources.loadFont('SourceCodePro-Bold.otf', 35);
+
+-- ------------------------------------------------
+-- Constructor
+-- ------------------------------------------------
 
 function Header.new(text, x, y, w, h)
     local shadowCol = { 0, 0, 0, 100 };

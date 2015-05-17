@@ -28,9 +28,21 @@ local Clickable = require('src.ui.decorators.Clickable');
 local TextLabel = require('src.ui.decorators.TextLabel');
 local Resources = require('src.Resources');
 
+-- ------------------------------------------------
+-- Module
+-- ------------------------------------------------
+
 local Button = {};
 
+-- ------------------------------------------------
+-- Constants
+-- ------------------------------------------------
+
 local LABEL_FONT = Resources.loadFont('SourceCodePro-Medium.otf', 20);
+
+-- ------------------------------------------------
+-- Constructor
+-- ------------------------------------------------
 
 function Button.new(command, text, x, y, w, h)
     local self = BaseDecorator(x, y, w, h);
