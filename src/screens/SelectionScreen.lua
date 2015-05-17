@@ -164,12 +164,12 @@ function SelectionScreen.new()
         love.graphics.print('Latest commit: ' .. info.latestCommit, x + 25, y + 125);
         love.graphics.print('Total commits: ' .. info.totalCommits, x + 25, y + 150);
 
-        love.graphics.setFont(DEFAULT_FONT);
-        love.graphics.print('Work in Progress (v' .. getVersion() .. ')', love.graphics.getWidth() - 180, love.graphics.getHeight() - uiElementPadding);
-
         for i = 1, #buttons do
             buttons[i]:draw();
         end
+
+        love.graphics.setFont(DEFAULT_FONT);
+        love.graphics.print('Work in Progress (v' .. getVersion() .. ')', love.graphics.getWidth() - 180, love.graphics.getHeight() - uiElementPadding);
     end
 
     function self:watchLog()
