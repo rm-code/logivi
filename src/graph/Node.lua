@@ -20,6 +20,12 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
+local Resources = require('src.Resources');
+
+-- ------------------------------------------------
+-- Module
+-- ------------------------------------------------
+
 local Node = {};
 
 -- ------------------------------------------------
@@ -36,8 +42,8 @@ local MIN_ARC_SIZE = SPRITE_SIZE;
 local FORCE_SPRING = -0.005;
 local FORCE_CHARGE = 10000000;
 
-local LABEL_FONT = love.graphics.newFont('res/fonts/SourceCodePro-Medium.otf', 20);
-local DEFAULT_FONT = love.graphics.newFont(12);
+local LABEL_FONT   = Resources.loadFont('SourceCodePro-Medium.otf', 20);
+local DEFAULT_FONT = Resources.loadFont('default', 12);
 
 local DAMPING_FACTOR = 0.95;
 

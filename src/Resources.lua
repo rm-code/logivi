@@ -20,23 +20,55 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
-local BaseComponent = require('src.ui.components.BaseComponent');
-local TextLabel = require('src.ui.decorators.TextLabel');
-local Resources = require('src.Resources');
+local Resources = {};
 
-local Header = {};
+-- ------------------------------------------------
+-- Constants
+-- ------------------------------------------------
 
-local HEADER_FONT = Resources.loadFont('SourceCodePro-Bold.otf', 35);
+local IMG_PATH  = 'res/img/';
+local FONT_PATH = 'res/fonts/';
 
-function Header.new(text, x, y, w, h)
-    local shadowCol = { 0, 0, 0, 100 };
-    local textCol = { 255, 100, 100, 255 };
+-- ------------------------------------------------
+-- Local Variables
+-- ------------------------------------------------
 
-    local self = TextLabel(text, textCol, HEADER_FONT, 0, 0);
-    self:attach(TextLabel(text, shadowCol, HEADER_FONT, 5, 5));
-    self:attach(BaseComponent(x, y, w, h));
+local images = {};
+local fonts  = {
+    default = {
+        [12] = love.graphics.newFont(12)
+    }
+};
 
-    return self;
+
+-- ------------------------------------------------
+-- Public Functions
+-- ------------------------------------------------
+
+---
+-- Loads an image or returns an already loaded image.
+-- @param name - The name of the file to load.
+--
+function Resources.loadImage(name)
+    if not images[name] then
+        images[name] = love.graphics.newImage(IMG_PATH .. name);
+    end
+    return images[name]
 end
 
-return Header;
+---
+-- Loads a font or returns an already loaded font.
+-- @param name - The name of the font to load.
+-- @param size - The size of the font to load.
+--
+function Resources.loadFont(name, size)
+    if not fonts[name] then
+        fonts[name] = {};
+        fonts[name][size] = love.graphics.newFont(FONT_PATH .. name, size);
+    elseif not fonts[name][size] then
+        fonts[name][size] = love.graphics.newFont(FONT_PATH .. name, size);
+    end
+    return fonts[name][size];
+end
+
+return Resources;

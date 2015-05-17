@@ -20,14 +20,20 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
+local Resources = require('src.Resources');
+
+-- ------------------------------------------------
+-- Module
+-- ------------------------------------------------
+
 local Timeline = {};
 
 -- ------------------------------------------------
 -- Constants
 -- ------------------------------------------------
 
-local TEXT_FONT = love.graphics.newFont('res/fonts/SourceCodePro-Medium.otf', 15);
-local DEFAULT_FONT = love.graphics.newFont(12);
+local TEXT_FONT    = Resources.loadFont('SourceCodePro-Medium.otf', 15);
+local DEFAULT_FONT = Resources.loadFont('default', 12);
 local MARGIN_LEFT = 10;
 local MARGIN_RIGHT = 10;
 local MARGIN_LABEL = 35;
@@ -50,7 +56,7 @@ function Timeline.new(visible, totalCommits, date)
     local currentStep = 0;
     local highlighted = -1;
 
-    local stepSprite = love.graphics.newImage('res/img/step.png');
+    local stepSprite  = Resources.loadImage('step.png');
     local spritebatch = love.graphics.newSpriteBatch(stepSprite, TOTAL_STEPS, 'dynamic');
     spritebatch:setColor(100, 100, 100, 255);
 

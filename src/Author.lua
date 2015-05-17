@@ -20,14 +20,20 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
+local Resources = require('src.Resources');
+
+-- ------------------------------------------------
+-- Module
+-- ------------------------------------------------
+
 local Author = {};
 
 -- ------------------------------------------------
 -- Constants
 -- ------------------------------------------------
 
-local LABEL_FONT = love.graphics.newFont('res/fonts/SourceCodePro-Medium.otf', 20);
-local DEFAULT_FONT = love.graphics.newFont(12);
+local LABEL_FONT   = Resources.loadFont('SourceCodePro-Medium.otf', 20);
+local DEFAULT_FONT = Resources.loadFont('default', 12);
 
 local AVATAR_SIZE = 48;
 local AUTHOR_INACTIVITY_TIMER = 2;

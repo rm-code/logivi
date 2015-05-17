@@ -33,6 +33,7 @@ local InputHandler = require('src.InputHandler');
 local OpenFolderCommand = require('src.ui.commands.OpenFolderCommand');
 local RefreshLogCommand = require('src.ui.commands.RefreshLogCommand');
 local WatchCommand = require('src.ui.commands.WatchCommand');
+local Resources = require('src.Resources');
 
 -- ------------------------------------------------
 -- Module
@@ -44,8 +45,8 @@ local SelectionScreen = {};
 -- Constants
 -- ------------------------------------------------
 
-local TEXT_FONT = love.graphics.newFont('res/fonts/SourceCodePro-Medium.otf', 15);
-local DEFAULT_FONT = love.graphics.newFont(12);
+local TEXT_FONT    = Resources.loadFont('SourceCodePro-Medium.otf', 15);
+local DEFAULT_FONT = Resources.loadFont('default', 12);
 
 -- ------------------------------------------------
 -- Constructor

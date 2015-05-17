@@ -26,10 +26,11 @@ local BoxDecorator = require('src.ui.decorators.BoxDecorator');
 local MouseOverDecorator = require('src.ui.decorators.MouseOverDecorator');
 local Clickable = require('src.ui.decorators.Clickable');
 local TextLabel = require('src.ui.decorators.TextLabel');
+local Resources = require('src.Resources');
 
 local Button = {};
 
-local LABEL_FONT = love.graphics.newFont('res/fonts/SourceCodePro-Medium.otf', 20);
+local LABEL_FONT = Resources.loadFont('SourceCodePro-Medium.otf', 20);
 
 function Button.new(command, text, x, y, w, h)
     local self = BaseDecorator(x, y, w, h);
