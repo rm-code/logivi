@@ -79,15 +79,16 @@ function Timeline.new(visible, totalCommits, date)
         if not visible then return end
         love.graphics.draw(spritebatch);
 
+        local sw, sh = love.graphics.getDimensions();
         love.graphics.setColor(120, 120, 120, 255);
-        love.graphics.draw(stepSprite, MARGIN_LEFT + (currentStep - 1) * stepWidth, love.graphics.getHeight() - (stepSprite:getHeight() * CURRENT_STEP_SCALE), 0, CURRENT_STEP_SCALE, CURRENT_STEP_SCALE);
+        love.graphics.draw(stepSprite, MARGIN_LEFT + (currentStep - 1) * stepWidth, sh - (stepSprite:getHeight() * CURRENT_STEP_SCALE), 0, CURRENT_STEP_SCALE, CURRENT_STEP_SCALE);
 
         love.graphics.setColor(255, 0, 0);
-        love.graphics.draw(stepSprite, MARGIN_LEFT + (highlighted - 1) * stepWidth, love.graphics.getHeight() - (stepSprite:getHeight() * HIGHLIGHT_STEP_SCALE), 0, HIGHLIGHT_STEP_SCALE, HIGHLIGHT_STEP_SCALE);
+        love.graphics.draw(stepSprite, MARGIN_LEFT + (highlighted - 1) * stepWidth, sh - (stepSprite:getHeight() * HIGHLIGHT_STEP_SCALE), 0, HIGHLIGHT_STEP_SCALE, HIGHLIGHT_STEP_SCALE);
 
         love.graphics.setColor(100, 100, 100);
         love.graphics.setFont(TEXT_FONT);
-        love.graphics.print(date, love.graphics.getWidth() * 0.5 - TEXT_FONT:getWidth(date) * 0.5, love.graphics.getHeight() - MARGIN_LABEL);
+        love.graphics.print(date, sw * 0.5 - TEXT_FONT:getWidth(date) * 0.5, sh - MARGIN_LABEL);
         love.graphics.setFont(DEFAULT_FONT)
         love.graphics.setColor(255, 255, 255);
     end
