@@ -61,6 +61,18 @@ function File.new(name, x, y)
         return a + (b - a) * t;
     end
 
+    ---
+    -- Resets the color values and the timer, and sets
+    -- the modified flag to false.
+    --
+    local function reset()
+        timer = MOD_TIMER;
+        modified = false;
+        currentColor[1] = fileColor[1];
+        currentColor[2] = fileColor[2];
+        currentColor[3] = fileColor[3];
+    end
+
     -- ------------------------------------------------
     -- Public Functions
     -- ------------------------------------------------
@@ -71,18 +83,15 @@ function File.new(name, x, y)
     -- @param dt
     --
     function self:update(dt)
-        if timer > 0 and modified then
-            timer = timer - dt;
-            currentColor[1] = lerp(currentColor[1], fileColor[1], dt * 1.5);
-            currentColor[2] = lerp(currentColor[2], fileColor[2], dt * 1.5);
-            currentColor[3] = lerp(currentColor[3], fileColor[3], dt * 1.5);
-        else
-            -- Reset values.
-            timer = MOD_TIMER;
-            modified = false;
-            currentColor[1] = fileColor[1]
-            currentColor[2] = fileColor[2];
-            currentColor[3] = fileColor[3];
+        if modified then
+            if timer > 0 then
+                timer = timer - dt;
+                currentColor[1] = lerp(currentColor[1], fileColor[1], dt * 1.5);
+                currentColor[2] = lerp(currentColor[2], fileColor[2], dt * 1.5);
+                currentColor[3] = lerp(currentColor[3], fileColor[3], dt * 1.5);
+            else
+                reset();
+            end
         end
     end
 

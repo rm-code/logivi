@@ -20,70 +20,49 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
-local PROJECT_TITLE = "LoGiVi";
+local BaseComponent = require('src.ui.components.BaseComponent');
+local BaseDecorator = require('src.ui.decorators.BaseDecorator');
+local BoxDecorator = require('src.ui.decorators.BoxDecorator');
+local MouseOverDecorator = require('src.ui.decorators.MouseOverDecorator');
+local Clickable = require('src.ui.decorators.Clickable');
+local TextLabel = require('src.ui.decorators.TextLabel');
+local Resources = require('src.Resources');
 
-local PROJECT_VERSION = "0351";
+-- ------------------------------------------------
+-- Module
+-- ------------------------------------------------
 
-local PROJECT_IDENTITY = "rmcode_LoGiVi";
+local Button = {};
 
-local LOVE_VERSION = "0.9.2";
+-- ------------------------------------------------
+-- Constants
+-- ------------------------------------------------
 
----
--- Initialise löve's config file.
--- @param t
---
-function love.conf(t)
-    t.identity = PROJECT_IDENTITY;
-    t.version = LOVE_VERSION;
-    t.console = true;
+local LABEL_FONT = Resources.loadFont('SourceCodePro-Medium.otf', 20);
 
-    t.window.title = PROJECT_TITLE;
-    t.window.icon = nil;
-    t.window.width = 800;
-    t.window.height = 600;
-    t.window.borderless = false;
-    t.window.resizable = true;
-    t.window.minwidth = 800;
-    t.window.minheight = 600;
-    t.window.fullscreen = false;
-    t.window.fullscreentype = "normal";
-    t.window.vsync = true;
-    t.window.fsaa = 0;
-    t.window.display = 1;
-    t.window.highdpi = false;
-    t.window.srgb = false;
-    t.window.x = nil;
-    t.window.y = nil;
+-- ------------------------------------------------
+-- Constructor
+-- ------------------------------------------------
 
-    t.modules.audio = true;
-    t.modules.event = true;
-    t.modules.graphics = true;
-    t.modules.image = true;
-    t.modules.joystick = true;
-    t.modules.keyboard = true;
-    t.modules.math = true;
-    t.modules.mouse = true;
-    t.modules.physics = true;
-    t.modules.sound = true;
-    t.modules.system = true;
-    t.modules.timer = true;
-    t.modules.window = true;
+function Button.new(command, text, x, y, w, h)
+    local self = BaseDecorator(x, y, w, h);
+
+    local bodyCol = { 60, 60, 60, 255 };
+    local outlineCol = { 100, 100, 100, 255 };
+    local hlCol = { 255, 255, 255, 100 };
+    local textCol = { 200, 200, 200, 255 };
+
+    local textX = w * 0.5 - LABEL_FONT:getWidth(text) * 0.5;
+    local textY = h * 0.5 - LABEL_FONT:getHeight() * 0.5;
+
+    self:attach(Clickable(command, 0, 0, 0, 0));
+    self:attach(MouseOverDecorator(hlCol, 0, 0, 0, 0));
+    self:attach(TextLabel(text, textCol, LABEL_FONT, textX, textY));
+    self:attach(BoxDecorator('line', outlineCol, 0, 0, 0, 0));
+    self:attach(BoxDecorator('fill', bodyCol, 0, 0, 0, 0));
+    self:attach(BaseComponent(x, y, w, h));
+
+    return self;
 end
 
----
--- Returns the project's version.
---
-function getVersion()
-    if PROJECT_VERSION then
-        return PROJECT_VERSION;
-    end
-end
-
----
--- Returns the project's title.
---
-function getTitle()
-    if PROJECT_TITLE then
-        return PROJECT_TITLE;
-    end
-end
+return Button;

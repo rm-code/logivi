@@ -218,9 +218,20 @@ function LogLoader.loadInfo(name)
         local info = love.filesystem.load(LOG_FOLDER .. '/' .. name .. '/' .. INFO_FILE)()
         info.firstCommit = createDateFromUnixTimestamp(info.firstCommit);
         info.latestCommit = createDateFromUnixTimestamp(info.latestCommit);
+        info.aliases = info.aliases or {};
+        info.avatars = info.avatars or {};
+        info.colors = info.colors or {};
         return info;
     end
-    return { name = name };
+    return {
+        name = name,
+        firstCommit = '<no information available>',
+        latestCommit = '<no information available>',
+        totalCommits = '<no information available>',
+        aliases = {},
+        avatars = {},
+        colors = {},
+    };
 end
 
 ---

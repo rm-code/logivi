@@ -88,6 +88,10 @@ function FileManager.draw(x, y)
     end
 end
 
+function FileManager.update(dt)
+    return 0, 0, 0, 10 + (#sortedList + 1) * 20;
+end
+
 ---
 -- Adds a new file extension to the list.
 -- @param fileName

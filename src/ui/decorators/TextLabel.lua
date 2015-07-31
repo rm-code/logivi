@@ -1,5 +1,5 @@
 --==================================================================================================
--- Copyright (C) 2014 - 2015 by Robert Machmer                                                     =
+-- Copyright (C) 2015 by Robert Machmer                                                            =
 --                                                                                                 =
 -- Permission is hereby granted, free of charge, to any person obtaining a copy                    =
 -- of this software and associated documentation files (the "Software"), to deal                   =
@@ -20,70 +20,42 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
-local PROJECT_TITLE = "LoGiVi";
+local BaseDecorator = require('src.ui.decorators.BaseDecorator');
 
-local PROJECT_VERSION = "0351";
-
-local PROJECT_IDENTITY = "rmcode_LoGiVi";
-
-local LOVE_VERSION = "0.9.2";
+local TextLabel = {};
 
 ---
--- Initialise löve's config file.
--- @param t
+-- @param t - The class table.
+-- @param text - The text to display.
+-- @param rgba - The color to use when rendering text.
+-- @param font - The font to use when rendering text.
+-- @param x - The position of the decorator on the x-axis relative to its parent.
+-- @param y - The position of the decorator on the y-axis relative to its parent.
+-- @param fixedW - Determines wether to lock the width of the decorator or not.
+-- @param fixedH - Determines wether to lock the height of the decorator or not.
+-- @param fixedPosX - Determines wether to lock the position of the decorator or not.
+-- @param fixedPosY - Determines wether to lock the position of the decorator or not.
 --
-function love.conf(t)
-    t.identity = PROJECT_IDENTITY;
-    t.version = LOVE_VERSION;
-    t.console = true;
+local function new(t, text, rgba, font, x, y, fixedPosX, fixedPosY)
+    local self = BaseDecorator();
 
-    t.window.title = PROJECT_TITLE;
-    t.window.icon = nil;
-    t.window.width = 800;
-    t.window.height = 600;
-    t.window.borderless = false;
-    t.window.resizable = true;
-    t.window.minwidth = 800;
-    t.window.minheight = 600;
-    t.window.fullscreen = false;
-    t.window.fullscreentype = "normal";
-    t.window.vsync = true;
-    t.window.fsaa = 0;
-    t.window.display = 1;
-    t.window.highdpi = false;
-    t.window.srgb = false;
-    t.window.x = nil;
-    t.window.y = nil;
-
-    t.modules.audio = true;
-    t.modules.event = true;
-    t.modules.graphics = true;
-    t.modules.image = true;
-    t.modules.joystick = true;
-    t.modules.keyboard = true;
-    t.modules.math = true;
-    t.modules.mouse = true;
-    t.modules.physics = true;
-    t.modules.sound = true;
-    t.modules.system = true;
-    t.modules.timer = true;
-    t.modules.window = true;
-end
-
----
--- Returns the project's version.
---
-function getVersion()
-    if PROJECT_VERSION then
-        return PROJECT_VERSION;
+    function self:draw()
+        self.child:draw();
+        local px, py = self:getPosition();
+        love.graphics.setFont(font);
+        love.graphics.setColor(rgba);
+        love.graphics.print(text, px + x, py + y);
+        love.graphics.setColor(255, 255, 255, 255);
     end
+
+    function self:setDimensions(nw, nh)
+        local pw, ph = self:getDimensions();
+        if fixedPosX then x = x - (pw - nw) end
+        if fixedPosY then y = y - (ph - nh) end
+        self.child:setDimensions(nw, nh);
+    end
+
+    return self;
 end
 
----
--- Returns the project's title.
---
-function getTitle()
-    if PROJECT_TITLE then
-        return PROJECT_TITLE;
-    end
-end
+return setmetatable(TextLabel, { __call = new });

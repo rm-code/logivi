@@ -20,7 +20,8 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
-local Button = require('src.ui.Button');
+local Button = require('src.ui.components.Button');
+local SelectItemCommand = require('src.ui.commands.SelectItemCommand');
 
 -- ------------------------------------------------
 -- Module
@@ -37,7 +38,6 @@ function ButtonList.new(offsetX, offsetY, margin)
 
     local buttons;
 
-    local scrollOffset = 0;
     local scrollSpeed = 20;
     local buttonW = 200;
     local buttonH = 40;
@@ -47,10 +47,11 @@ function ButtonList.new(offsetX, offsetY, margin)
     -- Public Functions
     -- ------------------------------------------------
 
-    function self:init(logList)
+    function self:init(screen, logList)
         buttons = {};
         for i, log in ipairs(logList) do
-            buttons[#buttons + 1] = Button.new(log.name, offsetX, offsetY + (i - 1) * (buttonH) + margin * (i - 1), buttonW, buttonH);
+            buttons[#buttons + 1] = Button.new(SelectItemCommand.new(screen, log.name),
+                log.name, offsetX, offsetY + (i - 1) * (buttonH) + margin * (i - 1), buttonW, buttonH);
         end
 
         listLength = listLength + offsetY + (#buttons - 1) * (buttonH) + margin * (#buttons - 1);
@@ -65,43 +66,31 @@ function ButtonList.new(offsetX, offsetY, margin)
     end
 
     function self:update(dt)
-        local mx, my = love.mouse.getPosition();
         for _, button in ipairs(buttons) do
-            button:setOffset(0, scrollOffset);
-            button:update(dt, mx, my);
+            button:update(dt);
         end
     end
 
-    function self:scroll(mx, my, scrollFactor)
-        -- Deactivate scrolling if the list is smaller than the screen.
+    function self:scroll(mx, my, scrollOffset)
+        -- Deactivate scrolling if the list is smaller than the screen
         if listLength < love.graphics.getHeight() - offsetY * 2 then
             return;
         end
 
-        if offsetX < mx and offsetX + buttonW > mx then
-            scrollOffset = scrollOffset + scrollFactor;
-
-            if scrollOffset >= 0 then
-                -- Stop at top of the list.
-                scrollOffset = 0;
-            elseif (scrollOffset + listLength) <= (love.graphics.getHeight() - offsetY * 2 - buttonH) then
-                -- Stop at bottom of the list.
-                scrollOffset = love.graphics.getHeight() - offsetY * 2 - buttonH - listLength;
-            end
+        for _, button in ipairs(buttons) do
+            local px, py = button:getPosition();
+            button:setPosition(px, py + scrollOffset);
         end
     end
 
-    function self:pressed(x, y, b)
-        if b == 'wu' then
+    function self:mousepressed(x, y, b)
+        if b == 'wu' and offsetX < x and offsetX + buttonW > x then
             self:scroll(x, y, -scrollSpeed);
-        elseif b == 'wd' then
+        elseif b == 'wd' and offsetX < x and offsetX + buttonW > x then
             self:scroll(x, y, scrollSpeed);
-        elseif b == 'l' then
+        else
             for _, button in ipairs(buttons) do
-                if button:hasFocus() then
-                    print('Select log: ' .. button:getId());
-                    return button:getId();
-                end
+                button:mousepressed(x, y, b);
             end
         end
     end

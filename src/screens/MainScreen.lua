@@ -29,7 +29,7 @@ local ConfigReader = require('src.conf.ConfigReader');
 local AuthorManager = require('src.AuthorManager');
 local FileManager = require('src.FileManager');
 local Graph = require('src.graph.Graph');
-local Panel = require('src.ui.Panel');
+local FilePanel = require('src.ui.components.FilePanel');
 local Timeline = require('src.ui.Timeline');
 local InputHandler = require('src.InputHandler');
 
@@ -100,26 +100,27 @@ function MainScreen.new()
     -- ------------------------------------------------
 
     function self:init(param)
+        -- Store the name of the currently displayed log.
+        log = param.log;
+
         local config = ConfigReader.init();
+        local info = LogLoader.loadInfo(log);
 
         -- Load keybindings.
         assignKeyBindings(config);
 
-        AuthorManager.init(config.aliases, config.avatars, config.options.showAuthors);
+        AuthorManager.init(info.aliases, info.avatars, config.options.showAuthors);
 
         -- Create the camera.
         camera = Camera.new();
         camera:assignKeyBindings(config);
 
         -- Load custom colors.
-        FileManager.setColorTable(config.colors);
+        FileManager.setColorTable(info.colors);
 
         graph = Graph.new(config.options.edgeWidth, config.options.showLabels);
         graph:register(AuthorManager);
         graph:register(camera);
-
-        -- Store the name of the currently displayed log.
-        log = param.log;
 
         -- Initialise LogReader and register observers.
         LogReader.init(LogLoader.load(log), config.options.commitDelay, config.options.mode, config.options.autoplay);
@@ -127,8 +128,8 @@ function MainScreen.new()
         LogReader.register(graph);
 
         -- Create panel.
-        filePanel = Panel.new(0, 0, 150, 400);
-        filePanel:setVisible(config.options.showFileList);
+        filePanel = FilePanel.new(FileManager.draw, FileManager.update, 0, 0, 150, 400);
+        filePanel:setActive(config.options.showFileList);
 
         timeline = Timeline.new(config.options.showTimeline, LogReader.getTotalCommits(), LogReader.getCurrentDate());
 
@@ -142,7 +143,7 @@ function MainScreen.new()
             AuthorManager.drawLabels(camera:getRotation());
         end);
 
-        filePanel:draw(FileManager.draw);
+        filePanel:draw();
         timeline:draw();
     end
 
@@ -174,7 +175,7 @@ function MainScreen.new()
         if InputHandler.isPressed(key, toggleAuthors) then
             AuthorManager.setVisible(not AuthorManager.isVisible());
         elseif InputHandler.isPressed(key, toggleFilePanel) then
-            filePanel:setVisible(not filePanel:isVisible());
+            filePanel:toggle();
         elseif InputHandler.isPressed(key, toggleLabels) then
             graph:toggleLabels();
         elseif InputHandler.isPressed(key, toggleSimulation) then

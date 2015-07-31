@@ -22,6 +22,7 @@
 
 local Node = require('src.graph.Node');
 local File = require('src.graph.File');
+local Resources = require('src.Resources');
 
 -- ------------------------------------------------
 -- Module
@@ -51,7 +52,7 @@ local EVENT_UPDATE_FILE = 'GRAPH_UPDATE_FILE';
 -- Local Variables
 -- ------------------------------------------------
 
-local fileSprite = love.graphics.newImage('res/img/file.png');
+local fileSprite  = Resources.loadImage('file.png');
 local spritebatch = love.graphics.newSpriteBatch(fileSprite, 10000, 'stream');
 
 -- ------------------------------------------------

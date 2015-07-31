@@ -1,5 +1,5 @@
 --==================================================================================================
--- Copyright (C) 2014 - 2015 by Robert Machmer                                                     =
+-- Copyright (C) 2015 by Robert Machmer                                                            =
 --                                                                                                 =
 -- Permission is hereby granted, free of charge, to any person obtaining a copy                    =
 -- of this software and associated documentation files (the "Software"), to deal                   =
@@ -20,70 +20,81 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
-local PROJECT_TITLE = "LoGiVi";
+local BaseDecorator = require('src.ui.decorators.BaseDecorator');
 
-local PROJECT_VERSION = "0351";
-
-local PROJECT_IDENTITY = "rmcode_LoGiVi";
-
-local LOVE_VERSION = "0.9.2";
+local BoxDecorator = {};
 
 ---
--- Initialise löve's config file.
--- @param t
+-- Allows to deactivate all public functions inherited from the base decorator.
 --
-function love.conf(t)
-    t.identity = PROJECT_IDENTITY;
-    t.version = LOVE_VERSION;
-    t.console = true;
+local function new()
+    local self = BaseDecorator();
 
-    t.window.title = PROJECT_TITLE;
-    t.window.icon = nil;
-    t.window.width = 800;
-    t.window.height = 600;
-    t.window.borderless = false;
-    t.window.resizable = true;
-    t.window.minwidth = 800;
-    t.window.minheight = 600;
-    t.window.fullscreen = false;
-    t.window.fullscreentype = "normal";
-    t.window.vsync = true;
-    t.window.fsaa = 0;
-    t.window.display = 1;
-    t.window.highdpi = false;
-    t.window.srgb = false;
-    t.window.x = nil;
-    t.window.y = nil;
+    local active = true;
 
-    t.modules.audio = true;
-    t.modules.event = true;
-    t.modules.graphics = true;
-    t.modules.image = true;
-    t.modules.joystick = true;
-    t.modules.keyboard = true;
-    t.modules.math = true;
-    t.modules.mouse = true;
-    t.modules.physics = true;
-    t.modules.sound = true;
-    t.modules.system = true;
-    t.modules.timer = true;
-    t.modules.window = true;
-end
-
----
--- Returns the project's version.
---
-function getVersion()
-    if PROJECT_VERSION then
-        return PROJECT_VERSION;
+    function self:draw()
+        if not active then return end
+        self.child:draw();
     end
+
+    function self:update(dt)
+        if not active then return end
+        self.child:update(dt);
+    end
+
+    function self:intersects(cx, cy)
+        if not active then return end
+        return self.child:intersects(cx, cy);
+    end
+
+    function self:mousemoved(mx, my, dx, dy)
+        if not active then return end
+        self.child:mousemoved(mx, my, dx, dy);
+    end
+
+    function self:mousepressed(mx, my, b)
+        if not active then return end
+        self.child:mousepressed(mx, my, b);
+    end
+
+    function self:mousereleased(mx, my, b)
+        if not active then return end
+        self.child:mousereleased(mx, my, b);
+    end
+
+    function self:setPosition(nx, ny)
+        if not active then return end
+        self.child:setPosition(nx, ny);
+    end
+
+    function self:setDimensions(nw, nh)
+        if not active then return end
+        self.child:setDimensions(nw, nh)
+    end
+
+    function self:getPosition()
+        if not active then return end
+        return self.child:getPosition();
+    end
+
+    function self:getDimensions()
+        if not active then return end
+        return self.child:getDimensions();
+    end
+
+    function self:toggle()
+        active = not active;
+    end
+
+    function self:setActive(nactive)
+        active = nactive;
+    end
+
+    function self:isActive()
+        return active;
+    end
+
+    return self;
 end
 
----
--- Returns the project's title.
---
-function getTitle()
-    if PROJECT_TITLE then
-        return PROJECT_TITLE;
-    end
-end
+return setmetatable(BoxDecorator, { __call = new });

@@ -1,5 +1,5 @@
 --==================================================================================================
--- Copyright (C) 2014 - 2015 by Robert Machmer                                                     =
+-- Copyright (C) 2015 by Robert Machmer                                                            =
 --                                                                                                 =
 -- Permission is hereby granted, free of charge, to any person obtaining a copy                    =
 -- of this software and associated documentation files (the "Software"), to deal                   =
@@ -20,89 +20,54 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
-local Button = {};
+local BaseComponent = {};
 
--- ------------------------------------------------
--- Constants
--- ------------------------------------------------
-
-local LABEL_FONT = love.graphics.newFont('res/fonts/SourceCodePro-Medium.otf', 20);
-local DEFAULT_FONT = love.graphics.newFont(12);
-
--- ------------------------------------------------
--- Constructor
--- ------------------------------------------------
-
-function Button.new(id, x, y, w, h)
+local function new(t, x, y, w, h)
     local self = {};
 
-    local focus;
-    local focusTimer = 0;
-    local col = { 100, 100, 100, 100 };
-    local hlcol = { 150, 150, 150, 150 };
-
-    local offsetX, offsetY = 0, 0;
-
-    local tooltip;
-
-    -- ------------------------------------------------
-    -- Private Functions
-    -- ------------------------------------------------
-
     function self:draw()
-        love.graphics.setFont(LABEL_FONT);
-        love.graphics.setColor(focus and hlcol or col);
-        love.graphics.rectangle('fill', x + offsetX, y + offsetY, w, h);
-        love.graphics.setColor(255, 255, 255, 100);
-        love.graphics.rectangle('line', x + offsetX, y + offsetY, w, h);
-        love.graphics.print(id, x + offsetX + 10, y + offsetY + 10);
-        love.graphics.setFont(DEFAULT_FONT);
-        love.graphics.setColor(255, 255, 255, 255);
+        return;
+    end
 
-        if focus and (tooltip and focusTimer > 0.3) then
-            tooltip:draw();
+    function self:update(dt)
+        return;
+    end
+
+    function self:intersects(cx, cy)
+        if x < cx and x + w > cx and y < cy and y + h > cy then
+            return true;
         end
     end
 
-    function self:update(dt, mx, my)
-        focus = x + offsetX < mx and x + w > mx + offsetX and y + offsetY < my and y + offsetY + h > my;
-
-        focusTimer = focus and focusTimer + dt or 0;
-
-        if tooltip then
-            tooltip:update(mx, my);
-        end
+    function self:mousemoved(mx, my, dx, dy)
+        return;
     end
 
-    -- ------------------------------------------------
-    -- Getters
-    -- ------------------------------------------------
-
-    function self:getId()
-        return id;
+    function self:mousepressed(mx, my, b)
+        return;
     end
 
-    function self:hasFocus()
-        return focus;
-    end
-
-    -- ------------------------------------------------
-    -- Setters
-    -- ------------------------------------------------
-
-    function self:setOffset(nox, noy)
-        offsetX, offsetY = nox, noy;
+    function self:mousereleased(mx, my, b)
+        return;
     end
 
     function self:setPosition(nx, ny)
         x, y = nx, ny;
     end
 
-    function self:setTooltip(ntooltip)
-        tooltip = ntooltip;
+    function self:setDimensions(nw, nh)
+        w, h = nw, nh
+    end
+
+    function self:getPosition()
+        return x, y;
+    end
+
+    function self:getDimensions()
+        return w, h;
     end
 
     return self;
 end
 
-return Button;
+return setmetatable(BaseComponent, { __call = new });

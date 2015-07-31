@@ -20,16 +20,25 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
+local Resources = require('src.Resources');
+
+-- ------------------------------------------------
+-- Module
+-- ------------------------------------------------
+
 local Author = {};
 
 -- ------------------------------------------------
 -- Constants
 -- ------------------------------------------------
 
+local LABEL_FONT   = Resources.loadFont('SourceCodePro-Medium.otf', 20);
+local DEFAULT_FONT = Resources.loadFont('default', 12);
+
 local AVATAR_SIZE = 48;
 local AUTHOR_INACTIVITY_TIMER = 2;
 local LINK_INACTIVITY_TIMER = 2;
-local FADE_FACTOR = 2;
+local FADE_FACTOR = 125;
 local DEFAULT_AVATAR_ALPHA = 255;
 local DEFAULT_LINK_ALPHA = 100;
 local DAMPING_FACTOR = 0.90;
@@ -49,6 +58,8 @@ local LINK_COLOR = {
 
 function Author.new(name, avatar, cx, cy)
     local self = {};
+
+    local active = true;
 
     local posX, posY = cx + love.math.random(5, 200) * (love.math.random(0, 1) == 0 and -1 or 1), cy + love.math.random(5, 200) * (love.math.random(0, 1) == 0 and -1 or 1);
     local accX, accY = 0, 0;
@@ -72,6 +83,7 @@ function Author.new(name, avatar, cx, cy)
 
     local function reactivate()
         inactivity = 0;
+        active = true;
         avatarAlpha = DEFAULT_AVATAR_ALPHA;
         linkAlpha = DEFAULT_LINK_ALPHA;
     end
@@ -93,30 +105,41 @@ function Author.new(name, avatar, cx, cy)
     -- ------------------------------------------------
 
     function self:draw(rotation)
-        for i = 1, #links do
-            love.graphics.setColor(LINK_COLOR[links[i].mod][1], LINK_COLOR[links[i].mod][2], LINK_COLOR[links[i].mod][3], linkAlpha);
+        if active then
             love.graphics.setLineWidth(BEAM_WIDTH);
-            love.graphics.line(posX, posY, links[i].file:getX(), links[i].file:getY());
+            for i = 1, #links do
+                love.graphics.setColor(LINK_COLOR[links[i].mod][1], LINK_COLOR[links[i].mod][2], LINK_COLOR[links[i].mod][3], linkAlpha);
+                love.graphics.line(posX, posY, links[i].file:getX(), links[i].file:getY());
+            end
             love.graphics.setLineWidth(1);
+
+            love.graphics.setColor(255, 255, 255, avatarAlpha);
+            love.graphics.draw(avatar, posX, posY, -rotation, AVATAR_SIZE / aw, AVATAR_SIZE / ah, aw * 0.5, ah * 0.5);
+            love.graphics.setFont(LABEL_FONT);
+            love.graphics.print(name, posX, posY, -rotation, 1, 1, LABEL_FONT:getWidth(name) * 0.5, - AVATAR_SIZE);
+            love.graphics.setFont(DEFAULT_FONT);
             love.graphics.setColor(255, 255, 255, 255);
         end
-        love.graphics.setColor(255, 255, 255, avatarAlpha);
-        love.graphics.draw(avatar, posX, posY, -rotation, AVATAR_SIZE / aw, AVATAR_SIZE / ah, aw * 0.5, ah * 0.5);
-        love.graphics.setColor(255, 255, 255, 255);
     end
 
     function self:update(dt)
-        move(dt);
+        if active then
+            move(dt);
 
-        inactivity = inactivity + dt;
-        if inactivity > AUTHOR_INACTIVITY_TIMER then
-            avatarAlpha = avatarAlpha - avatarAlpha * dt * FADE_FACTOR;
-        end
-        if inactivity > LINK_INACTIVITY_TIMER then
-            linkAlpha = linkAlpha - linkAlpha * dt * FADE_FACTOR;
-        end
-        if inactivity > 0.5 then
-            accX, accY = 0, 0;
+            inactivity = inactivity + dt;
+            if inactivity > AUTHOR_INACTIVITY_TIMER then
+                avatarAlpha = clamp(0, avatarAlpha - dt * FADE_FACTOR, 255);
+            end
+            if inactivity > LINK_INACTIVITY_TIMER then
+                linkAlpha = clamp(0, linkAlpha - dt * FADE_FACTOR, 255);
+            end
+            if inactivity > 0.5 then
+                accX, accY = 0, 0;
+            end
+            if avatarAlpha <= 0 then
+                active = false;
+                self:resetLinks();
+            end
         end
     end
 

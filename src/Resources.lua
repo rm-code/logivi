@@ -20,70 +20,55 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
-local PROJECT_TITLE = "LoGiVi";
+local Resources = {};
 
-local PROJECT_VERSION = "0351";
+-- ------------------------------------------------
+-- Constants
+-- ------------------------------------------------
 
-local PROJECT_IDENTITY = "rmcode_LoGiVi";
+local IMG_PATH  = 'res/img/';
+local FONT_PATH = 'res/fonts/';
 
-local LOVE_VERSION = "0.9.2";
+-- ------------------------------------------------
+-- Local Variables
+-- ------------------------------------------------
 
----
--- Initialise löve's config file.
--- @param t
---
-function love.conf(t)
-    t.identity = PROJECT_IDENTITY;
-    t.version = LOVE_VERSION;
-    t.console = true;
+local images = {};
+local fonts  = {
+    default = {
+        [12] = love.graphics.newFont(12)
+    }
+};
 
-    t.window.title = PROJECT_TITLE;
-    t.window.icon = nil;
-    t.window.width = 800;
-    t.window.height = 600;
-    t.window.borderless = false;
-    t.window.resizable = true;
-    t.window.minwidth = 800;
-    t.window.minheight = 600;
-    t.window.fullscreen = false;
-    t.window.fullscreentype = "normal";
-    t.window.vsync = true;
-    t.window.fsaa = 0;
-    t.window.display = 1;
-    t.window.highdpi = false;
-    t.window.srgb = false;
-    t.window.x = nil;
-    t.window.y = nil;
 
-    t.modules.audio = true;
-    t.modules.event = true;
-    t.modules.graphics = true;
-    t.modules.image = true;
-    t.modules.joystick = true;
-    t.modules.keyboard = true;
-    t.modules.math = true;
-    t.modules.mouse = true;
-    t.modules.physics = true;
-    t.modules.sound = true;
-    t.modules.system = true;
-    t.modules.timer = true;
-    t.modules.window = true;
-end
+-- ------------------------------------------------
+-- Public Functions
+-- ------------------------------------------------
 
 ---
--- Returns the project's version.
+-- Loads an image or returns an already loaded image.
+-- @param name - The name of the file to load.
 --
-function getVersion()
-    if PROJECT_VERSION then
-        return PROJECT_VERSION;
+function Resources.loadImage(name)
+    if not images[name] then
+        images[name] = love.graphics.newImage(IMG_PATH .. name);
     end
+    return images[name]
 end
 
 ---
--- Returns the project's title.
+-- Loads a font or returns an already loaded font.
+-- @param name - The name of the font to load.
+-- @param size - The size of the font to load.
 --
-function getTitle()
-    if PROJECT_TITLE then
-        return PROJECT_TITLE;
+function Resources.loadFont(name, size)
+    if not fonts[name] then
+        fonts[name] = {};
+        fonts[name][size] = love.graphics.newFont(FONT_PATH .. name, size);
+    elseif not fonts[name][size] then
+        fonts[name][size] = love.graphics.newFont(FONT_PATH .. name, size);
     end
+    return fonts[name][size];
 end
+
+return Resources;

@@ -20,70 +20,31 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
-local PROJECT_TITLE = "LoGiVi";
+local BaseComponent = require('src.ui.components.BaseComponent');
+local BaseDecorator = require('src.ui.decorators.BaseDecorator');
+local BoxDecorator = require('src.ui.decorators.BoxDecorator');
 
-local PROJECT_VERSION = "0351";
+-- ------------------------------------------------
+-- Module
+-- ------------------------------------------------
 
-local PROJECT_IDENTITY = "rmcode_LoGiVi";
+local StaticPanel = {};
 
-local LOVE_VERSION = "0.9.2";
+-- ------------------------------------------------
+-- Constructor
+-- ------------------------------------------------
 
----
--- Initialise löve's config file.
--- @param t
---
-function love.conf(t)
-    t.identity = PROJECT_IDENTITY;
-    t.version = LOVE_VERSION;
-    t.console = true;
+function StaticPanel.new(x, y, w, h)
+    local self = BaseDecorator(x, y, w, h);
 
-    t.window.title = PROJECT_TITLE;
-    t.window.icon = nil;
-    t.window.width = 800;
-    t.window.height = 600;
-    t.window.borderless = false;
-    t.window.resizable = true;
-    t.window.minwidth = 800;
-    t.window.minheight = 600;
-    t.window.fullscreen = false;
-    t.window.fullscreentype = "normal";
-    t.window.vsync = true;
-    t.window.fsaa = 0;
-    t.window.display = 1;
-    t.window.highdpi = false;
-    t.window.srgb = false;
-    t.window.x = nil;
-    t.window.y = nil;
+    local bodyCol = { 40, 40, 40, 255 };
+    local outlineCol = { 80, 80, 80, 255 };
 
-    t.modules.audio = true;
-    t.modules.event = true;
-    t.modules.graphics = true;
-    t.modules.image = true;
-    t.modules.joystick = true;
-    t.modules.keyboard = true;
-    t.modules.math = true;
-    t.modules.mouse = true;
-    t.modules.physics = true;
-    t.modules.sound = true;
-    t.modules.system = true;
-    t.modules.timer = true;
-    t.modules.window = true;
+    self:attach(BoxDecorator('line', outlineCol, 0, 0, 0, 0));
+    self:attach(BoxDecorator('fill', bodyCol, 0, 0, 0, 0));
+    self:attach(BaseComponent(x, y, w, h));
+
+    return self;
 end
 
----
--- Returns the project's version.
---
-function getVersion()
-    if PROJECT_VERSION then
-        return PROJECT_VERSION;
-    end
-end
-
----
--- Returns the project's title.
---
-function getTitle()
-    if PROJECT_TITLE then
-        return PROJECT_TITLE;
-    end
-end
+return StaticPanel;

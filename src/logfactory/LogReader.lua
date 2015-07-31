@@ -20,19 +20,14 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
-local EVENT_NEW_COMMIT = 'NEW_COMMIT';
-local EVENT_CHANGED_FILE = 'LOGREADER_CHANGED_FILE';
-
--- ------------------------------------------------
--- Module
--- ------------------------------------------------
-
 local LogReader = {};
 
 -- ------------------------------------------------
 -- Constants
 -- ------------------------------------------------
 
+local EVENT_NEW_COMMIT = 'NEW_COMMIT';
+local EVENT_CHANGED_FILE = 'LOGREADER_CHANGED_FILE';
 local MOD_ADD = 'A';
 local MOD_DELETE = 'D';
 
@@ -220,7 +215,7 @@ end
 -- index is the same as the current one, the input is
 -- ignored. If the target commit is smaller (aka older)
 -- as the current one we fast-rewind the graph to that
--- position. If the target commit is bigger than the 
+-- position. If the target commit is bigger than the
 -- current one, we fast-forward instead.
 --
 function LogReader.setCurrentIndex(ni)

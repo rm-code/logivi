@@ -1,5 +1,5 @@
 --==================================================================================================
--- Copyright (C) 2014 - 2015 by Robert Machmer                                                     =
+-- Copyright (C) 2015 by Robert Machmer                                                            =
 --                                                                                                 =
 -- Permission is hereby granted, free of charge, to any person obtaining a copy                    =
 -- of this software and associated documentation files (the "Software"), to deal                   =
@@ -20,29 +20,37 @@
 -- THE SOFTWARE.                                                                                   =
 --==================================================================================================
 
-local Tooltip = {};
+local BaseComponent = require('src.ui.components.BaseComponent');
+local BoxDecorator = require('src.ui.decorators.BoxDecorator');
+local Resizable = require('src.ui.decorators.Resizable');
+local Draggable = require('src.ui.decorators.Draggable');
+local Scrollable = require('src.ui.decorators.Scrollable');
+local RenderArea = require('src.ui.decorators.RenderArea');
+local Toggleable = require('src.ui.decorators.Toggleable');
 
-function Tooltip.new(text, x, y, w, h)
-    local self = {};
+-- ------------------------------------------------
+-- Module
+-- ------------------------------------------------
 
-    local col = { 100, 100, 100, 255 };
+local FilePanel = {};
 
-    function self:update(mx, my)
-        x = math.max(0, math.min(mx + 10, love.graphics.getWidth() - w));
-        y = math.max(0, math.min(my + 10, love.graphics.getHeight() - h));
-    end
+-- ------------------------------------------------
+-- Constructor
+-- ------------------------------------------------
 
-    function self:draw()
-        love.graphics.setColor(col);
-        love.graphics.rectangle('fill', x, y, w, h);
-        love.graphics.setColor(255, 255, 255, 100);
-        love.graphics.rectangle('line', x, y, w, h);
-        love.graphics.setColor(255, 255, 255, 255);
-        love.graphics.print(text, x + 10, y + 10);
-        love.graphics.setColor(255, 255, 255, 255);
-    end
+function FilePanel.new(render, update, x, y, w, h)
+    local bodyBaseCol = { 80, 80, 80, 150 };
+
+    local self = Toggleable();
+    self:attach(Resizable(w - 16, h - 16, -w + 16, -h + 16, true, true, true, true));
+    self:attach(BoxDecorator('fill', bodyBaseCol, w - 16, h - 16, -w + 16, -h + 16, true, true, true, true));
+    self:attach(Draggable (0, 0, 0, 0));
+    self:attach(Scrollable(0, 0, 0, 0));
+    self:attach(RenderArea(render, update, 2, 2, -2, -2));
+    self:attach(BoxDecorator('fill', bodyBaseCol, 0, 0, 0, 0));
+    self:attach(BaseComponent(x, y, w, h));
 
     return self;
 end
 
-return Tooltip;
+return FilePanel;
