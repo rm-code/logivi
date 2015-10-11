@@ -26,7 +26,7 @@ local PROJECT_VERSION = "0351";
 
 local PROJECT_IDENTITY = "rmcode_LoGiVi";
 
-local LOVE_VERSION = "0.9.2";
+local LOVE_VERSION = "0.10.0";
 
 ---
 -- Initialise löve's config file.
