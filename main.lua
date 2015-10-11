@@ -82,7 +82,7 @@ function love.load()
     print(string.format("Title: '%s'", getTitle()));
     print(string.format("Version: %.4d", getVersion()));
     print(string.format("LOVE Version: %d.%d.%d (%s)", love.getVersion()));
-    print(string.format("Resolution: %dx%d", love.window.getDimensions()));
+    print(string.format("Resolution: %dx%d", love.graphics.getDimensions()));
 
     -- Check the user's hardware.
     checkSupport();
