@@ -46,7 +46,7 @@ function love.conf(t)
     t.window.minwidth = 800;
     t.window.minheight = 600;
     t.window.fullscreen = false;
-    t.window.fullscreentype = "normal";
+    t.window.fullscreentype = "exclusive";
     t.window.vsync = true;
     t.window.fsaa = 0;
     t.window.display = 1;
