@@ -36,18 +36,6 @@ local showDebug = false;
 -- Check if the hardware supports certain features.
 --
 local function checkSupport()
-    print("\n---- SUPPORTED ---- ");
-    print("Canvas:         " .. tostring(love.graphics.isSupported('canvas')));
-    print("PO2:            " .. tostring(love.graphics.isSupported('npot')));
-    print("Subtractive BM: " .. tostring(love.graphics.isSupported('subtractive')));
-    print("Shaders:        " .. tostring(love.graphics.isSupported('shader')));
-    print("HDR Canvas:     " .. tostring(love.graphics.isSupported('hdrcanvas')));
-    print("Multicanvas:    " .. tostring(love.graphics.isSupported('multicanvas')));
-    print("Mipmaps:        " .. tostring(love.graphics.isSupported('mipmap')));
-    print("DXT:            " .. tostring(love.graphics.isSupported('dxt')));
-    print("BC5:            " .. tostring(love.graphics.isSupported('bc5')));
-    print("SRGB:           " .. tostring(love.graphics.isSupported('srgb')));
-
     print("\n---- RENDERER  ---- ");
     local name, version, vendor, device = love.graphics.getRendererInfo()
     print(string.format("Name: %s \nVersion: %s \nVendor: %s \nDevice: %s", name, version, vendor, device));
@@ -86,7 +74,7 @@ function love.load()
     print(string.format("Resolution: %dx%d", love.graphics.getDimensions()));
 
     -- Check the user's hardware.
-    -- checkSupport();
+    checkSupport();
     print("===================")
     print(os.date('%c', os.time()));
     print("===================")
