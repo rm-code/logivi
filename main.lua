@@ -132,3 +132,7 @@ end
 function love.mousemoved(x, y, dx, dy)
     ScreenManager.mousemoved(x, y, dx, dy);
 end
+
+function love.wheelmoved(x, y)
+    ScreenManager.wheelmoved(x, y);
+end
