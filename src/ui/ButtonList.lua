@@ -84,13 +84,17 @@ function ButtonList.new(offsetX, offsetY, margin)
     end
 
     function self:mousepressed(x, y, b)
-        if b == 'wu' and offsetX < x and offsetX + buttonW > x then
-            self:scroll(x, y, -scrollSpeed);
-        elseif b == 'wd' and offsetX < x and offsetX + buttonW > x then
-            self:scroll(x, y, scrollSpeed);
-        else
-            for _, button in ipairs(buttons) do
-                button:mousepressed(x, y, b);
+        for _, button in ipairs(buttons) do
+            button:mousepressed(x, y, b);
+        end
+    end
+
+    function self:wheelmoved(x, y)
+        if offsetX < love.mouse.getX() and offsetX + buttonW > love.mouse.getX() then
+            if y < 0 then
+                self:scroll(x, y, scrollSpeed);
+            else
+                self:scroll(x, y, -scrollSpeed);
             end
         end
     end

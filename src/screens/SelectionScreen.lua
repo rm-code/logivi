@@ -203,6 +203,10 @@ function SelectionScreen.new()
         end
     end
 
+    function self:wheelmoved(x, y)
+        buttonList:wheelmoved(x, y);
+    end
+
     function self:keypressed(key)
         if InputHandler.isPressed(key, config.keyBindings.exit) then
             love.event.quit();
