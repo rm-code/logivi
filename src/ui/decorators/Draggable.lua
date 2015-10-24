@@ -43,7 +43,7 @@ local function new(t, x, y, w, h, fixedW, fixedH, fixedPosX, fixedPosY)
     function self:mousepressed(mx, my, b)
         local px, py = self:getPosition();
         local pw, ph = self:getDimensions();
-        if b == 'l' and px + x < mx and px + x + pw + w > mx and py + y < my and py + y + ph + h > my then
+        if b == 1 and px + x < mx and px + x + pw + w > mx and py + y < my and py + y + ph + h > my then
             drag = true;
             return;
         end
