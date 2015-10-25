@@ -39,6 +39,9 @@ This will create the file _log.txt_ in the folder you are currently in. Take thi
 ```
 LoGiVi will use the folder's name to identify the log so make it informative.
 
+# LÖVE Version
+Version 0351 and all prior versions of LoGiVi are written for Version 0.9.2 of the LÖVE framework. ___All future versions will be based on LÖVE 0.10.0 (currently unreleased).___
+
 # License
 
 The MIT License (MIT)
