@@ -6,6 +6,7 @@ local LogCreator = {};
 
 local GIT_COMMAND = 'git -C "'
 local LOG_COMMAND = '" log --reverse --numstat --pretty=format:"info: %an|%ae|%ct" --name-status --no-merges';
+local STATUS_COMMAND = '" status';
 local FIRST_COMMIT_COMMAND = '" log --pretty=format:%ct|tail -1';
 local LATEST_COMMIT_COMMAND = '" log --pretty=format:%ct|head -1';
 local TOTAL_COMMITS_COMMAND = '" rev-list HEAD --count';
@@ -86,6 +87,17 @@ function LogCreator.isGitAvailable()
     print(result);
     handle:close();
     return result:find('git version');
+end
+
+---
+-- Checks if a path points to a valid git repository.
+-- @param path - The path to check.
+--
+function LogCreator.isGitRepository(path)
+    local handle = io.popen(GIT_COMMAND .. path .. STATUS_COMMAND);
+    local result = handle:read('*a');
+    handle:close();
+    return result ~= '';
 end
 
 return LogCreator;

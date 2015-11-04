@@ -26,6 +26,9 @@ local SelectionScreen = {};
 local TEXT_FONT    = Resources.loadFont('SourceCodePro-Medium.otf', 15);
 local DEFAULT_FONT = Resources.loadFont('default', 12);
 
+local WARNING_TITLE = 'Not a valid git repository';
+local WARNING_MESSAGE = 'The path "%s" does not point to a valid git repository. Make sure you have specified the full path in the settings file.';
+
 -- ------------------------------------------------
 -- Constructor
 -- ------------------------------------------------
@@ -88,8 +91,14 @@ function SelectionScreen.new()
         -- Create git logs for repositories specified in the config file.
         if LogCreator.isGitAvailable() then
             for name, path in pairs(config.repositories) do
-                LogCreator.createGitLog(name, path);
-                LogCreator.createInfoFile(name, path);
+                -- Check if the path points to a valid git repository before attempting
+                -- to create a git log and the info file for it.
+                if LogCreator.isGitRepository(path) then
+                    LogCreator.createGitLog(name, path);
+                    LogCreator.createInfoFile(name, path);
+                else
+                    love.window.showMessageBox(WARNING_TITLE, string.format(WARNING_MESSAGE, path), 'warning', false);
+                end
             end
         end
 
