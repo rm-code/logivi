@@ -215,7 +215,7 @@ end
 --
 function LogLoader.loadInfo(name)
     if love.filesystem.isFile(LOG_FOLDER .. '/' .. name .. '/' .. INFO_FILE) then
-        local info = love.filesystem.load(LOG_FOLDER .. '/' .. name .. '/' .. INFO_FILE)()
+        local info = love.filesystem.load(LOG_FOLDER .. '/' .. name .. '/' .. INFO_FILE)();
         info.firstCommit = createDateFromUnixTimestamp(info.firstCommit);
         info.latestCommit = createDateFromUnixTimestamp(info.latestCommit);
         info.aliases = info.aliases or {};
