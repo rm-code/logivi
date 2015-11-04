@@ -51,6 +51,10 @@ local function new(t, x, y, w, h)
         return;
     end
 
+    function self:wheelmoved(x, y)
+        return;
+    end
+
     function self:setPosition(nx, ny)
         x, y = nx, ny;
     end

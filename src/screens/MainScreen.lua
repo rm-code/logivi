@@ -212,6 +212,10 @@ function MainScreen.new()
         filePanel:mousemoved(x, y, dx, dy);
     end
 
+    function self:wheelmoved(x, y)
+        filePanel:wheelmoved(x, y);
+    end
+
     function self:resize(nx, ny)
         timeline:resize(nx, ny);
     end

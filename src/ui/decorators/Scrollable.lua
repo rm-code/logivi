@@ -64,22 +64,23 @@ local function new(t, x, y, w, h, fixedW, fixedH, fixedPosX, fixedPosY)
         self.child:update(dt);
     end
 
-    function self:mousepressed(mx, my, b)
+    function self:wheelmoved(x, y)
+        local mx, my = love.mouse.getPosition();
         local px, py = self:getPosition();
         local pw, ph = self:getDimensions();
 
         -- Check if the mousepointer is over the scroll panel before applying scroll.
         if px + x < mx and px + x + pw + w > mx and py + y < my and py + y + ph + h > my then
-            if b == 'wu' then
+            if y < 0 then
                 scrollVelocity = scrollVelocity > 0 and 0 or scrollVelocity;
                 scrollVelocity = scrollVelocity - SCROLL_SPEED;
-            elseif b == 'wd' then
+            elseif y > 0 then
                 scrollVelocity = scrollVelocity < 0 and 0 or scrollVelocity;
                 scrollVelocity = scrollVelocity + SCROLL_SPEED;
             end
         end
 
-        self.child:mousepressed(mx, my, b);
+        self.child:wheelmoved(mx, my, b);
     end
 
     function self:setDimensions(nw, nh)
