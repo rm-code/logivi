@@ -88,5 +88,4 @@ function LogCreator.isGitAvailable()
     return result:find('git version');
 end
 
-
 return LogCreator;
