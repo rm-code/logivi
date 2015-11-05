@@ -1,6 +1,7 @@
 # LoGiVi
 
 LoGiVi is a git-repository visualisation tool inspired by [Gource](https://code.google.com/p/gource/) and __currently in development__. It was written from scratch using [Lua](http://www.lua.org/) and the [LÖVE](https://love2d.org/) framework.
+It works with Spring and Charge: Spring is used to create a distance between nodes and the charge force will attract them to be visible on the screen size. The result will be an excellent and exact visualization of your git-nodes!
 
 ![Example Visualization](https://github.com/rm-code/logivi/wiki/media/logivi_0312.gif)
 
