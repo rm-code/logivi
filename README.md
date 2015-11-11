@@ -5,7 +5,15 @@ LoGiVi is a git-repository visualisation tool inspired by [Gource](http://gource
 ![Example Visualization](https://github.com/rm-code/logivi/wiki/media/logivi_0312.gif)
 
 # Instructions
-When you run LoGiVi for the first time it will set up all necessary folders, an example git log and a config file in the save directory on your harddrive. A dialog will pop up which allows you to view the save directory.
+When you run LoGiVi for the first time it will set up all necessary folders, an example git log and a config file in the save directory on your harddrive. 
+
+The location of this save directory depends on the OS you are using:
+
+- ***OSX*** ```/Users/user/Library/Application Support/LOVE/rmcode_LoGiVi```
+- ***WINDOWS*** ```C:\Users\user\AppData\Roaming\LOVE``` or ```%appdata%\LOVE\```
+- ***LINUX*** ```~/.local/share/love/```
+
+A dialog will pop up which allows you to view the save directory on your computer.
 
 ## Generating git logs automatically
 LoGiVi can generate git logs automatically when you specify a path to a git repository on your harddrive. Open the _settings.cfg_ file in the LoGiVi save directory and look for the _[repositories]_ section. Add the absolute path to the folder containing the git repository like this:
