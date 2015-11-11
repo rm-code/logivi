@@ -45,6 +45,10 @@ function Screen.new()
 
     function self:focus(dfocus) end
 
+    function self:directorydropped(path) end
+
+    function self:filedropped(file) end
+
     function self:resize(w, h) end
 
     function self:visible(dvisible) end
@@ -52,6 +56,8 @@ function Screen.new()
     function self:keypressed(key) end
 
     function self:keyreleased(key) end
+
+    function self:lowmemory() end
 
     function self:textinput(input) end
 
@@ -64,6 +70,14 @@ function Screen.new()
     function self:mousemoved(x, y, dx, dy) end
 
     function self:quit(dquit) end
+
+    function self:touchmoved(id, x, y, pressure) end
+
+    function self:touchpressed(id, x, y, pressure) end
+
+    function self:touchreleased(id, x, y, pressure) end
+
+    function self:wheelmoved(x, y) end
 
     function self:isActive()
         return active;

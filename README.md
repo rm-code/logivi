@@ -1,11 +1,19 @@
 # LoGiVi
 
-LoGiVi is a git-repository visualisation tool inspired by [Gource](https://code.google.com/p/gource/) and __currently in development__. It was written from scratch using [Lua](http://www.lua.org/) and the [LÖVE](https://love2d.org/) framework.
+LoGiVi is a git-repository visualisation tool inspired by [Gource](http://gource.io/) and __currently in development__. It was written from scratch using [Lua](http://www.lua.org/) and the [LÖVE](https://love2d.org/) framework.
 
 ![Example Visualization](https://github.com/rm-code/logivi/wiki/media/logivi_0312.gif)
 
 # Instructions
-When you run LoGiVi for the first time it will set up all necessary folders, an example git log and a config file in the save directory on your harddrive. A dialog will pop up which allows you to view the save directory.
+When you run LoGiVi for the first time it will set up all necessary folders, an example git log and a config file in the save directory on your harddrive. 
+
+The location of this save directory depends on the OS you are using:
+
+- ***OSX*** ```/Users/user/Library/Application Support/LOVE/rmcode_LoGiVi```
+- ***WINDOWS*** ```C:\Users\user\AppData\Roaming\LOVE``` or ```%appdata%\LOVE\```
+- ***LINUX*** ```~/.local/share/love/```
+
+A dialog will pop up which allows you to view the save directory on your computer.
 
 ## Generating git logs automatically
 LoGiVi can generate git logs automatically when you specify a path to a git repository on your harddrive. Open the _settings.cfg_ file in the LoGiVi save directory and look for the _[repositories]_ section. Add the absolute path to the folder containing the git repository like this:
@@ -38,6 +46,9 @@ This will create the file _log.txt_ in the folder you are currently in. Take thi
 /Users/Robert/Library/Application Support/LOVE/rmcode_LoGiVi/logs/yourProject/log.txt
 ```
 LoGiVi will use the folder's name to identify the log so make it informative.
+
+# LÖVE Version
+Version 0351 and all prior versions of LoGiVi are written for Version 0.9.2 of the LÖVE framework. ___All future versions will be based on LÖVE 0.10.0 (currently unreleased).___
 
 # License
 

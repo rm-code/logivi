@@ -1,25 +1,3 @@
---==================================================================================================
--- Copyright (C) 2015 by Robert Machmer                                                            =
---                                                                                                 =
--- Permission is hereby granted, free of charge, to any person obtaining a copy                    =
--- of this software and associated documentation files (the "Software"), to deal                   =
--- in the Software without restriction, including without limitation the rights                    =
--- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell                       =
--- copies of the Software, and to permit persons to whom the Software is                           =
--- furnished to do so, subject to the following conditions:                                        =
---                                                                                                 =
--- The above copyright notice and this permission notice shall be included in                      =
--- all copies or substantial portions of the Software.                                             =
---                                                                                                 =
--- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR                      =
--- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,                        =
--- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE                     =
--- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER                          =
--- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,                   =
--- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN                       =
--- THE SOFTWARE.                                                                                   =
---==================================================================================================
-
 local BaseDecorator = require('src.ui.decorators.BaseDecorator');
 
 local Scrollable = {};
@@ -64,22 +42,23 @@ local function new(t, x, y, w, h, fixedW, fixedH, fixedPosX, fixedPosY)
         self.child:update(dt);
     end
 
-    function self:mousepressed(mx, my, b)
+    function self:wheelmoved(x, y)
+        local mx, my = love.mouse.getPosition();
         local px, py = self:getPosition();
         local pw, ph = self:getDimensions();
 
         -- Check if the mousepointer is over the scroll panel before applying scroll.
         if px + x < mx and px + x + pw + w > mx and py + y < my and py + y + ph + h > my then
-            if b == 'wu' then
+            if y < 0 then
                 scrollVelocity = scrollVelocity > 0 and 0 or scrollVelocity;
                 scrollVelocity = scrollVelocity - SCROLL_SPEED;
-            elseif b == 'wd' then
+            elseif y > 0 then
                 scrollVelocity = scrollVelocity < 0 and 0 or scrollVelocity;
                 scrollVelocity = scrollVelocity + SCROLL_SPEED;
             end
         end
 
-        self.child:mousepressed(mx, my, b);
+        self.child:wheelmoved(mx, my, b);
     end
 
     function self:setDimensions(nw, nh)

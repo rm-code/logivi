@@ -1,25 +1,3 @@
---==================================================================================================
--- Copyright (C) 2014 - 2015 by Robert Machmer                                                     =
---                                                                                                 =
--- Permission is hereby granted, free of charge, to any person obtaining a copy                    =
--- of this software and associated documentation files (the "Software"), to deal                   =
--- in the Software without restriction, including without limitation the rights                    =
--- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell                       =
--- copies of the Software, and to permit persons to whom the Software is                           =
--- furnished to do so, subject to the following conditions:                                        =
---                                                                                                 =
--- The above copyright notice and this permission notice shall be included in                      =
--- all copies or substantial portions of the Software.                                             =
---                                                                                                 =
--- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR                      =
--- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,                        =
--- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE                     =
--- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER                          =
--- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,                   =
--- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN                       =
--- THE SOFTWARE.                                                                                   =
---==================================================================================================
-
 local ScreenManager = require('lib.screenmanager.ScreenManager');
 local Screen = require('lib.screenmanager.Screen');
 local LogCreator = require('src.logfactory.LogCreator');
@@ -47,6 +25,9 @@ local SelectionScreen = {};
 
 local TEXT_FONT    = Resources.loadFont('SourceCodePro-Medium.otf', 15);
 local DEFAULT_FONT = Resources.loadFont('default', 12);
+
+local WARNING_TITLE = 'Not a valid git repository';
+local WARNING_MESSAGE = 'The path "%s" does not point to a valid git repository. Make sure you have specified the full path in the settings file.';
 
 -- ------------------------------------------------
 -- Constructor
@@ -110,8 +91,14 @@ function SelectionScreen.new()
         -- Create git logs for repositories specified in the config file.
         if LogCreator.isGitAvailable() then
             for name, path in pairs(config.repositories) do
-                LogCreator.createGitLog(name, path);
-                LogCreator.createInfoFile(name, path);
+                -- Check if the path points to a valid git repository before attempting
+                -- to create a git log and the info file for it.
+                if LogCreator.isGitRepository(path) then
+                    LogCreator.createGitLog(name, path);
+                    LogCreator.createInfoFile(name, path);
+                else
+                    love.window.showMessageBox(WARNING_TITLE, string.format(WARNING_MESSAGE, path), 'warning', false);
+                end
             end
         end
 
@@ -201,6 +188,10 @@ function SelectionScreen.new()
         for i = 1, #buttons do
             buttons[i]:mousereleased(x, y, b);
         end
+    end
+
+    function self:wheelmoved(x, y)
+        buttonList:wheelmoved(x, y);
     end
 
     function self:keypressed(key)

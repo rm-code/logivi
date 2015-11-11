@@ -1,3 +1,16 @@
+
+# Version 0375 - 2015/11/11
+
+**Important**: With this version LoGiVi now ***requires*** LÖVE Version [0.10.0](https://love2d.org/wiki/0.10.0) to run and will no longer work with LÖVE 0.9.2! LÖVE 0.10.0 has not yet been officially released, but can be compiled from the source. For more information check out the [official LÖVE repository](https://bitbucket.org/rude/love/overview).
+
+### Fixes
+- Fixed [#43](https://github.com/rm-code/logivi/issues/43) - Allow more printable characters as keys in config file
+- Fixed [#42](https://github.com/rm-code/logivi/issues/42) - Prevent crash with faulty info files
+- Fixed [#41](https://github.com/rm-code/logivi/issues/41) - Make sure paths lead to a valid git repository
+
+### Other Changes
+- Updated LoGiVi to run on LÖVE 0.10.0
+
 # Version 0351 - 2015/08/01
 
 ### Additions
