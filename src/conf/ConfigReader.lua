@@ -54,7 +54,7 @@ local function loadFile(file)
             section = config[header];
         else
             -- Store values in the section.
-            local key, value = line:match('^([%w_]+)%s-=%s-(.+)');
+            local key, value = line:match('^([%g]+)%s-=%s-(.+)');
 
             -- Store multiple values in a table.
             if value and value:find(',') then
