@@ -18,6 +18,8 @@ local CAMERA_ZOOM_SPEED = 0.6;
 local CAMERA_MAX_ZOOM = 0.05;
 local CAMERA_MIN_ZOOM = 2;
 
+local GRAPH_PADDING = 100;
+
 -- ------------------------------------------------
 -- Local variables
 -- ------------------------------------------------
@@ -42,11 +44,17 @@ function CamWrapper.new()
     local cx, cy = 0, 0;
     local ox, oy = 0, 0;
     local gx, gy = 0, 0;
+    local gw, gh = 0, 0;
     local zoom = 1;
+    local manualZoom = 0;
 
     -- ------------------------------------------------
     -- Private Functions
     -- ------------------------------------------------
+
+    local function lerp(a, b, t)
+        return a + (b - a) * t;
+    end
 
     ---
     -- Updates the position on which the camera offset builds.
@@ -55,6 +63,32 @@ function CamWrapper.new()
     --
     local function updateCenter(ngx, ngy)
         gx, gy = ngx, ngy;
+    end
+
+    ---
+    -- Updates the dimensions of the graph and adds a padding value.
+    -- @param minX
+    -- @param maxX
+    -- @param minY
+    -- @param maxY
+    --
+    local function updateGraphDimensions(minX, maxX, minY, maxY)
+        gw, gh = maxX - minX, maxY - minY;
+    end
+
+    ---
+    -- Calculates the automatic zoom factor needed to fit the whole graph on
+    -- the user's screen.
+    --
+    local function calculateAutoZoom()
+        local w, h = GRAPH_PADDING + gw, GRAPH_PADDING + gh;
+        local sw, sh = love.graphics.getDimensions();
+
+        -- Calculate the zoom factors for both width and height and use the
+        -- smaller one to zoom.
+        local ratioW, ratioH =  sw / w, sh / h;
+
+        return ratioW <= ratioH and ratioW or ratioH;
     end
 
     -- ------------------------------------------------
@@ -81,14 +115,17 @@ function CamWrapper.new()
     -- @param dt
     --
     function self:move(dt)
-        -- Zoom.
+        local tzoom = calculateAutoZoom();
+        zoom = lerp(zoom, tzoom, dt * 2);
+
+        -- Handle manual zoom. This will be added to the automatic zoom factor.
         if InputHandler.isDown(camera_zoomIn) then
-            zoom = zoom + CAMERA_ZOOM_SPEED * dt;
+            manualZoom = manualZoom + CAMERA_ZOOM_SPEED * dt;
         elseif InputHandler.isDown(camera_zoomOut) then
-            zoom = zoom - CAMERA_ZOOM_SPEED * dt;
+            manualZoom = manualZoom - CAMERA_ZOOM_SPEED * dt;
         end
-        zoom = math.max(CAMERA_MAX_ZOOM, math.min(zoom, CAMERA_MIN_ZOOM));
-        camera:zoomTo(zoom);
+
+        camera:zoomTo(math.max(CAMERA_MAX_ZOOM, math.min(zoom + manualZoom, CAMERA_MIN_ZOOM)));
 
         -- Rotation.
         if InputHandler.isDown(camera_rotateL) then
@@ -137,6 +174,8 @@ function CamWrapper.new()
     function self:receive(event, ...)
         if event == 'GRAPH_UPDATE_CENTER' then
             updateCenter(...);
+        elseif event == 'GRAPH_UPDATE_DIMENSIONS' then
+            updateGraphDimensions(...);
         end
     end
 

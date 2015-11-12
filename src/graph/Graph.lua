@@ -22,6 +22,7 @@ local MOD_UNMERGE = 'U';
 local MOD_UNKNOWN = 'X';
 local MOD_BROKEN_PAIRING = 'B';
 
+local EVENT_UPDATE_DIMENSIONS = 'GRAPH_UPDATE_DIMENSIONS';
 local EVENT_UPDATE_CENTER = 'GRAPH_UPDATE_CENTER';
 local EVENT_UPDATE_FILE = 'GRAPH_UPDATE_FILE';
 
@@ -204,6 +205,7 @@ function Graph.new(ewidth, showLabels)
         end
 
         notify(EVENT_UPDATE_CENTER, updateCenter());
+        notify(EVENT_UPDATE_DIMENSIONS, minX, maxX, minY, maxY);
     end
 
     ---
