@@ -70,8 +70,8 @@ function Graph.new(ewidth, showLabels)
     -- @param nx - The new x position to check.
     -- @param ny - The new y position to check.
     --
-    local function updateBoundaries(minX, maxX, minY, maxY, nx, ny)
-        return math.min(nx, minX), math.max(nx, maxX), math.min(ny, minY), math.max(ny, maxY);
+    local function updateBoundaries(minX, maxX, minY, maxY, radius, nx, ny)
+        return math.min(nx - radius, minX), math.max(nx + radius, maxX), math.min(ny - radius, minY), math.max(ny + radius, maxY);
     end
 
     ---
@@ -191,7 +191,7 @@ function Graph.new(ewidth, showLabels)
                 nodeA:calculateForces(nodeB);
             end
 
-            minX, maxX, minY, maxY = updateBoundaries(minX, maxX, minY, maxY, nodeA:update(dt));
+            minX, maxX, minY, maxY = updateBoundaries(minX, maxX, minY, maxY, nodeA:getRadius(), nodeA:update(dt));
         end
 
         notify(EVENT_UPDATE_CENTER, self:getCenter());

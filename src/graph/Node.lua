@@ -326,6 +326,10 @@ function Node.new(parent, path, name, x, y, spritebatch)
         return 0.015 * (childCount + math.log(math.max(SPRITE_SIZE, radius)));
     end
 
+    function self:getRadius()
+        return radius;
+    end
+
     function self:isConnectedTo(node)
         for _, child in pairs(children) do
             if node == child then
