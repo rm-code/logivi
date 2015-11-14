@@ -92,9 +92,9 @@ function CamWrapper.new()
 
         -- Rotation.
         if InputHandler.isDown(camera_rotateL) then
-            camera:rotate(CAMERA_ROTATION_SPEED * dt);
-        elseif InputHandler.isDown(camera_rotateR) then
             camera:rotate(-CAMERA_ROTATION_SPEED * dt);
+        elseif InputHandler.isDown(camera_rotateR) then
+            camera:rotate(CAMERA_ROTATION_SPEED * dt);
         end
 
         -- Horizontal Movement.
