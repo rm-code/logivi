@@ -72,11 +72,6 @@ local function loadFile(file)
         end
     end
 
-    -- Validate file paths.
-    for project, path in pairs(config.repositories) do
-        config.repositories[project] = path:gsub('\\+', '/');
-    end
-
     return config;
 end
 
@@ -104,6 +99,17 @@ local function validateFile(default, loaded)
     return loaded;
 end
 
+---
+-- Replaces backslashes in paths with forwardslashes.
+-- @param The loaded config.
+-- 
+local function validateRepositoryPaths(config)
+    for project, path in pairs(config.repositories) do
+        config.repositories[project] = path:gsub('\\+', '/');
+    end
+    return config;
+end
+
 -- ------------------------------------------------
 -- Public Functions
 -- ------------------------------------------------
@@ -119,6 +125,7 @@ function ConfigReader.init()
     if not config then
         config = loadFile(FILE_NAME);
         config = validateFile(default, config);
+        config = validateRepositoryPaths(config);
     end
 
     return config;
