@@ -75,6 +75,15 @@ function Graph.new(ewidth, showLabels)
     end
 
     ---
+    -- Returns the center of the graph. The center is calculated
+    -- by forming a rectangle that encapsulates all nodes and then
+    -- dividing its sides by two.
+    --
+    local function updateCenter()
+        return minX + (maxX - minX) * 0.5, minY + (maxY - minY) * 0.5;
+    end
+
+    ---
     -- Creates a new node and stores it in our list, using the name
     -- as the identifier or returns an already existing node.
     -- @param parentPath
@@ -194,7 +203,7 @@ function Graph.new(ewidth, showLabels)
             minX, maxX, minY, maxY = updateBoundaries(minX, maxX, minY, maxY, nodeA:getRadius(), nodeA:update(dt));
         end
 
-        notify(EVENT_UPDATE_CENTER, self:getCenter());
+        notify(EVENT_UPDATE_CENTER, updateCenter());
     end
 
     ---
@@ -221,19 +230,6 @@ function Graph.new(ewidth, showLabels)
         if event == 'LOGREADER_CHANGED_FILE' then
             applyGitModifier(...)
         end
-    end
-
-    -- ------------------------------------------------
-    -- Getters
-    -- ------------------------------------------------
-
-    ---
-    -- Returns the center of the graph. The center is calculated
-    -- by forming a rectangle that encapsulates all nodes and then
-    -- dividing its sides by two.
-    --
-    function self:getCenter()
-        return minX + (maxX - minX) * 0.5, minY + (maxY - minY) * 0.5;
     end
 
     return self;
