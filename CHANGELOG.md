@@ -1,3 +1,14 @@
+# Version 0404 - 2015/11/24
+
+### Additions
+- Added option to add a repository by dropping its folder onto LoGiVi (Closes [#46](https://github.com/rm-code/logivi/issues/46))
+- Added automatic camera zoom (Closes [#47](https://github.com/rm-code/logivi/issues/47))
+- Added fading of deleted files. They will no longer be removed instantly, but instead fade out until they are invisible (Closes [#49](https://github.com/rm-code/logivi/issues/49))
+- Added animation of files when they are rearranged around their parent nodes
+
+### Fixes
+- Fixed [#44](https://github.com/rm-code/logivi/issues/44) - File paths are validated after the config has been validated
+- Fixed direction of camera rotation
 
 # Version 0375 - 2015/11/11
 
