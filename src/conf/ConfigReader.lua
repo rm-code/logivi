@@ -7,6 +7,10 @@ local ConfigReader = {};
 local FILE_NAME = 'settings.cfg';
 local TEMPLATE_PATH = 'res/templates/settings.cfg';
 
+local INVALID_CONFIG_HEADER   = 'Invalid config file';
+local MISSING_SECTION_WARNING = 'Seems like the loaded configuration file is missing the [%s] section. The default settings will be used instead.';
+local MISSING_VALUE_WARNING   = 'Seems like the loaded configuration file is missing the [%s] value in the [%s] section. The default settings will be used instead.';
+
 -- ------------------------------------------------
 -- Local Variables
 -- ------------------------------------------------
@@ -82,17 +86,14 @@ local function validateFile(default, loaded)
 
         -- If loaded config file doesn't contain section return default.
         if loaded[skey] == nil then
-            love.window.showMessageBox('Invalid config file', 'Seems like the loaded configuration file is missing the "' ..
-                    skey .. '" section. The default settings will be used instead.', 'warning', false);
+            love.window.showMessageBox(INVALID_CONFIG_HEADER, string.format(MISSING_SECTION_WARNING, skey), 'warning', false);
             return default;
         end
 
         if type(section) == 'table' then
             for vkey, _ in pairs(section) do
                 if loaded[skey][vkey] == nil then
-                    love.window.showMessageBox('Invalid config file',
-                        'Seems like the loaded configuration file is missing the "' ..
-                                vkey .. '" value in the "' .. skey .. '" section. The default settings will be used instead.', 'warning', false);
+                    love.window.showMessageBox(INVALID_CONFIG_HEADER, string.format(MISSING_VALUE_WARNING, vkey, skey), 'warning', false);
                     return default;
                 end
             end
