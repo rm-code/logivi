@@ -54,6 +54,26 @@ function SelectionScreen.new()
     -- ------------------------------------------------
 
     ---
+    -- Checks if git is available and attempts to create git logs based on the
+    -- list of repositories read from the user's config file.
+    -- @param options
+    --
+    local function createGitLogs(config)
+        if LogCreator.isGitAvailable() then
+            for name, path in pairs(config.repositories) do
+                -- Check if the path points to a valid git repository before attempting
+                -- to create a git log and the info file for it.
+                if LogCreator.isGitRepository(path) then
+                    LogCreator.createGitLog(name, path);
+                    LogCreator.createInfoFile(name, path);
+                else
+                    love.window.showMessageBox(WARNING_TITLE, string.format(WARNING_MESSAGE, path), 'warning', false);
+                end
+            end
+        end
+    end
+
+    ---
     -- Updates the project's window settings based on the config file.
     -- @param options
     --
@@ -89,18 +109,7 @@ function SelectionScreen.new()
         setWindowMode(config.options);
 
         -- Create git logs for repositories specified in the config file.
-        if LogCreator.isGitAvailable() then
-            for name, path in pairs(config.repositories) do
-                -- Check if the path points to a valid git repository before attempting
-                -- to create a git log and the info file for it.
-                if LogCreator.isGitRepository(path) then
-                    LogCreator.createGitLog(name, path);
-                    LogCreator.createInfoFile(name, path);
-                else
-                    love.window.showMessageBox(WARNING_TITLE, string.format(WARNING_MESSAGE, path), 'warning', false);
-                end
-            end
-        end
+        createGitLogs(config);
 
         -- Intitialise LogLoader.
         logList = LogLoader.init();
