@@ -211,6 +211,23 @@ function SelectionScreen.new()
         end
     end
 
+    function self:directorydropped(path)
+        local temporaryConfig = {};
+        local name = path:match("/?([^/]+)$"); -- Use the folder's name to store the repo.
+        temporaryConfig.repositories = {
+            [name] = path
+        };
+
+        createGitLogs(temporaryConfig);
+
+        -- Intitialise LogLoader.
+        logList = LogLoader.init();
+
+        -- A scrollable list of buttons which can be used to select a certain log.
+        buttonList = ButtonList.new(uiElementPadding, uiElementPadding, uiElementMargin);
+        buttonList:init(self, logList);
+    end
+
     function self:quit()
         if ConfigReader.getConfig('options').removeTmpFiles then
             ConfigReader.removeTmpFiles();
