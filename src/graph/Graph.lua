@@ -1,5 +1,4 @@
 local Node = require('src.graph.Node');
-local File = require('src.graph.File');
 local Resources = require('src.Resources');
 
 -- ------------------------------------------------
@@ -158,7 +157,7 @@ function Graph.new(ewidth, showLabels)
 
         local modifiedFile;
         if modifier == MOD_ADD then
-            modifiedFile = targetNode:addFile(file, File.new(file, targetNode:getX(), targetNode:getY()));
+            modifiedFile = targetNode:addFile(file);
         elseif modifier == MOD_DELETE then
             modifiedFile = targetNode:removeFile(file);
         elseif modifier == MOD_MODIFY then

@@ -1,4 +1,5 @@
 local Resources = require('src.Resources');
+local File = require('src.graph.File');
 
 -- ------------------------------------------------
 -- Module
@@ -224,7 +225,8 @@ function Node.new(parent, path, name, x, y, spritebatch)
         return posX, posY;
     end
 
-    function self:addFile(name, file)
+    function self:addFile(name)
+        local file = File.new(name, posX, posY);
         if files[name] then
             print('+ Can not add file: ' .. name .. ' - It already exists.');
             return;
