@@ -342,6 +342,14 @@ function Node.new(parent, path, name, x, y, spritebatch)
         return parent == node;
     end
 
+    ---
+    -- Returns true if the node doesn't contain any files and doesn't have any
+    -- children.
+    --
+    function self:isDead()
+        return fileCount == 0 and childCount == 0;
+    end
+
     return self;
 end
 

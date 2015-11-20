@@ -132,11 +132,11 @@ function Graph.new(ewidth, showLabels)
     -- @param node - The node to check.
     --
     local function removeDeadNode(node)
-        local path = node:getPath();
-        if node:getFileCount() == 0 and node:getChildCount() == 0 then
+        if node:isDead() then
             -- print('DEL node [' .. path .. ']');
-            local parent = nodes[path]:getParent();
+            local parent = node:getParent();
             if parent then
+                local path = node:getPath();
                 parent:removeChild(path);
                 nodes[path] = nil;
             end
