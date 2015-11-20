@@ -127,21 +127,18 @@ function Graph.new(ewidth, showLabels)
     end
 
     ---
-    -- Remove dead node if it doesn't contain any files and only links
-    -- to its parent.
-    -- @param targetNode
-    -- @param path
+    -- Checks if a node is dead. A node is considered dead if it doesn't contain
+    -- any files and doesn't link to any other nodes except for its own parent.
+    -- @param node - The node to check.
     --
-    local function removeDeadNode(targetNode, path)
-        if targetNode:getFileCount() == 0 and targetNode:getChildCount() == 0 then
+    local function removeDeadNode(node)
+        local path = node:getPath();
+        if node:getFileCount() == 0 and node:getChildCount() == 0 then
             -- print('DEL node [' .. path .. ']');
             local parent = nodes[path]:getParent();
             if parent then
                 parent:removeChild(path);
                 nodes[path] = nil;
-
-                -- Recursively check if we also need to remove the parent.
-                removeDeadNode(parent, parent:getPath());
             end
         end
     end
@@ -164,10 +161,6 @@ function Graph.new(ewidth, showLabels)
             modifiedFile = targetNode:addFile(file, File.new(file, targetNode:getX(), targetNode:getY()));
         elseif modifier == MOD_DELETE then
             modifiedFile = targetNode:removeFile(file);
-
-            -- Remove the node if it doesn't contain files and only
-            -- has a link to its parent.
-            removeDeadNode(targetNode, path);
         elseif modifier == MOD_MODIFY then
             modifiedFile = targetNode:modifyFile(file);
         end
@@ -199,6 +192,10 @@ function Graph.new(ewidth, showLabels)
             for _, nodeB in pairs(nodes) do
                 nodeA:calculateForces(nodeB);
             end
+
+            -- Remove the node if it doesn't contain files and only
+            -- has a link to its parent.
+            removeDeadNode(nodeA);
 
             minX, maxX, minY, maxY = updateBoundaries(minX, maxX, minY, maxY, nodeA:getRadius(), nodeA:update(dt));
         end
