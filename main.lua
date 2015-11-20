@@ -86,9 +86,8 @@ function love.resize(x, y)
 end
 
 function love.keypressed(key)
-    if key == ' ' then
-        key = 'space';
-    elseif tonumber(key) then
+    -- Transform strings to numbers to fit the control values we read from the config file.
+    if tonumber(key) then
         key = tonumber(key);
     end
 
