@@ -150,18 +150,18 @@ function Graph.new(ewidth, showLabels)
     -- along the way.
     -- @param modifier
     -- @param path
-    -- @param file
+    -- @param filename
     --
-    local function applyGitModifier(modifier, path, file, mode)
+    local function applyGitModifier(modifier, path, filename, mode)
         local targetNode = getNode(path);
 
         local modifiedFile;
         if modifier == MOD_ADD then
-            modifiedFile = targetNode:addFile(file);
+            modifiedFile = targetNode:addFile(filename);
         elseif modifier == MOD_DELETE then
-            modifiedFile = targetNode:removeFile(file);
+            modifiedFile = targetNode:removeFile(filename);
         elseif modifier == MOD_MODIFY then
-            modifiedFile = targetNode:modifyFile(file);
+            modifiedFile = targetNode:modifyFile(filename);
         end
 
         -- We only notify observers if the graph isn't modifed in fast forward / rewind mode.
