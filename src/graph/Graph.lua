@@ -159,7 +159,11 @@ function Graph.new(ewidth, showLabels)
         if modifier == MOD_ADD then
             modifiedFile = targetNode:addFile(filename);
         elseif modifier == MOD_DELETE then
-            modifiedFile = targetNode:removeFile(filename);
+            if mode == 'normal' then
+                modifiedFile = targetNode:markFileForDeletion(filename);
+            else
+                modifiedFile = targetNode:removeFile(filename);
+            end
         elseif modifier == MOD_MODIFY then
             modifiedFile = targetNode:modifyFile(filename);
         end

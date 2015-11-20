@@ -15,15 +15,16 @@ local MOD_COLOR = {
 -- Constructor
 -- ------------------------------------------------
 
-function File.new(name, color, extension, x, y)
+function File.new(parent, name, color, extension, x, y)
     local self = {};
 
     local posX, posY = x, y;
     local offX, offY = 0, 0;
     local fileColor, extension = color, extension;
-    local currentColor = { r = 0, g = 0, b = 0};
+    local currentColor = { r = 0, g = 0, b = 0, a = 255 };
     local modified = false;
     local timer = MOD_TIMER;
+    local fade = false;
     local dead = false;
 
     -- ------------------------------------------------
@@ -41,9 +42,12 @@ function File.new(name, color, extension, x, y)
     local function reset()
         timer = MOD_TIMER;
         modified = false;
+        fade = false;
+        dead = false;
         currentColor.r = fileColor.r;
         currentColor.g = fileColor.g;
         currentColor.b = fileColor.b;
+        currentColor.a = 255;
     end
 
     -- ------------------------------------------------
@@ -56,6 +60,14 @@ function File.new(name, color, extension, x, y)
     -- @param dt
     --
     function self:update(dt)
+        if fade then
+            currentColor.a = math.min(255, math.max(currentColor.a - 3, 0));
+            if currentColor.a <= 0 then
+                dead = true;
+            end
+            return;
+        end
+
         if modified then
             if timer > 0 then
                 timer = timer - dt;
@@ -74,10 +86,16 @@ function File.new(name, color, extension, x, y)
     -- @param mod
     --
     function self:modify(mod)
+        reset();
+
         modified = true;
         currentColor.r = MOD_COLOR[mod].r;
         currentColor.g = MOD_COLOR[mod].g;
         currentColor.b = MOD_COLOR[mod].b;
+
+        if mod == 'del' then
+            fade = true;
+        end
     end
 
     -- ------------------------------------------------
@@ -98,6 +116,10 @@ function File.new(name, color, extension, x, y)
 
     function self:getExtension()
         return extension;
+    end
+
+    function self:isDead()
+        return dead;
     end
 
     -- ------------------------------------------------

@@ -214,12 +214,15 @@ function Node.new(parent, path, name, x, y, spritebatch)
 
     function self:update(dt)
         move(dt);
-        for _, file in pairs(files) do
+        for name, file in pairs(files) do
+            if file:isDead() then
+                self:removeFile(name);
+            end
             file:update(dt);
             file:setPosition(posX, posY);
 
             local color = file:getColor();
-            spritebatch:setColor(color.r, color.g, color.b);
+            spritebatch:setColor(color.r, color.g, color.b, color.a);
 
             spritebatch:add(file:getX(), file:getY(), 0, SPRITE_SCALE_FACTOR, SPRITE_SCALE_FACTOR, SPRITE_OFFSET, SPRITE_OFFSET);
         end
@@ -229,13 +232,13 @@ function Node.new(parent, path, name, x, y, spritebatch)
     function self:addFile(name)
         -- Exit early if the file already exists.
         if files[name] then
-            print('+ Can not add file: ' .. name .. ' - It already exists.');
-            return;
+            files[name]:modify('add');
+            return files[name];
         end
 
         -- Get the file color and extension from the FileManager and create the actual file object.
         local color, extension = FileManager.add(name);
-        files[name] = File.new(name, color, extension, posX, posY);
+        files[name] = File.new(self, name, color, extension, posX, posY);
         files[name]:modify('add');
         fileCount = fileCount + 1;
 
@@ -244,23 +247,45 @@ function Node.new(parent, path, name, x, y, spritebatch)
         return files[name];
     end
 
+    ---
+    -- Sets a file's modifier to deletion.
+    -- @param name - The name of the file to modify.
+    --
+    function self:markFileForDeletion(name)
+        local file = files[name];
+
+        if not file then
+            print('- Can not rem file: ' .. name .. ' - It doesn\'t exist.');
+            return;
+        end
+
+        file:modify('del');
+
+        return file;
+    end
+
+    ---
+    -- Removes a file from the list of files for this node and notifies the
+    -- FileManager that it also needs to be removed from the global file
+    -- list.
+    -- @param name - The name of the file to remove.
+    --
     function self:removeFile(name)
-        if not files[name] then
+        local file = files[name];
+
+        if not file then
             print('- Can not rem file: ' .. name .. ' - It doesn\'t exist.');
             return;
         end
 
         -- Store a reference to the file which can be returned
         -- after the file has been removed from the table.
-        local tmp = files[name];
         FileManager.remove(name);
-        files[name]:modify('del');
         files[name] = nil;
         fileCount = fileCount - 1;
 
-        -- Update layout of the files.
         radius = plotCircle(files, fileCount);
-        return tmp;
+        return file;
     end
 
     function self:modifyFile(name)
