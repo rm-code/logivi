@@ -1,9 +1,3 @@
-local FileManager = require('src.FileManager');
-
--- ------------------------------------------------
--- Module
--- ------------------------------------------------
-
 local File = {};
 
 -- ------------------------------------------------
@@ -21,12 +15,12 @@ local MOD_COLOR = {
 -- Constructor
 -- ------------------------------------------------
 
-function File.new(name, x, y)
+function File.new(name, color, extension, x, y)
     local self = {};
 
     local posX, posY = x, y;
     local offX, offY = 0, 0;
-    local fileColor, extension = FileManager.add(name);
+    local fileColor, extension = color, extension;
     local currentColor = { r = 0, g = 0, b = 0};
     local modified = false;
     local timer = MOD_TIMER;
@@ -72,10 +66,6 @@ function File.new(name, x, y)
                 reset();
             end
         end
-    end
-
-    function self:remove()
-        FileManager.remove(name);
     end
 
     ---

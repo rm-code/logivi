@@ -1,4 +1,5 @@
 local Resources = require('src.Resources');
+local FileManager = require('src.FileManager');
 local File = require('src.graph.File');
 
 -- ------------------------------------------------
@@ -226,13 +227,15 @@ function Node.new(parent, path, name, x, y, spritebatch)
     end
 
     function self:addFile(name)
-        local file = File.new(name, posX, posY);
+        -- Exit early if the file already exists.
         if files[name] then
             print('+ Can not add file: ' .. name .. ' - It already exists.');
             return;
         end
 
-        files[name] = file;
+        -- Get the file color and extension from the FileManager and create the actual file object.
+        local color, extension = FileManager.add(name);
+        files[name] = File.new(name, color, extension, posX, posY);
         files[name]:modify('add');
         fileCount = fileCount + 1;
 
@@ -250,8 +253,8 @@ function Node.new(parent, path, name, x, y, spritebatch)
         -- Store a reference to the file which can be returned
         -- after the file has been removed from the table.
         local tmp = files[name];
+        FileManager.remove(name);
         files[name]:modify('del');
-        files[name]:remove();
         files[name] = nil;
         fileCount = fileCount - 1;
 
