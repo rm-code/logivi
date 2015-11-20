@@ -12,9 +12,9 @@ local File = {};
 
 local MOD_TIMER = 2;
 local MOD_COLOR = {
-    add = { 0, 255, 0 },
-    del = { 255, 0, 0 },
-    mod = { 254, 140, 0 },
+    add = { r =   0, g = 255, b = 0 },
+    del = { r = 255, g =   0, b = 0 },
+    mod = { r = 254, g = 140, b = 0 },
 };
 
 -- ------------------------------------------------
@@ -27,7 +27,7 @@ function File.new(name, x, y)
     local posX, posY = x, y;
     local offX, offY = 0, 0;
     local fileColor, extension = FileManager.add(name);
-    local currentColor = {};
+    local currentColor = { r = 0, g = 0, b = 0};
     local modified = false;
     local timer = MOD_TIMER;
     local dead = false;
@@ -47,9 +47,9 @@ function File.new(name, x, y)
     local function reset()
         timer = MOD_TIMER;
         modified = false;
-        currentColor[1] = fileColor.r;
-        currentColor[2] = fileColor.g;
-        currentColor[3] = fileColor.b;
+        currentColor.r = fileColor.r;
+        currentColor.g = fileColor.g;
+        currentColor.b = fileColor.b;
     end
 
     -- ------------------------------------------------
@@ -65,9 +65,9 @@ function File.new(name, x, y)
         if modified then
             if timer > 0 then
                 timer = timer - dt;
-                currentColor[1] = lerp(currentColor[1], fileColor.r, dt * 1.5);
-                currentColor[2] = lerp(currentColor[2], fileColor.g, dt * 1.5);
-                currentColor[3] = lerp(currentColor[3], fileColor.b, dt * 1.5);
+                currentColor.r = lerp(currentColor.r, fileColor.r, dt * 1.5);
+                currentColor.g = lerp(currentColor.g, fileColor.g, dt * 1.5);
+                currentColor.b = lerp(currentColor.b, fileColor.b, dt * 1.5);
             else
                 reset();
             end
@@ -85,9 +85,9 @@ function File.new(name, x, y)
     --
     function self:modify(mod)
         modified = true;
-        currentColor[1] = MOD_COLOR[mod][1];
-        currentColor[2] = MOD_COLOR[mod][2];
-        currentColor[3] = MOD_COLOR[mod][3];
+        currentColor.r = MOD_COLOR[mod].r;
+        currentColor.g = MOD_COLOR[mod].g;
+        currentColor.b = MOD_COLOR[mod].b;
     end
 
     -- ------------------------------------------------

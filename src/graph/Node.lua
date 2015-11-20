@@ -215,7 +215,10 @@ function Node.new(parent, path, name, x, y, spritebatch)
         for _, file in pairs(files) do
             file:update(dt);
             file:setPosition(posX, posY);
-            spritebatch:setColor(file:getColor());
+
+            local color = file:getColor();
+            spritebatch:setColor(color.r, color.g, color.b);
+
             spritebatch:add(file:getX(), file:getY(), 0, SPRITE_SCALE_FACTOR, SPRITE_SCALE_FACTOR, SPRITE_OFFSET, SPRITE_OFFSET);
         end
         return posX, posY;
