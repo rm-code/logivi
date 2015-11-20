@@ -30,6 +30,7 @@ function File.new(name, x, y)
     local currentColor = {};
     local modified = false;
     local timer = MOD_TIMER;
+    local dead = false;
 
     -- ------------------------------------------------
     -- Private Functions
@@ -46,9 +47,9 @@ function File.new(name, x, y)
     local function reset()
         timer = MOD_TIMER;
         modified = false;
-        currentColor[1] = fileColor[1];
-        currentColor[2] = fileColor[2];
-        currentColor[3] = fileColor[3];
+        currentColor[1] = fileColor.r;
+        currentColor[2] = fileColor.g;
+        currentColor[3] = fileColor.b;
     end
 
     -- ------------------------------------------------
@@ -64,9 +65,9 @@ function File.new(name, x, y)
         if modified then
             if timer > 0 then
                 timer = timer - dt;
-                currentColor[1] = lerp(currentColor[1], fileColor[1], dt * 1.5);
-                currentColor[2] = lerp(currentColor[2], fileColor[2], dt * 1.5);
-                currentColor[3] = lerp(currentColor[3], fileColor[3], dt * 1.5);
+                currentColor[1] = lerp(currentColor[1], fileColor.r, dt * 1.5);
+                currentColor[2] = lerp(currentColor[2], fileColor.g, dt * 1.5);
+                currentColor[3] = lerp(currentColor[3], fileColor.b, dt * 1.5);
             else
                 reset();
             end
