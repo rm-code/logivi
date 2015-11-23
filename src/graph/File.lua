@@ -102,22 +102,40 @@ function File.new(parent, name, color, extension, x, y)
     -- Getters
     -- ------------------------------------------------
 
+    ---
+    -- Returns the real position of the node on the x-axis.
+    -- This is the sum of the parent-node's position and the offset of the file.
+    --
     function self:getX()
         return posX + offX;
     end
 
+    ---
+    -- Returns the real position of the node on the y-axis.
+    -- This is the sum of the parent-node's position and the offset of the file.
+    --
     function self:getY()
         return posY + offY;
     end
 
+    ---
+    -- Returns the current color of the file.
+    -- The table uses rgba keys to store the color.
+    --
     function self:getColor()
         return currentColor;
     end
 
+    ---
+    -- Returns the extension of the file as a string.
+    --
     function self:getExtension()
         return extension;
     end
 
+    ---
+    -- Returns true if the file is marked as dead.
+    --
     function self:isDead()
         return dead;
     end
@@ -126,10 +144,21 @@ function File.new(parent, name, color, extension, x, y)
     -- Setters
     -- ------------------------------------------------
 
+    ---
+    -- Sets the offset of the file from its parent node.
+    -- This distance is used to plot all the files in a circle around the node.
+    -- @param ox - The offset on the x-axis.
+    -- @param oy - The offset on the y-axis.
+    --
     function self:setOffset(ox, oy)
         offX, offY = ox, oy;
     end
 
+    ---
+    -- Sets the position of the parent node on which the file is located.
+    -- @param nx - The new position on the x-axis.
+    -- @param ny - The new position on the y-axis.
+    --
     function self:setPosition(nx, ny)
         posX, posY = nx, ny;
     end
