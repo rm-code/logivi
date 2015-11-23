@@ -19,7 +19,8 @@ function File.new(parent, name, color, extension, x, y)
     local self = {};
 
     local posX, posY = x, y;
-    local offX, offY = 0, 0;
+    local targetOffsetX,  targetOffsetY  = 0, 0;
+    local currentOffsetX, currentOffsetY = 0, 0;
     local fileColor, extension = color, extension;
     local currentColor = { r = 0, g = 0, b = 0, a = 255 };
     local modified = false;
@@ -50,6 +51,19 @@ function File.new(parent, name, color, extension, x, y)
         currentColor.a = 255;
     end
 
+    ---
+    -- Lerps the file from its current offset position to the target offset.
+    -- This adds a nice animation effect when files are rearranged around their
+    -- parent nodes.
+    -- @param dt - The delta time between frames.
+    -- @param tarX - The target offset on the x-axis.
+    -- @param tarY - The target offset on the y-axis.
+    --
+    local function animate(dt, tarX, tarY)
+        currentOffsetX = lerp(currentOffsetX, tarX, dt * 3.5);
+        currentOffsetY = lerp(currentOffsetY, tarY, dt * 3.5);
+    end
+
     -- ------------------------------------------------
     -- Public Functions
     -- ------------------------------------------------
@@ -60,6 +74,8 @@ function File.new(parent, name, color, extension, x, y)
     -- @param dt
     --
     function self:update(dt)
+        animate(dt, targetOffsetX, targetOffsetY);
+
         if fade then
             currentColor.a = math.min(255, math.max(currentColor.a - 3, 0));
             if currentColor.a <= 0 then
@@ -107,7 +123,7 @@ function File.new(parent, name, color, extension, x, y)
     -- This is the sum of the parent-node's position and the offset of the file.
     --
     function self:getX()
-        return posX + offX;
+        return posX + currentOffsetX;
     end
 
     ---
@@ -115,7 +131,7 @@ function File.new(parent, name, color, extension, x, y)
     -- This is the sum of the parent-node's position and the offset of the file.
     --
     function self:getY()
-        return posY + offY;
+        return posY + currentOffsetY;
     end
 
     ---
@@ -145,13 +161,13 @@ function File.new(parent, name, color, extension, x, y)
     -- ------------------------------------------------
 
     ---
-    -- Sets the offset of the file from its parent node.
+    -- Sets the target offset of the file from its parent node.
     -- This distance is used to plot all the files in a circle around the node.
     -- @param ox - The offset on the x-axis.
     -- @param oy - The offset on the y-axis.
     --
     function self:setOffset(ox, oy)
-        offX, offY = ox, oy;
+        targetOffsetX, targetOffsetY = ox, oy;
     end
 
     ---
