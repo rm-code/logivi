@@ -1,5 +1,4 @@
 local Node = require('src.graph.Node');
-local File = require('src.graph.File');
 local Resources = require('src.Resources');
 
 -- ------------------------------------------------
@@ -23,6 +22,7 @@ local MOD_UNMERGE = 'U';
 local MOD_UNKNOWN = 'X';
 local MOD_BROKEN_PAIRING = 'B';
 
+local EVENT_UPDATE_DIMENSIONS = 'GRAPH_UPDATE_DIMENSIONS';
 local EVENT_UPDATE_CENTER = 'GRAPH_UPDATE_CENTER';
 local EVENT_UPDATE_FILE = 'GRAPH_UPDATE_FILE';
 
@@ -70,8 +70,17 @@ function Graph.new(ewidth, showLabels)
     -- @param nx - The new x position to check.
     -- @param ny - The new y position to check.
     --
-    local function updateBoundaries(minX, maxX, minY, maxY, nx, ny)
-        return math.min(nx, minX), math.max(nx, maxX), math.min(ny, minY), math.max(ny, maxY);
+    local function updateBoundaries(minX, maxX, minY, maxY, radius, nx, ny)
+        return math.min(nx - radius, minX), math.max(nx + radius, maxX), math.min(ny - radius, minY), math.max(ny + radius, maxY);
+    end
+
+    ---
+    -- Returns the center of the graph. The center is calculated
+    -- by forming a rectangle that encapsulates all nodes and then
+    -- dividing its sides by two.
+    --
+    local function updateCenter()
+        return minX + (maxX - minX) * 0.5, minY + (maxY - minY) * 0.5;
     end
 
     ---
@@ -118,21 +127,18 @@ function Graph.new(ewidth, showLabels)
     end
 
     ---
-    -- Remove dead node if it doesn't contain any files and only links
-    -- to its parent.
-    -- @param targetNode
-    -- @param path
+    -- Checks if a node is dead. A node is considered dead if it doesn't contain
+    -- any files and doesn't link to any other nodes except for its own parent.
+    -- @param node - The node to check.
     --
-    local function removeDeadNode(targetNode, path)
-        if targetNode:getFileCount() == 0 and targetNode:getChildCount() == 0 then
+    local function removeDeadNode(node)
+        if node:isDead() then
             -- print('DEL node [' .. path .. ']');
-            local parent = nodes[path]:getParent();
+            local parent = node:getParent();
             if parent then
+                local path = node:getPath();
                 parent:removeChild(path);
                 nodes[path] = nil;
-
-                -- Recursively check if we also need to remove the parent.
-                removeDeadNode(parent, parent:getPath());
             end
         end
     end
@@ -145,22 +151,22 @@ function Graph.new(ewidth, showLabels)
     -- along the way.
     -- @param modifier
     -- @param path
-    -- @param file
+    -- @param filename
     --
-    local function applyGitModifier(modifier, path, file, mode)
+    local function applyGitModifier(modifier, path, filename, mode)
         local targetNode = getNode(path);
 
         local modifiedFile;
         if modifier == MOD_ADD then
-            modifiedFile = targetNode:addFile(file, File.new(file, targetNode:getX(), targetNode:getY()));
+            modifiedFile = targetNode:addFile(filename);
         elseif modifier == MOD_DELETE then
-            modifiedFile = targetNode:removeFile(file);
-
-            -- Remove the node if it doesn't contain files and only
-            -- has a link to its parent.
-            removeDeadNode(targetNode, path);
+            if mode == 'normal' then
+                modifiedFile = targetNode:markFileForDeletion(filename);
+            else
+                modifiedFile = targetNode:removeFile(filename);
+            end
         elseif modifier == MOD_MODIFY then
-            modifiedFile = targetNode:modifyFile(file);
+            modifiedFile = targetNode:modifyFile(filename);
         end
 
         -- We only notify observers if the graph isn't modifed in fast forward / rewind mode.
@@ -191,10 +197,15 @@ function Graph.new(ewidth, showLabels)
                 nodeA:calculateForces(nodeB);
             end
 
-            minX, maxX, minY, maxY = updateBoundaries(minX, maxX, minY, maxY, nodeA:update(dt));
+            -- Remove the node if it doesn't contain files and only
+            -- has a link to its parent.
+            removeDeadNode(nodeA);
+
+            minX, maxX, minY, maxY = updateBoundaries(minX, maxX, minY, maxY, nodeA:getRadius(), nodeA:update(dt));
         end
 
-        notify(EVENT_UPDATE_CENTER, self:getCenter());
+        notify(EVENT_UPDATE_CENTER, updateCenter());
+        notify(EVENT_UPDATE_DIMENSIONS, minX, maxX, minY, maxY);
     end
 
     ---
@@ -221,19 +232,6 @@ function Graph.new(ewidth, showLabels)
         if event == 'LOGREADER_CHANGED_FILE' then
             applyGitModifier(...)
         end
-    end
-
-    -- ------------------------------------------------
-    -- Getters
-    -- ------------------------------------------------
-
-    ---
-    -- Returns the center of the graph. The center is calculated
-    -- by forming a rectangle that encapsulates all nodes and then
-    -- dividing its sides by two.
-    --
-    function self:getCenter()
-        return minX + (maxX - minX) * 0.5, minY + (maxY - minY) * 0.5;
     end
 
     return self;

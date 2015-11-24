@@ -59,7 +59,7 @@ function FileManager.draw(x, y)
     love.graphics.print(totalFiles, x + FRST_OFFSET, y + 10);
     love.graphics.print('Files', x + SCND_OFFSET, y + 10);
     for i, tbl in ipairs(sortedList) do
-        love.graphics.setColor(tbl.color);
+        love.graphics.setColor(tbl.color.r, tbl.color.g, tbl.color.b);
         love.graphics.print(tbl.amount, x + FRST_OFFSET, y + 10 + i * 20);
         love.graphics.print(tbl.extension, x + SCND_OFFSET, y + 10 + i * 20);
         love.graphics.setColor(255, 255, 255);
@@ -80,7 +80,11 @@ function FileManager.add(fileName)
         extensions[ext] = {};
         extensions[ext].extension = ext;
         extensions[ext].amount = 0;
-        extensions[ext].color = colors[ext] or { love.math.random(0, 255), love.math.random(0, 255), love.math.random(0, 255) };
+        extensions[ext].color = colors[ext] or {
+            r = love.math.random(0, 255),
+            g = love.math.random(0, 255),
+            b = love.math.random(0, 255)
+        };
     end
     extensions[ext].amount = extensions[ext].amount + 1;
     totalFiles = totalFiles + 1;

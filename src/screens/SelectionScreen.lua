@@ -29,6 +29,9 @@ local DEFAULT_FONT = Resources.loadFont('default', 12);
 local WARNING_TITLE = 'Not a valid git repository';
 local WARNING_MESSAGE = 'The path "%s" does not point to a valid git repository. Make sure you have specified the full path in the settings file.';
 
+local UI_ELEMENT_PADDING = 20;
+local UI_ELEMENT_MARGIN  =  5;
+
 -- ------------------------------------------------
 -- Constructor
 -- ------------------------------------------------
@@ -44,14 +47,31 @@ function SelectionScreen.new()
     local header;
     local panel;
 
-    local uiElementPadding = 20;
-    local uiElementMargin = 5;
-
     local info = {};
 
     -- ------------------------------------------------
     -- Private Functions
     -- ------------------------------------------------
+
+    ---
+    -- Checks if git is available and attempts to create git logs based on the
+    -- list of repositories read from the user's config file.
+    -- @param options
+    --
+    local function createGitLogs(config)
+        if LogCreator.isGitAvailable() then
+            for name, path in pairs(config.repositories) do
+                -- Check if the path points to a valid git repository before attempting
+                -- to create a git log and the info file for it.
+                if LogCreator.isGitRepository(path) then
+                    LogCreator.createGitLog(name, path);
+                    LogCreator.createInfoFile(name, path);
+                else
+                    love.window.showMessageBox(WARNING_TITLE, string.format(WARNING_MESSAGE, path), 'warning', false);
+                end
+            end
+        end
+    end
 
     ---
     -- Updates the project's window settings based on the config file.
@@ -89,24 +109,13 @@ function SelectionScreen.new()
         setWindowMode(config.options);
 
         -- Create git logs for repositories specified in the config file.
-        if LogCreator.isGitAvailable() then
-            for name, path in pairs(config.repositories) do
-                -- Check if the path points to a valid git repository before attempting
-                -- to create a git log and the info file for it.
-                if LogCreator.isGitRepository(path) then
-                    LogCreator.createGitLog(name, path);
-                    LogCreator.createInfoFile(name, path);
-                else
-                    love.window.showMessageBox(WARNING_TITLE, string.format(WARNING_MESSAGE, path), 'warning', false);
-                end
-            end
-        end
+        createGitLogs(config);
 
         -- Intitialise LogLoader.
         logList = LogLoader.init();
 
         -- A scrollable list of buttons which can be used to select a certain log.
-        buttonList = ButtonList.new(uiElementPadding, uiElementPadding, uiElementMargin);
+        buttonList = ButtonList.new(UI_ELEMENT_PADDING, UI_ELEMENT_PADDING, UI_ELEMENT_MARGIN);
         buttonList:init(self, logList);
 
         -- Load info about currently selected log.
@@ -114,13 +123,13 @@ function SelectionScreen.new()
 
         local sw, sh = love.graphics.getDimensions();
         buttons = {
-            Button.new(OpenFolderCommand.new(love.filesystem.getSaveDirectory()), 'Open', uiElementPadding + (2 * uiElementMargin) + 220, sh - uiElementPadding - 10 - uiElementPadding - 40, 100, 40);
-            Button.new(WatchCommand.new(self), 'Watch', sw - uiElementPadding - 10 - 100, sh - uiElementPadding - 10 - uiElementPadding - 40, 100, 40);
-            Button.new(RefreshLogCommand.new(self), 'Refresh', sw - uiElementPadding - 20 - 200, sh - uiElementPadding - 10 - uiElementPadding - 40, 100, 40);
+            Button.new(OpenFolderCommand.new(love.filesystem.getSaveDirectory()), 'Open', UI_ELEMENT_PADDING + (2 * UI_ELEMENT_MARGIN) + 220, sh - UI_ELEMENT_PADDING - 10 - UI_ELEMENT_PADDING - 40, 100, 40);
+            Button.new(WatchCommand.new(self), 'Watch', sw - UI_ELEMENT_PADDING - 10 - 100, sh - UI_ELEMENT_PADDING - 10 - UI_ELEMENT_PADDING - 40, 100, 40);
+            Button.new(RefreshLogCommand.new(self), 'Refresh', sw - UI_ELEMENT_PADDING - 20 - 200, sh - UI_ELEMENT_PADDING - 10 - UI_ELEMENT_PADDING - 40, 100, 40);
         };
 
-        header = Header.new(info.name, uiElementPadding + (2 * uiElementMargin) + 200 + 25, uiElementPadding + 25);
-        panel = StaticPanel.new(uiElementPadding + (2 * uiElementMargin) + buttonList:getButtonWidth(), uiElementPadding, sw - (uiElementPadding + (2 * uiElementMargin) + 200) - 20, sh - uiElementPadding - 40);
+        header = Header.new(info.name, UI_ELEMENT_PADDING + (2 * UI_ELEMENT_MARGIN) + 200 + 25, UI_ELEMENT_PADDING + 25);
+        panel = StaticPanel.new(UI_ELEMENT_PADDING + (2 * UI_ELEMENT_MARGIN) + buttonList:getButtonWidth(), UI_ELEMENT_PADDING, sw - (UI_ELEMENT_PADDING + (2 * UI_ELEMENT_MARGIN) + 200) - 20, sh - UI_ELEMENT_PADDING - 40);
     end
 
     function self:update(dt)
@@ -131,17 +140,17 @@ function SelectionScreen.new()
     end
 
     function self:resize(nw, nh)
-        panel:setDimensions(nw - (uiElementPadding + (2 * uiElementMargin) + 200) - 20, nh - uiElementPadding - 40)
-        buttons[1]:setPosition(uiElementPadding + (2 * uiElementMargin) + 210, nh - uiElementPadding - 10 - uiElementPadding - 40);
-        buttons[2]:setPosition(nw - uiElementPadding - 10 - 100, nh - uiElementPadding - 10 - uiElementPadding - 40);
-        buttons[3]:setPosition(nw - uiElementPadding - 20 - 200, nh - uiElementPadding - 10 - uiElementPadding - 40);
+        panel:setDimensions(nw - (UI_ELEMENT_PADDING + (2 * UI_ELEMENT_MARGIN) + 200) - 20, nh - UI_ELEMENT_PADDING - 40)
+        buttons[1]:setPosition(UI_ELEMENT_PADDING + (2 * UI_ELEMENT_MARGIN) + 210, nh - UI_ELEMENT_PADDING - 10 - UI_ELEMENT_PADDING - 40);
+        buttons[2]:setPosition(nw - UI_ELEMENT_PADDING - 10 - 100, nh - UI_ELEMENT_PADDING - 10 - UI_ELEMENT_PADDING - 40);
+        buttons[3]:setPosition(nw - UI_ELEMENT_PADDING - 20 - 200, nh - UI_ELEMENT_PADDING - 10 - UI_ELEMENT_PADDING - 40);
     end
 
     function self:draw()
         buttonList:draw();
 
-        local x = uiElementPadding + (2 * uiElementMargin) + buttonList:getButtonWidth();
-        local y = uiElementPadding;
+        local x = UI_ELEMENT_PADDING + (2 * UI_ELEMENT_MARGIN) + buttonList:getButtonWidth();
+        local y = UI_ELEMENT_PADDING;
 
         panel:draw();
         header:draw();
@@ -156,7 +165,7 @@ function SelectionScreen.new()
         end
 
         love.graphics.setFont(DEFAULT_FONT);
-        love.graphics.print('Work in Progress (v' .. getVersion() .. ')', love.graphics.getWidth() - 180, love.graphics.getHeight() - uiElementPadding);
+        love.graphics.print('Work in Progress (v' .. getVersion() .. ')', love.graphics.getWidth() - 180, love.graphics.getHeight() - UI_ELEMENT_PADDING);
     end
 
     function self:watchLog()
@@ -174,7 +183,7 @@ function SelectionScreen.new()
 
     function self:selectLog(name)
         info = LogLoader.loadInfo(name);
-        header = Header.new(info.name, uiElementPadding + (2 * uiElementMargin) + 200 + 25, uiElementPadding + 25);
+        header = Header.new(info.name, UI_ELEMENT_PADDING + (2 * UI_ELEMENT_MARGIN) + 200 + 25, UI_ELEMENT_PADDING + 25);
     end
 
     function self:mousepressed(x, y, b)
@@ -200,6 +209,23 @@ function SelectionScreen.new()
         elseif InputHandler.isPressed(key, config.keyBindings.toggleFullscreen) then
             love.window.setFullscreen(not love.window.getFullscreen());
         end
+    end
+
+    function self:directorydropped(path)
+        local temporaryConfig = {};
+        local name = path:match("/?([^/]+)$"); -- Use the folder's name to store the repo.
+        temporaryConfig.repositories = {
+            [name] = path
+        };
+
+        createGitLogs(temporaryConfig);
+
+        -- Intitialise LogLoader.
+        logList = LogLoader.init();
+
+        -- A scrollable list of buttons which can be used to select a certain log.
+        buttonList = ButtonList.new(UI_ELEMENT_PADDING, UI_ELEMENT_PADDING, UI_ELEMENT_MARGIN);
+        buttonList:init(self, logList);
     end
 
     function self:quit()

@@ -15,7 +15,7 @@ local showDebug = false;
 --
 local function checkSupport()
     print("\n---- RENDERER  ---- ");
-    local name, version, vendor, device = love.graphics.getRendererInfo()
+    local name, version, vendor, device = love.graphics.getRendererInfo();
     print(string.format("Name: %s \nVersion: %s \nVendor: %s \nDevice: %s", name, version, vendor, device));
 
     print("\n----  SYSTEM   ---- ");
@@ -86,9 +86,8 @@ function love.resize(x, y)
 end
 
 function love.keypressed(key)
-    if key == ' ' then
-        key = 'space';
-    elseif tonumber(key) then
+    -- Transform strings to numbers to fit the control values we read from the config file.
+    if tonumber(key) then
         key = tonumber(key);
     end
 
@@ -113,4 +112,8 @@ end
 
 function love.wheelmoved(x, y)
     ScreenManager.wheelmoved(x, y);
+end
+
+function love.directorydropped(path)
+    ScreenManager.directorydropped(path);
 end

@@ -1,6 +1,6 @@
 # LoGiVi
 
-LoGiVi is a git-repository visualisation tool inspired by [Gource](http://gource.io/) and __currently in development__. It was written from scratch using [Lua](http://www.lua.org/) and the [LÖVE](https://love2d.org/) framework.
+LoGiVi is a git-repository visualisation tool inspired by [Gource](http://gource.io/) and __currently in development__. It was written from scratch using [Lua](http://www.lua.org/) and the [LÖVE](https://love2d.org/) framework. Note: Since version [0375](https://github.com/rm-code/logivi/releases/tag/0375) LoGiVi uses version [0.10.0](https://love2d.org/wiki/0.10.0) of the LÖVE framework. 
 
 ![Example Visualization](https://github.com/rm-code/logivi/wiki/media/logivi_0312.gif)
 

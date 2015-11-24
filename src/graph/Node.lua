@@ -1,4 +1,6 @@
 local Resources = require('src.Resources');
+local FileManager = require('src.FileManager');
+local File = require('src.graph.File');
 
 -- ------------------------------------------------
 -- Module
@@ -65,8 +67,10 @@ function Node.new(parent, path, name, x, y, spritebatch)
     end
 
     ---
-    -- @param fx
-    -- @param fy
+    -- Calculates the new xy-acceleration for this node.
+    -- The values are clamped to keep the graph from "exploding".
+    -- @param fx - The force to apply in x-direction.
+    -- @param fy - The force to apply in y-direction.
     --
     local function applyForce(fx, fy)
         accX = clamp(-FORCE_MAX, accX + fx, FORCE_MAX);
@@ -160,8 +164,8 @@ function Node.new(parent, path, name, x, y, spritebatch)
     end
 
     ---
-    -- Update the node's position based on the calculated
-    -- velocity and acceleration.
+    -- Update the node's position based on the calculated velocity and
+    -- acceleration.
     --
     local function move(dt)
         velX = (velX + accX * dt * speed) * DAMPING_FACTOR;
@@ -175,12 +179,21 @@ function Node.new(parent, path, name, x, y, spritebatch)
     -- Public Functions
     -- ------------------------------------------------
 
-    function self:addChild(name, folder)
-        children[name] = folder;
+    ---
+    -- Adds a child node to this node and increments the child counter.
+    -- @param name - The name of the node to add.
+    -- @param node - The actual node object.
+    --
+    function self:addChild(name, node)
+        children[name] = node;
         childCount = childCount + 1;
         return children[name];
     end
 
+    ---
+    -- Removes a child node from this node and decrements the child counter.
+    -- @param name - The name of the node to remove.
+    --
     function self:removeChild(name)
         children[name] = nil;
         childCount = childCount - 1;
@@ -212,22 +225,40 @@ function Node.new(parent, path, name, x, y, spritebatch)
 
     function self:update(dt)
         move(dt);
-        for _, file in pairs(files) do
+        for name, file in pairs(files) do
+            if file:isDead() then
+                self:removeFile(name);
+            end
             file:update(dt);
             file:setPosition(posX, posY);
-            spritebatch:setColor(file:getColor());
+
+            local color = file:getColor();
+            spritebatch:setColor(color.r, color.g, color.b, color.a);
+
             spritebatch:add(file:getX(), file:getY(), 0, SPRITE_SCALE_FACTOR, SPRITE_SCALE_FACTOR, SPRITE_OFFSET, SPRITE_OFFSET);
         end
         return posX, posY;
     end
 
-    function self:addFile(name, file)
+    ---
+    -- Adds a new file to the node.
+    -- When the file already exists its modifier is set to "addition" and it is
+    -- returned. When the file doesn't exist yet, its color and extension are
+    -- requested from the FileManager and a new File object is created. After
+    -- the file object has been added to the file list of this node, the layout
+    -- of the files around the nodes is recalculated.
+    -- @name - The name of the file to add.
+    --
+    function self:addFile(name)
+        -- Exit early if the file already exists.
         if files[name] then
-            print('+ Can not add file: ' .. name .. ' - It already exists.');
-            return;
+            files[name]:modify('add');
+            return files[name];
         end
 
-        files[name] = file;
+        -- Get the file color and extension from the FileManager and create the actual file object.
+        local color, extension = FileManager.add(name);
+        files[name] = File.new(self, name, color, extension, posX, posY);
         files[name]:modify('add');
         fileCount = fileCount + 1;
 
@@ -236,33 +267,61 @@ function Node.new(parent, path, name, x, y, spritebatch)
         return files[name];
     end
 
+    ---
+    -- Sets a file's modifier to deletion.
+    -- @param name - The name of the file to modify.
+    --
+    function self:markFileForDeletion(name)
+        local file = files[name];
+
+        if not file then
+            print('- Can not rem file: ' .. name .. ' - It doesn\'t exist.');
+            return;
+        end
+
+        file:modify('del');
+
+        return file;
+    end
+
+    ---
+    -- Removes a file from the list of files for this node and notifies the
+    -- FileManager that it also needs to be removed from the global file
+    -- list. Once the file is removed, the layout of the files around the nodes
+    -- is recalculated.
+    -- @param name - The name of the file to remove.
+    --
     function self:removeFile(name)
-        if not files[name] then
+        local file = files[name];
+
+        if not file then
             print('- Can not rem file: ' .. name .. ' - It doesn\'t exist.');
             return;
         end
 
         -- Store a reference to the file which can be returned
         -- after the file has been removed from the table.
-        local tmp = files[name];
-        files[name]:modify('del');
-        files[name]:remove();
+        FileManager.remove(name);
         files[name] = nil;
         fileCount = fileCount - 1;
 
-        -- Update layout of the files.
         radius = plotCircle(files, fileCount);
-        return tmp;
+        return file;
     end
 
+    ---
+    -- Sets a file's modifier to "modification" and returns the file object.
+    -- @param name - The file to modify.
+    --
     function self:modifyFile(name)
-        if not files[name] then
+        local file = files[name]
+        if not file then
             print('~ Can not mod file: ' .. name .. ' - It doesn\'t exist.');
             return;
         end
 
-        files[name]:modify('mod');
-        return files[name];
+        file:modify('mod');
+        return file;
     end
 
     ---
@@ -326,6 +385,10 @@ function Node.new(parent, path, name, x, y, spritebatch)
         return 0.015 * (childCount + math.log(math.max(SPRITE_SIZE, radius)));
     end
 
+    function self:getRadius()
+        return radius;
+    end
+
     function self:isConnectedTo(node)
         for _, child in pairs(children) do
             if node == child then
@@ -333,6 +396,14 @@ function Node.new(parent, path, name, x, y, spritebatch)
             end
         end
         return parent == node;
+    end
+
+    ---
+    -- Returns true if the node doesn't contain any files and doesn't have any
+    -- children.
+    --
+    function self:isDead()
+        return fileCount == 0 and childCount == 0;
     end
 
     return self;
