@@ -80,13 +80,16 @@ function CamWrapper.new()
     -- Calculates the automatic zoom factor needed to fit the whole graph on
     -- the user's screen.
     --
-    local function calculateAutoZoom()
+    local function calculateAutoZoom(rot)
         local w, h = GRAPH_PADDING + gw, GRAPH_PADDING + gh;
         local sw, sh = love.graphics.getDimensions();
 
+        local rw = h * math.abs(math.sin(rot)) + w * math.abs(math.cos(rot));
+        local rh = h * math.abs(math.cos(rot)) + w * math.abs(math.sin(rot));
+
         -- Calculate the zoom factors for both width and height and use the
         -- smaller one to zoom.
-        local ratioW, ratioH =  sw / w, sh / h;
+        local ratioW, ratioH =  sw / rw, sh / rh;
 
         return ratioW <= ratioH and ratioW or ratioH;
     end
@@ -115,7 +118,7 @@ function CamWrapper.new()
     -- @param dt
     --
     function self:move(dt)
-        local tzoom = calculateAutoZoom();
+        local tzoom = calculateAutoZoom(camera.rot);
         zoom = lerp(zoom, tzoom, dt * 2);
 
         -- Handle manual zoom. This will be added to the automatic zoom factor.
