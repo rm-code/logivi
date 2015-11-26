@@ -252,14 +252,14 @@ function Node.new(parent, path, name, x, y, spritebatch)
     function self:addFile(name)
         -- Exit early if the file already exists.
         if files[name] then
-            files[name]:modify('add');
+            files[name]:setState('add');
             return files[name];
         end
 
         -- Get the file color and extension from the FileManager and create the actual file object.
         local color, extension = FileManager.add(name);
-        files[name] = File.new(name, color, extension, posX, posY);
-        files[name]:modify('add');
+        files[name] = File.new(posX, posY, color, extension);
+        files[name]:setState('add');
         fileCount = fileCount + 1;
 
         -- Update layout of the files.
@@ -279,7 +279,7 @@ function Node.new(parent, path, name, x, y, spritebatch)
             return;
         end
 
-        file:modify('del');
+        file:setState('del');
 
         return file;
     end
@@ -320,7 +320,7 @@ function Node.new(parent, path, name, x, y, spritebatch)
             return;
         end
 
-        file:modify('mod');
+        file:setState('mod');
         return file;
     end
 

@@ -4,51 +4,42 @@ local File = {};
 -- Constants
 -- ------------------------------------------------
 
-local MOD_TIMER = 2;
+local ANIM_TIMER = 3.5;
+local FADE_TIMER = 3.0;
+local MOD_TIMER  = 1.5;
+
 local MOD_COLOR = {
-    add = { r =   0, g = 255, b = 0 },
-    del = { r = 255, g =   0, b = 0 },
-    mod = { r = 254, g = 140, b = 0 },
+    add = { r =   0, g = 255, b = 0, a = 255 },
+    del = { r = 255, g =   0, b = 0, a = 255 },
+    mod = { r = 254, g = 140, b = 0, a = 255 },
 };
 
 -- ------------------------------------------------
 -- Constructor
 -- ------------------------------------------------
 
-function File.new(name, color, extension, x, y)
+function File.new(posX, posY, defaultColor, extension)
     local self = {};
 
-    local posX, posY = x, y;
+    local state;
+
+    -- The target and the current offset from the parent node's position.
+    -- This is used to arrange the files around a node.
     local targetOffsetX,  targetOffsetY  = 0, 0;
     local currentOffsetX, currentOffsetY = 0, 0;
-    local fileColor, extension = color, extension;
-    local currentColor = { r = 0, g = 0, b = 0, a = 255 };
-    local modified = false;
-    local timer = MOD_TIMER;
-    local fade = false;
-    local dead = false;
+
+    -- The actual color currently displayed on screen.
+    local currentColor = {};
 
     -- ------------------------------------------------
     -- Private Functions
     -- ------------------------------------------------
 
+    ---
+    -- Linear interpolation between a and b.
+    --
     local function lerp(a, b, t)
         return a + (b - a) * t;
-    end
-
-    ---
-    -- Resets the color values and the timer, and sets
-    -- the modified flag to false.
-    --
-    local function reset()
-        timer = MOD_TIMER;
-        modified = false;
-        fade = false;
-        dead = false;
-        currentColor.r = fileColor.r;
-        currentColor.g = fileColor.g;
-        currentColor.b = fileColor.b;
-        currentColor.a = 255;
     end
 
     ---
@@ -60,8 +51,8 @@ function File.new(name, color, extension, x, y)
     -- @param tarY - The target offset on the y-axis.
     --
     local function animate(dt, tarX, tarY)
-        currentOffsetX = lerp(currentOffsetX, tarX, dt * 3.5);
-        currentOffsetY = lerp(currentOffsetY, tarY, dt * 3.5);
+        currentOffsetX = lerp(currentOffsetX, tarX, dt * ANIM_TIMER);
+        currentOffsetY = lerp(currentOffsetY, tarY, dt * ANIM_TIMER);
     end
 
     -- ------------------------------------------------
@@ -76,42 +67,32 @@ function File.new(name, color, extension, x, y)
     function self:update(dt)
         animate(dt, targetOffsetX, targetOffsetY);
 
-        if fade then
-            currentColor.a = math.min(255, math.max(currentColor.a - 3, 0));
-            if currentColor.a <= 0 then
-                dead = true;
-            end
-            return;
-        end
+        -- Slowly change the color from the modified color back to the default.
+        currentColor.r = lerp(currentColor.r, defaultColor.r, dt * MOD_TIMER);
+        currentColor.g = lerp(currentColor.g, defaultColor.g, dt * MOD_TIMER);
+        currentColor.b = lerp(currentColor.b, defaultColor.b, dt * MOD_TIMER);
 
-        if modified then
-            if timer > 0 then
-                timer = timer - dt;
-                currentColor.r = lerp(currentColor.r, fileColor.r, dt * 1.5);
-                currentColor.g = lerp(currentColor.g, fileColor.g, dt * 1.5);
-                currentColor.b = lerp(currentColor.b, fileColor.b, dt * 1.5);
-            else
-                reset();
+        -- Slowly fade out the file when it has been marked for deletion.
+        if state == 'del' then
+            currentColor.a = math.max(0, math.min(currentColor.a - FADE_TIMER, 255));
+            if currentColor.a == 0 then
+                state = 'dead';
             end
         end
     end
 
     ---
-    -- Marks the file as modified and changes the
-    -- current color to the modified color.
-    -- @param mod
+    -- Sets the state of the file and changes the current color to a specific
+    -- color based on the used modifier.
+    -- @param mod - The modifier used on the file.
     --
-    function self:modify(mod)
-        reset();
+    function self:setState(mod)
+        state = mod;
 
-        modified = true;
         currentColor.r = MOD_COLOR[mod].r;
         currentColor.g = MOD_COLOR[mod].g;
         currentColor.b = MOD_COLOR[mod].b;
-
-        if mod == 'del' then
-            fade = true;
-        end
+        currentColor.a = MOD_COLOR[mod].a;
     end
 
     -- ------------------------------------------------
@@ -153,7 +134,7 @@ function File.new(name, color, extension, x, y)
     -- Returns true if the file is marked as dead.
     --
     function self:isDead()
-        return dead;
+        return state == 'dead';
     end
 
     -- ------------------------------------------------
