@@ -15,7 +15,7 @@ local MOD_COLOR = {
 -- Constructor
 -- ------------------------------------------------
 
-function File.new(parent, name, color, extension, x, y)
+function File.new(name, color, extension, x, y)
     local self = {};
 
     local posX, posY = x, y;

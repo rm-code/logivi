@@ -258,7 +258,7 @@ function Node.new(parent, path, name, x, y, spritebatch)
 
         -- Get the file color and extension from the FileManager and create the actual file object.
         local color, extension = FileManager.add(name);
-        files[name] = File.new(self, name, color, extension, posX, posY);
+        files[name] = File.new(name, color, extension, posX, posY);
         files[name]:modify('add');
         fileCount = fileCount + 1;
 
