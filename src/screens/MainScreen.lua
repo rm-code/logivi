@@ -118,7 +118,7 @@ function MainScreen.new()
     function self:draw()
         camera:draw(function()
             graph:draw(camera:getRotation(), camera:getScale());
-            AuthorManager.drawLabels(camera:getRotation());
+            AuthorManager.drawLabels(camera:getRotation(), camera:getScale());
         end);
 
         filePanel:draw();

@@ -82,7 +82,7 @@ function Author.new(name, avatar, cx, cy)
     -- Public Functions
     -- ------------------------------------------------
 
-    function self:draw(rotation)
+    function self:draw(rotation, scale)
         if active then
             love.graphics.setLineWidth(BEAM_WIDTH);
             for i = 1, #links do
@@ -94,7 +94,7 @@ function Author.new(name, avatar, cx, cy)
             love.graphics.setColor(255, 255, 255, avatarAlpha);
             love.graphics.draw(avatar, posX, posY, -rotation, AVATAR_SIZE / aw, AVATAR_SIZE / ah, aw * 0.5, ah * 0.5);
             love.graphics.setFont(LABEL_FONT);
-            love.graphics.print(name, posX, posY, -rotation, 1, 1, LABEL_FONT:getWidth(name) * 0.5, - AVATAR_SIZE);
+            love.graphics.print(name, posX, posY, -rotation, 1 / scale, 1 / scale, LABEL_FONT:getWidth(name) * 0.5, - AVATAR_SIZE * scale);
             love.graphics.setFont(DEFAULT_FONT);
             love.graphics.setColor(255, 255, 255, 255);
         end
