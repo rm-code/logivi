@@ -179,12 +179,12 @@ function Graph.new(ewidth, showLabels)
     -- Public Functions
     -- ------------------------------------------------
 
-    function self:draw(camrot)
+    function self:draw(camrot, camscale)
         root:draw(ewidth);
         love.graphics.draw(spritebatch);
 
         if showLabels then
-            root:drawLabel(camrot);
+            root:drawLabel(camrot, camscale);
         end
     end
 

@@ -189,6 +189,10 @@ function CamWrapper.new()
         return camera.rot;
     end
 
+    function self:getScale()
+        return camera.scale;
+    end
+
     return self;
 end
 
