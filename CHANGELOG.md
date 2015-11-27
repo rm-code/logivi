@@ -1,3 +1,22 @@
+# Version 0xxx - 2015/xx/xx
+
+### Additions
+- Added scaling for folder and name labels based on the camera's zoom factor
+- Added MessageBox which displays a warning in case git isn't found on the user's system (Closes [#50](https://github.com/rm-code/logivi/issues/50))
+- Added mouse panning and scaling (Closes [#45](https://github.com/rm-code/logivi/issues/45))
+	- The mouse can be used to drag around the camera while the left button is pressed
+	- The mouse wheel can be used to zoom in and out
+
+### Fixes
+- Fixed [#51](https://github.com/rm-code/logivi/issues/51) - Fixed crash caused by faulty variable
+- Fixed [#48](https://github.com/rm-code/logivi/issues/48) - Got rid of the timer for color fading
+- Fixed [#35](https://github.com/rm-code/logivi/issues/35) - Made large graphs more stable
+- Fixed minor issue with folder labels being drawn multiple times per frame
+
+### Other Changes
+- LoGiVi now starts in windowed mode on first start
+- Canged design of the file panel to be less intrusive
+
 # Version 0404 - 2015/11/24
 
 ### Additions
@@ -67,7 +86,7 @@
 - Added config file validation after it has been loaded (Closes [#26](https://github.com/rm-code/logivi/issues/26))
 
 ### Fixes
-- Fixed [#33](https://github.com/rm-code/logivi/issues/33) - Ignore lines in config file which aren't formatted correctly 
+- Fixed [#33](https://github.com/rm-code/logivi/issues/33) - Ignore lines in config file which aren't formatted correctly
 - Fixed [#32](https://github.com/rm-code/logivi/issues/32) - Resize Timeline when MainScreen is resized
 - Fixed [#31](https://github.com/rm-code/logivi/issues/31) - Directly pass the repository's path to the git command
 - Fixed [#30](https://github.com/rm-code/logivi/issues/30) - Ignore files when no changes were applied
@@ -95,7 +114,7 @@
 - Added keybinding for manually loading the previous commit
 - Added keybinding for rewersing the graph creation (will run back until it reaches the first commit)
 - Added keybinding for toggling fullscreen mode
-- Added a timeline 
+- Added a timeline
 	- Indicates the current position of the log compared to the total commit history and shows the date of the currently indexed commit
 	- Allows the user to quickly jump around in time (forward and backwards) while still rendering the full graph (Closes [#10](https://github.com/rm-code/logivi/issues/10))
 	- Can be hidden via keybinding or in the config file
@@ -172,7 +191,7 @@
 - Rewrote most of the graph system
 	- The graph is structured and handled completely different than before with files, folder nodes and edges being independent from each other
 	- Gets rid of a lot of issues like edges overlaying other nodes
-	- The arrangement of files around folder nodes is no longer updated every frame 
+	- The arrangement of files around folder nodes is no longer updated every frame
 	- Major improvements in memory usage, performance and garbage production
 - Updated log reader to separate commits based on the author tag instead of looking for the "special" logivi_commit tag (which was pretty useless anyway)
 - Updated log reader to digest unix timestamps and transform them into human readable dates
@@ -192,7 +211,7 @@
 
 ### Additions
 - Added (rudimentary) Force-Directed Graph which - visualises the files and folders of a git repository at a given point in time
-	- Files are represented as evenly distributed leaves around their parent folder node 
+	- Files are represented as evenly distributed leaves around their parent folder node
 		- Depending on the amount of files in one folder new folders will be created automatically)
 		- Modified files are coloured red and fade back to their original color over time
 	- Folders are represented as single green dots (this will be changed in one of the next releases) and are connected by lines
