@@ -5,7 +5,7 @@ local ConfigReader = {};
 -- ------------------------------------------------
 
 local FILE_NAME = 'settings.cfg';
-local TEMPLATE_PATH = 'res/templates/settings.cfg';
+local TEMPLATE_PATH = 'res/templates/settings_template.cfg';
 
 local INVALID_CONFIG_HEADER   = 'Invalid config file';
 local MISSING_SECTION_WARNING = 'Seems like the loaded configuration file is missing the [%s] section. The default settings will be used instead.';
