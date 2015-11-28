@@ -70,7 +70,7 @@ function SelectionScreen.new()
         -- Exit early if git isn't available.
         if not LogCreator.isGitAvailable() then
             -- Show a warning to the user.
-            love.window.showMessageBox(WARNING_TITLE_NO_GIT, WARNING_MESSAGE_NO_GIT, { BUTTON_OK, BUTTON_HELP, enterbutton = 1, escapebutton = 1 }, 'warning', false);
+            local pressedbutton = love.window.showMessageBox(WARNING_TITLE_NO_GIT, WARNING_MESSAGE_NO_GIT, { BUTTON_OK, BUTTON_HELP, enterbutton = 1, escapebutton = 1 }, 'warning', false);
             if pressedbutton == 2 then
                 love.system.openURL(URL_INSTRUCTIONS);
             end
