@@ -67,21 +67,24 @@ function SelectionScreen.new()
     -- @param options
     --
     local function createGitLogs(config)
-        if LogCreator.isGitAvailable() then
-            for name, path in pairs(config.repositories) do
-                -- Check if the path points to a valid git repository before attempting
-                -- to create a git log and the info file for it.
-                if LogCreator.isGitRepository(path) then
-                    LogCreator.createGitLog(name, path);
-                    LogCreator.createInfoFile(name, path);
-                else
-                    love.window.showMessageBox(WARNING_TITLE_NO_REPO, string.format(WARNING_MESSAGE, path), 'warning', false);
-                end
-            end
-        else
+        -- Exit early if git isn't available.
+        if not LogCreator.isGitAvailable() then
+            -- Show a warning to the user.
             love.window.showMessageBox(WARNING_TITLE_NO_GIT, WARNING_MESSAGE_NO_GIT, { BUTTON_OK, BUTTON_HELP, enterbutton = 1, escapebutton = 1 }, 'warning', false);
             if pressedbutton == 2 then
                 love.system.openURL(URL_INSTRUCTIONS);
+            end
+            return;
+        end
+
+        for name, path in pairs(config.repositories) do
+            -- Check if the path points to a valid git repository before attempting
+            -- to create a git log and the info file for it.
+            if LogCreator.isGitRepository(path) then
+                LogCreator.createGitLog(name, path);
+                LogCreator.createInfoFile(name, path);
+            else
+                love.window.showMessageBox(WARNING_TITLE_NO_REPO, string.format(WARNING_MESSAGE, path), 'warning', false);
             end
         end
     end
