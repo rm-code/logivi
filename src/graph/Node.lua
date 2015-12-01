@@ -27,6 +27,8 @@ local DEFAULT_FONT = Resources.loadFont('default', 12);
 
 local DAMPING_FACTOR = 0.95;
 
+local EDGE_COLOR = { 60, 60, 60, 255 };
+
 -- ------------------------------------------------
 -- Constructor
 -- ------------------------------------------------
@@ -201,7 +203,7 @@ function Node.new(parent, path, name, x, y, spritebatch)
 
     function self:draw(ewidth)
         for _, node in pairs(children) do
-            love.graphics.setColor(255, 255, 255, 55);
+            love.graphics.setColor(EDGE_COLOR);
             love.graphics.setLineWidth(ewidth);
             love.graphics.line(posX, posY, node:getX(), node:getY());
             love.graphics.setLineWidth(1);
