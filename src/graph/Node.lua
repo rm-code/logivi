@@ -19,8 +19,8 @@ local SPRITE_SCALE_FACTOR = SPRITE_SIZE / 256;
 local SPRITE_OFFSET = 128;
 local MIN_ARC_SIZE = SPRITE_SIZE;
 
-local FORCE_SPRING = -0.005;
-local FORCE_CHARGE = 10000000;
+local FORCE_SPRING = -0.001;
+local FORCE_CHARGE = 1000000;
 
 local LABEL_FONT   = Resources.loadFont('SourceCodePro-Medium.otf', 20);
 local DEFAULT_FONT = Resources.loadFont('default', 12);
