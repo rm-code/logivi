@@ -84,7 +84,7 @@ function SelectionScreen.new()
                 LogCreator.createGitLog(name, path);
                 LogCreator.createInfoFile(name, path);
             else
-                love.window.showMessageBox(WARNING_TITLE_NO_REPO, string.format(WARNING_MESSAGE, path), 'warning', false);
+                love.window.showMessageBox(WARNING_TITLE_NO_REPO, string.format(WARNING_MESSAGE_NO_REPO, path), 'warning', false);
             end
         end
     end
