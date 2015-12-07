@@ -227,7 +227,7 @@ function Node.new(parent, path, name, x, y, spritebatch)
         move(dt);
         for name, file in pairs(files) do
             if file:isDead() then
-                self:removeFile(name);
+                self:removeFile(name, file:getExtension());
             end
             file:update(dt);
             file:setPosition(posX, posY);
@@ -247,9 +247,10 @@ function Node.new(parent, path, name, x, y, spritebatch)
     -- requested from the FileManager and a new File object is created. After
     -- the file object has been added to the file list of this node, the layout
     -- of the files around the nodes is recalculated.
-    -- @name - The name of the file to add.
+    -- @param name - The name of the file to add.
+    -- @param extension - The extension of the file to add.
     --
-    function self:addFile(name)
+    function self:addFile(name, extension)
         -- Exit early if the file already exists.
         if files[name] then
             files[name]:setState('add');
@@ -257,7 +258,7 @@ function Node.new(parent, path, name, x, y, spritebatch)
         end
 
         -- Get the file color and extension from the FileManager and create the actual file object.
-        local color, extension = FileManager.add(name);
+        local color = FileManager.add(name, extension);
         files[name] = File.new(posX, posY, color, extension);
         files[name]:setState('add');
         fileCount = fileCount + 1;
@@ -290,8 +291,9 @@ function Node.new(parent, path, name, x, y, spritebatch)
     -- list. Once the file is removed, the layout of the files around the nodes
     -- is recalculated.
     -- @param name - The name of the file to remove.
+    -- @param extension - The extension of the file to remove.
     --
-    function self:removeFile(name)
+    function self:removeFile(name, extension)
         local file = files[name];
 
         if not file then
@@ -301,7 +303,7 @@ function Node.new(parent, path, name, x, y, spritebatch)
 
         -- Store a reference to the file which can be returned
         -- after the file has been removed from the table.
-        FileManager.remove(name);
+        FileManager.remove(name, extension);
         files[name] = nil;
         fileCount = fileCount - 1;
 

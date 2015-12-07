@@ -21,14 +21,6 @@ local colors;
 -- ------------------------------------------------
 
 ---
--- Returns the extension of a file (or '.?' if it doesn't have one).
--- @param fileName
---
-local function splitExtension(fileName)
-    return fileName:match("(%.[^.]+)$") or '.?';
-end
-
----
 -- Takes the extensions list and creates a list
 -- which is sorted by the amount of files per extension.
 -- @param extensions
@@ -73,9 +65,9 @@ end
 ---
 -- Adds a new file extension to the list.
 -- @param fileName
+-- @param ext
 --
-function FileManager.add(fileName)
-    local ext = splitExtension(fileName);
+function FileManager.add(fileName, ext)
     if not extensions[ext] then
         extensions[ext] = {};
         extensions[ext].extension = ext;
@@ -99,9 +91,10 @@ end
 -- same extension. If there are no more files
 -- of that extension, it will remove it from
 -- the list.
+-- @param fileName
+-- @param ext
 --
-function FileManager.remove(fileName)
-    local ext = splitExtension(fileName);
+function FileManager.remove(fileName, ext)
     if not extensions[ext] then
         error('Tried to remove the non existing file extension "' .. ext .. '".');
     end
