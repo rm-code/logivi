@@ -60,7 +60,7 @@ local function applyNextCommit()
 
     for i = 1, #log[index] do
         local change = log[index][i];
-        notify(EVENT_CHANGED_FILE, change.modifier, change.path, change.file, 'normal');
+        notify(EVENT_CHANGED_FILE, change.modifier, change.path, change.file, change.extension, 'normal');
     end
 end
 
@@ -73,7 +73,7 @@ local function reverseCurCommit()
 
     for i = 1, #log[index] do
         local change = log[index][i];
-        notify(EVENT_CHANGED_FILE, reverseGitStatus(change.modifier), change.path, change.file, 'normal');
+        notify(EVENT_CHANGED_FILE, reverseGitStatus(change.modifier), change.path, change.file, change.extension, 'normal');
     end
 
     index = index - 1;
@@ -95,7 +95,7 @@ local function fastForward(to)
             local change = commit[j];
             -- Ignore modifications we just need to know about additions and deletions.
             if change.modifier ~= 'M' then
-                notify(EVENT_CHANGED_FILE, change.modifier, change.path, change.file, 'fast');
+                notify(EVENT_CHANGED_FILE, change.modifier, change.path, change.file, change.extension, 'fast');
             end
         end
     end
@@ -122,7 +122,7 @@ local function fastBackward(to)
             local change = commit[j];
             -- Ignore modifications we just need to know about additions and deletions.
             if change.modifier ~= 'M' then
-                notify(EVENT_CHANGED_FILE, reverseGitStatus(change.modifier), change.path, change.file, 'fast');
+                notify(EVENT_CHANGED_FILE, reverseGitStatus(change.modifier), change.path, change.file, change.extension, 'fast');
             end
         end
     end
