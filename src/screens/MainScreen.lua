@@ -216,20 +216,10 @@ function MainScreen.new()
     end
 
     function self:mousepressed(x, y, b)
-        filePanel:mousepressed(x, y, b);
-
         local pos = timeline:getCommitAt(x, y);
         if pos then
             LogReader.setCurrentIndex(pos);
         end
-    end
-
-    function self:mousereleased(x, y, b)
-        filePanel:mousereleased(x, y, b);
-    end
-
-    function self:mousemoved(x, y, dx, dy)
-        filePanel:mousemoved(x, y, dx, dy);
     end
 
     function self:wheelmoved(x, y)
