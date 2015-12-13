@@ -38,6 +38,10 @@ function CamWrapper.new()
     -- Private Functions
     -- ------------------------------------------------
 
+    local function clamp(min, val, max)
+        return math.max(min, math.min(val, max));
+    end
+
     local function lerp(a, b, t)
         return a + (b - a) * t;
     end
@@ -107,11 +111,11 @@ function CamWrapper.new()
         local tzoom = calculateAutoZoom(camera.rot);
         zoom = lerp(zoom, tzoom, dt * 2);
 
-        camera:zoomTo(math.max(CAMERA_MAX_ZOOM, math.min(zoom + manualZoom, CAMERA_MIN_ZOOM)));
+        camera:zoomTo(clamp(CAMERA_MAX_ZOOM, zoom + manualZoom, CAMERA_MIN_ZOOM));
 
         -- Gradually move the camera to the target position.
-        cx = cx - (cx - math.floor(gx + ox)) * dt * CAMERA_TRACKING_SPEED;
-        cy = cy - (cy - math.floor(gy + oy)) * dt * CAMERA_TRACKING_SPEED;
+        cx = lerp(cx, gx + ox, dt * CAMERA_TRACKING_SPEED);
+        cy = lerp(cy, gy + oy, dt * CAMERA_TRACKING_SPEED);
         camera:lookAt(cx, cy);
     end
 
