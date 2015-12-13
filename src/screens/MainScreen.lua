@@ -222,6 +222,12 @@ function MainScreen.new()
         end
     end
 
+    function self:mousemoved(x, y, dx, dy)
+        if love.mouse.isDown(1) then
+            camera:move(love.timer.getDelta(), dx * 0.5, dy * 0.5);
+        end
+    end
+
     function self:wheelmoved(x, y)
         local mx, my = love.mouse.getPosition();
         if filePanel:intersects(mx, my) then
