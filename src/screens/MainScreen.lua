@@ -233,7 +233,12 @@ function MainScreen.new()
     end
 
     function self:wheelmoved(x, y)
-        filePanel:wheelmoved(x, y);
+        local mx, my = love.mouse.getPosition();
+        if filePanel:intersects(mx, my) then
+            filePanel:wheelmoved(x, y);
+        else
+            camera:zoom(love.timer.getDelta(), y);
+        end
     end
 
     function self:resize(nx, ny)
