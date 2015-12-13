@@ -17,12 +17,9 @@ local FilePanel = {};
 -- ------------------------------------------------
 
 function FilePanel.new(render, update, x, y, w, h)
-    local bodyBaseCol = { 80, 80, 80, 150 };
+    local bodyBaseCol = { 0, 0, 0, 0 };
 
     local self = Toggleable();
-    self:attach(Resizable(w - 16, h - 16, -w + 16, -h + 16, true, true, true, true));
-    self:attach(BoxDecorator('fill', bodyBaseCol, w - 16, h - 16, -w + 16, -h + 16, true, true, true, true));
-    self:attach(Draggable (0, 0, 0, 0));
     self:attach(Scrollable(0, 0, 0, 0));
     self:attach(RenderArea(render, update, 2, 2, -2, -2));
     self:attach(BoxDecorator('fill', bodyBaseCol, 0, 0, 0, 0));
