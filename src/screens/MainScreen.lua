@@ -106,7 +106,7 @@ function MainScreen.new()
         LogReader.register(graph);
 
         -- Create panel.
-        filePanel = FilePanel.new(FileManager.draw, FileManager.update, 0, 0, 400, love.graphics.getHeight() - 40);
+        filePanel = FilePanel.new(FileManager.draw, FileManager.update, 0, 0, 150, love.graphics.getHeight() - 40);
         filePanel:setActive(config.options.showFileList);
 
         timeline = Timeline.new(config.options.showTimeline, LogReader.getTotalCommits(), LogReader.getCurrentDate());
