@@ -1,4 +1,4 @@
-# Version 0xxx - 2015/xx/xx
+# Version 0432 - 2015/12/14
 
 ### Additions
 - Added scaling for folder and name labels based on the camera's zoom factor
