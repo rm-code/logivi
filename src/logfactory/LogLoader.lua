@@ -147,7 +147,7 @@ end
 -- Checks if the log folder exists and if it is empty or not.
 --
 local function hasLogs()
-    return (love.filesystem.isDirectory('logs') and #list ~= 0);
+    return (love.filesystem.isDirectory(LOG_FOLDER) and #list ~= 0);
 end
 
 ---
