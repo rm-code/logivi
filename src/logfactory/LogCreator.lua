@@ -84,7 +84,6 @@ end
 function LogCreator.isGitAvailable()
     local handle = io.popen('git version');
     local result = handle:read('*a');
-    print(result);
     handle:close();
     return result:find('git version');
 end

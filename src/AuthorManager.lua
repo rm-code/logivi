@@ -95,10 +95,10 @@ end
 ---
 -- Draws a list of all authors working on the project.
 --
-function AuthorManager.drawLabels(rotation)
+function AuthorManager.drawLabels(rotation, scale)
     if visible then
         for _, author in pairs(authors) do
-            author:draw(rotation);
+            author:draw(rotation, scale);
         end
     end
 end

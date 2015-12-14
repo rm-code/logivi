@@ -19,13 +19,15 @@ local SPRITE_SCALE_FACTOR = SPRITE_SIZE / 256;
 local SPRITE_OFFSET = 128;
 local MIN_ARC_SIZE = SPRITE_SIZE;
 
-local FORCE_SPRING = -0.005;
-local FORCE_CHARGE = 10000000;
+local FORCE_SPRING = -0.001;
+local FORCE_CHARGE = 1000000;
 
 local LABEL_FONT   = Resources.loadFont('SourceCodePro-Medium.otf', 20);
 local DEFAULT_FONT = Resources.loadFont('default', 12);
 
 local DAMPING_FACTOR = 0.95;
+
+local EDGE_COLOR = { 60, 60, 60, 255 };
 
 -- ------------------------------------------------
 -- Constructor
@@ -201,7 +203,7 @@ function Node.new(parent, path, name, x, y, spritebatch)
 
     function self:draw(ewidth)
         for _, node in pairs(children) do
-            love.graphics.setColor(255, 255, 255, 55);
+            love.graphics.setColor(EDGE_COLOR);
             love.graphics.setLineWidth(ewidth);
             love.graphics.line(posX, posY, node:getX(), node:getY());
             love.graphics.setLineWidth(1);
@@ -210,24 +212,22 @@ function Node.new(parent, path, name, x, y, spritebatch)
         end
     end
 
-    function self:drawLabel(camrot)
+    function self:drawLabel(camrot, camscale)
         love.graphics.setFont(LABEL_FONT);
-        love.graphics.print(name, posX, posY, -camrot, 1, 1, -radius, -radius);
-        love.graphics.setFont(DEFAULT_FONT);
+        love.graphics.print(name, posX, posY, -camrot, 1 / camscale, 1 / camscale, -radius * camscale, -radius * camscale);
 
         for _, node in pairs(children) do
-            love.graphics.setFont(LABEL_FONT);
-            love.graphics.print(name, posX, posY, -camrot, 1, 1, -radius, -radius);
-            love.graphics.setFont(DEFAULT_FONT);
-            node:drawLabel(camrot);
+            node:drawLabel(camrot, camscale);
         end
+
+        love.graphics.setFont(DEFAULT_FONT);
     end
 
     function self:update(dt)
         move(dt);
         for name, file in pairs(files) do
             if file:isDead() then
-                self:removeFile(name);
+                self:removeFile(name, file:getExtension());
             end
             file:update(dt);
             file:setPosition(posX, posY);
@@ -247,19 +247,20 @@ function Node.new(parent, path, name, x, y, spritebatch)
     -- requested from the FileManager and a new File object is created. After
     -- the file object has been added to the file list of this node, the layout
     -- of the files around the nodes is recalculated.
-    -- @name - The name of the file to add.
+    -- @param name - The name of the file to add.
+    -- @param extension - The extension of the file to add.
     --
-    function self:addFile(name)
+    function self:addFile(name, extension)
         -- Exit early if the file already exists.
         if files[name] then
-            files[name]:modify('add');
+            files[name]:setState('add');
             return files[name];
         end
 
         -- Get the file color and extension from the FileManager and create the actual file object.
-        local color, extension = FileManager.add(name);
-        files[name] = File.new(self, name, color, extension, posX, posY);
-        files[name]:modify('add');
+        local color = FileManager.add(name, extension);
+        files[name] = File.new(posX, posY, color, extension);
+        files[name]:setState('add');
         fileCount = fileCount + 1;
 
         -- Update layout of the files.
@@ -279,7 +280,7 @@ function Node.new(parent, path, name, x, y, spritebatch)
             return;
         end
 
-        file:modify('del');
+        file:setState('del');
 
         return file;
     end
@@ -290,8 +291,9 @@ function Node.new(parent, path, name, x, y, spritebatch)
     -- list. Once the file is removed, the layout of the files around the nodes
     -- is recalculated.
     -- @param name - The name of the file to remove.
+    -- @param extension - The extension of the file to remove.
     --
-    function self:removeFile(name)
+    function self:removeFile(name, extension)
         local file = files[name];
 
         if not file then
@@ -301,7 +303,7 @@ function Node.new(parent, path, name, x, y, spritebatch)
 
         -- Store a reference to the file which can be returned
         -- after the file has been removed from the table.
-        FileManager.remove(name);
+        FileManager.remove(name, extension);
         files[name] = nil;
         fileCount = fileCount - 1;
 
@@ -320,7 +322,7 @@ function Node.new(parent, path, name, x, y, spritebatch)
             return;
         end
 
-        file:modify('mod');
+        file:setState('mod');
         return file;
     end
 

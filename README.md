@@ -1,6 +1,8 @@
 # LoGiVi
 
-LoGiVi is a git-repository visualisation tool inspired by [Gource](http://gource.io/) and __currently in development__. It was written from scratch using [Lua](http://www.lua.org/) and the [LÖVE](https://love2d.org/) framework. Note: Since version [0375](https://github.com/rm-code/logivi/releases/tag/0375) LoGiVi uses version [0.10.0](https://love2d.org/wiki/0.10.0) of the LÖVE framework. 
+LoGiVi is a git-repository visualisation tool inspired by [Gource](http://gource.io/) and __currently in development__. It was written from scratch using [Lua](http://www.lua.org/) and the [LÖVE](https://love2d.org/) framework. 
+
+Note: Since version [0375](https://github.com/rm-code/logivi/releases/tag/0375) LoGiVi uses version [0.10.0](https://love2d.org/wiki/0.10.0) of the LÖVE framework. 
 
 ![Example Visualization](https://github.com/rm-code/logivi/wiki/media/logivi_0312.gif)
 
@@ -46,9 +48,6 @@ This will create the file _log.txt_ in the folder you are currently in. Take thi
 /Users/Robert/Library/Application Support/LOVE/rmcode_LoGiVi/logs/yourProject/log.txt
 ```
 LoGiVi will use the folder's name to identify the log so make it informative.
-
-# LÖVE Version
-Version 0351 and all prior versions of LoGiVi are written for Version 0.9.2 of the LÖVE framework. ___All future versions will be based on LÖVE 0.10.0 (currently unreleased).___
 
 # License
 

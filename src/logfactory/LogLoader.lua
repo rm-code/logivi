@@ -122,7 +122,9 @@ local function splitCommits(log)
             if path ~= '' then
                 path = '/' .. path;
             end
-            commits[index][#commits[index] + 1] = { modifier = line:sub(1, 1), path = ROOT_FOLDER .. path, file = file };
+            local extension = file:match("(%.[^.]+)$") or '.?'; -- Get the file's extension.
+
+            commits[index][#commits[index] + 1] = { modifier = line:sub(1, 1), path = ROOT_FOLDER .. path, file = file, extension = extension };
         end
     end
 

@@ -1,4 +1,3 @@
-local InputHandler = require('src.InputHandler');
 local Camera = require('lib.camera.Camera');
 
 -- ------------------------------------------------
@@ -21,19 +20,6 @@ local CAMERA_MIN_ZOOM = 2;
 local GRAPH_PADDING = 100;
 
 -- ------------------------------------------------
--- Local variables
--- ------------------------------------------------
-
-local camera_zoomIn;
-local camera_zoomOut;
-local camera_rotateL;
-local camera_rotateR;
-local camera_n;
-local camera_s;
-local camera_e;
-local camera_w;
-
--- ------------------------------------------------
 -- Constructor
 -- ------------------------------------------------
 
@@ -51,6 +37,10 @@ function CamWrapper.new()
     -- ------------------------------------------------
     -- Private Functions
     -- ------------------------------------------------
+
+    local function clamp(min, val, max)
+        return math.max(min, math.min(val, max));
+    end
 
     local function lerp(a, b, t)
         return a + (b - a) * t;
@@ -98,67 +88,34 @@ function CamWrapper.new()
     -- Public Functions
     -- ------------------------------------------------
 
-    ---
-    -- Assign the keybindings to local variables for faster access.
-    -- @param config
-    --
-    function self:assignKeyBindings(config)
-        camera_zoomIn = config.keyBindings.camera_zoomIn;
-        camera_zoomOut = config.keyBindings.camera_zoomOut;
-        camera_rotateL = config.keyBindings.camera_rotateL;
-        camera_rotateR = config.keyBindings.camera_rotateR;
-        camera_n = config.keyBindings.camera_n;
-        camera_s = config.keyBindings.camera_s;
-        camera_e = config.keyBindings.camera_e;
-        camera_w = config.keyBindings.camera_w;
+    function self:zoom(dt, dir)
+        manualZoom = manualZoom + (dir * CAMERA_ZOOM_SPEED) * dt;
+    end
+
+    function self:rotate(dt, dir)
+        camera:rotate(dir * CAMERA_ROTATION_SPEED * dt);
+    end
+
+    function self:move(dt, dx, dy)
+        dx = (dx * dt * CAMERA_TRANSLATION_SPEED);
+        dy = (dy * dt * CAMERA_TRANSLATION_SPEED);
+        ox = ox + (math.cos(-camera.rot) * dx - math.sin(-camera.rot) * dy);
+        oy = oy + (math.sin(-camera.rot) * dx + math.cos(-camera.rot) * dy);
     end
 
     ---
     -- Processes camera related controls and updates the camera.
     -- @param dt
     --
-    function self:move(dt)
+    function self:update(dt)
         local tzoom = calculateAutoZoom(camera.rot);
         zoom = lerp(zoom, tzoom, dt * 2);
 
-        -- Handle manual zoom. This will be added to the automatic zoom factor.
-        if InputHandler.isDown(camera_zoomIn) then
-            manualZoom = manualZoom + CAMERA_ZOOM_SPEED * dt;
-        elseif InputHandler.isDown(camera_zoomOut) then
-            manualZoom = manualZoom - CAMERA_ZOOM_SPEED * dt;
-        end
-
-        camera:zoomTo(math.max(CAMERA_MAX_ZOOM, math.min(zoom + manualZoom, CAMERA_MIN_ZOOM)));
-
-        -- Rotation.
-        if InputHandler.isDown(camera_rotateL) then
-            camera:rotate(-CAMERA_ROTATION_SPEED * dt);
-        elseif InputHandler.isDown(camera_rotateR) then
-            camera:rotate(CAMERA_ROTATION_SPEED * dt);
-        end
-
-        -- Horizontal Movement.
-        local dx = 0;
-        if InputHandler.isDown(camera_w) then
-            dx = dx - dt * CAMERA_TRANSLATION_SPEED;
-        elseif InputHandler.isDown(camera_e) then
-            dx = dx + dt * CAMERA_TRANSLATION_SPEED;
-        end
-        -- Vertical Movement.
-        local dy = 0;
-        if InputHandler.isDown(camera_n) then
-            dy = dy - dt * CAMERA_TRANSLATION_SPEED;
-        elseif InputHandler.isDown(camera_s) then
-            dy = dy + dt * CAMERA_TRANSLATION_SPEED;
-        end
-
-        -- Take the camera rotation into account when calculating the new offset.
-        ox = ox + (math.cos(-camera.rot) * dx - math.sin(-camera.rot) * dy);
-        oy = oy + (math.sin(-camera.rot) * dx + math.cos(-camera.rot) * dy);
+        camera:zoomTo(clamp(CAMERA_MAX_ZOOM, zoom + manualZoom, CAMERA_MIN_ZOOM));
 
         -- Gradually move the camera to the target position.
-        cx = cx - (cx - math.floor(gx + ox)) * dt * CAMERA_TRACKING_SPEED;
-        cy = cy - (cy - math.floor(gy + oy)) * dt * CAMERA_TRACKING_SPEED;
+        cx = lerp(cx, gx + ox, dt * CAMERA_TRACKING_SPEED);
+        cy = lerp(cy, gy + oy, dt * CAMERA_TRACKING_SPEED);
         camera:lookAt(cx, cy);
     end
 
@@ -187,6 +144,10 @@ function CamWrapper.new()
     --
     function self:getRotation()
         return camera.rot;
+    end
+
+    function self:getScale()
+        return camera.scale;
     end
 
     return self;

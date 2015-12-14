@@ -12,9 +12,7 @@ local function new(t, x, y, w, h)
     end
 
     function self:intersects(cx, cy)
-        if x < cx and x + w > cx and y < cy and y + h > cy then
-            return true;
-        end
+        return x < cx and x + w > cx and y < cy and y + h > cy;
     end
 
     function self:mousemoved(mx, my, dx, dy)

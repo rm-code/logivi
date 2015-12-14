@@ -153,17 +153,17 @@ function Graph.new(ewidth, showLabels)
     -- @param path
     -- @param filename
     --
-    local function applyGitModifier(modifier, path, filename, mode)
+    local function applyGitModifier(modifier, path, filename, extension, mode)
         local targetNode = getNode(path);
 
         local modifiedFile;
         if modifier == MOD_ADD then
-            modifiedFile = targetNode:addFile(filename);
+            modifiedFile = targetNode:addFile(filename, extension);
         elseif modifier == MOD_DELETE then
             if mode == 'normal' then
                 modifiedFile = targetNode:markFileForDeletion(filename);
             else
-                modifiedFile = targetNode:removeFile(filename);
+                modifiedFile = targetNode:removeFile(filename, extension);
             end
         elseif modifier == MOD_MODIFY then
             modifiedFile = targetNode:modifyFile(filename);
@@ -179,12 +179,12 @@ function Graph.new(ewidth, showLabels)
     -- Public Functions
     -- ------------------------------------------------
 
-    function self:draw(camrot)
+    function self:draw(camrot, camscale)
         root:draw(ewidth);
         love.graphics.draw(spritebatch);
 
         if showLabels then
-            root:drawLabel(camrot);
+            root:drawLabel(camrot, camscale);
         end
     end
 
