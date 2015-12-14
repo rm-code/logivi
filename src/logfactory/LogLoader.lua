@@ -13,11 +13,11 @@ local ROOT_FOLDER = 'root';
 
 local WARNING_TITLE = 'No git log found.';
 local WARNING_MESSAGE = [[
-Looks like you are using LoGiVi for the first time. An example git log has been created in the save directory. Press 'Yes' to open the save directory.
+Looks like you are using LoGiVi for the first time. An example git log has been created in the save directory. Press '%s' to continue to the main menu, where you can watch the example.
 
-Press 'Show Help' to view the wiki (online) for more information on how to generate a proper log.
+Press '%s' to open the save directory, where you can add your own logs and edit the configuration file.
 
-Press 'No' to proceed to the selection screen from where you can view the example project.
+Press '%s' to view the wiki for more information on how to generate your own logs.
 ]];
 
 local EXAMPLE_TEMPLATE_PATH = 'res/templates/example_log.txt';
@@ -155,11 +155,13 @@ end
 -- to open the wiki page or the folder in which the logs need to be placed.
 --
 local function showWarning()
-    local buttons = { "Yes", "No", "Show Help (Online)", enterbutton = 1, escapebutton = 2 };
+    local buttons = { "Proceed", "Open Folder", "Show Help (Online)", enterbutton = 1 };
 
-    local pressedbutton = love.window.showMessageBox(WARNING_TITLE, WARNING_MESSAGE, buttons, 'warning', false);
-    if pressedbutton == 1 then
-        love.system.openURL('file://' .. love.filesystem.getSaveDirectory() .. '/logs');
+    local msg = string.format(WARNING_MESSAGE, buttons[1], buttons[2], buttons[3]);
+
+    local pressedbutton = love.window.showMessageBox(WARNING_TITLE, msg, buttons, 'warning', false);
+    if pressedbutton == 2 then
+        love.system.openURL('file://' .. love.filesystem.getSaveDirectory());
     elseif pressedbutton == 3 then
         love.system.openURL('https://github.com/rm-code/logivi/wiki#instructions');
     end
