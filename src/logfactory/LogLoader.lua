@@ -96,6 +96,24 @@ local function createDateFromUnixTimestamp(timestamp)
 end
 
 ---
+-- Splits a commit line into modifier, path, file and extension.
+-- @param line - The line to split.
+--
+local function buildCommitLine( line )
+    local modifier  = line:sub( 1, 1 );
+    local path      = line:gsub( '^(%a)%s*', '' );
+    local file      = path:match( '/?([^/]+)$' );
+    local extension = file:match( '(%.[^.]+)$' ) or '.?';
+
+    path = path:gsub( '/?([^/]+)$', '' ); -- Remove the filename from the path.
+    if path ~= '' then
+        path = '/' .. path;
+    end
+
+    return { modifier = modifier, path = ROOT_FOLDER .. path, file = file, extension = extension };
+end
+
+---
 -- Splits the log table into commits. Each commit is a new nested table.
 -- @param log
 --
@@ -115,16 +133,7 @@ local function splitCommits(log)
             -- Transform unix timestamp to a table containing a human-readable date.
             commits[index].date = createDateFromUnixTimestamp(commits[index].date);
         elseif commits[index] then
-            -- Split the whole change line into modifier, file name and file path fields.
-            local path = line:gsub("^(%a)%s*", ''); -- Remove modifier and whitespace.
-            local file = path:match("/?([^/]+)$"); -- Get the the filename at the end.
-            path = path:gsub("/?([^/]+)$", ''); -- Remove the filename from the path.
-            if path ~= '' then
-                path = '/' .. path;
-            end
-            local extension = file:match("(%.[^.]+)$") or '.?'; -- Get the file's extension.
-
-            commits[index][#commits[index] + 1] = { modifier = line:sub(1, 1), path = ROOT_FOLDER .. path, file = file, extension = extension };
+            commits[index][#commits[index] + 1] = buildCommitLine( line );
         end
     end
 
