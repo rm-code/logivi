@@ -1,7 +1,5 @@
 local BaseComponent = require('src.ui.components.BaseComponent');
 local BoxDecorator = require('src.ui.decorators.BoxDecorator');
-local Resizable = require('src.ui.decorators.Resizable');
-local Draggable = require('src.ui.decorators.Draggable');
 local Scrollable = require('src.ui.decorators.Scrollable');
 local RenderArea = require('src.ui.decorators.RenderArea');
 local Toggleable = require('src.ui.decorators.Toggleable');
