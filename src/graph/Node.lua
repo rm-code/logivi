@@ -1,4 +1,4 @@
-local Resources = require('src.Resources');
+local GraphLibraryNode = require('lib.graphoon.Graphoon').Node;
 local FileManager = require('src.FileManager');
 local File = require('src.graph.File');
 
@@ -12,72 +12,32 @@ local Node = {};
 -- Constants
 -- ------------------------------------------------
 
-local FORCE_MAX = 4;
-
 local SPRITE_SIZE = 24;
 local SPRITE_SCALE_FACTOR = SPRITE_SIZE / 256;
 local SPRITE_OFFSET = 128;
 local MIN_ARC_SIZE = SPRITE_SIZE;
 
-local FORCE_SPRING = -0.001;
-local FORCE_CHARGE = 1000000;
-
-local LABEL_FONT   = Resources.loadFont('SourceCodePro-Medium.otf', 20);
-local DEFAULT_FONT = Resources.loadFont('default', 12);
-
-local DAMPING_FACTOR = 0.95;
-
-local EDGE_COLOR = { 60, 60, 60, 255 };
-
 -- ------------------------------------------------
 -- Constructor
 -- ------------------------------------------------
 
-function Node.new(parent, path, name, x, y, spritebatch)
-    local self = {};
+function Node.new( id, x, y, anchor, parent, path, spritebatch, name )
+    local self = GraphLibraryNode.new( id, x, y, anchor );
 
     -- ------------------------------------------------
     -- Local Variables
     -- ------------------------------------------------
 
-    local children = {};
     local childCount = 0;
 
     local files = {};
     local fileCount = 0;
 
-    local speed = 64;
-
-    local posX, posY = x, y;
-    local velX, velY = 0, 0;
-    local accX, accY = 0, 0;
-
     local radius = 0;
 
     -- ------------------------------------------------
-    -- Public Functions
+    -- Local Functions
     -- ------------------------------------------------
-
-    ---
-    -- Clamps a value to a certain range.
-    -- @param min
-    -- @param val
-    -- @param max
-    --
-    local function clamp(min, val, max)
-        return math.max(min, math.min(val, max));
-    end
-
-    ---
-    -- Calculates the new xy-acceleration for this node.
-    -- The values are clamped to keep the graph from "exploding".
-    -- @param fx - The force to apply in x-direction.
-    -- @param fy - The force to apply in y-direction.
-    --
-    local function applyForce(fx, fy)
-        accX = clamp(-FORCE_MAX, accX + fx, FORCE_MAX);
-        accY = clamp(-FORCE_MAX, accY + fy, FORCE_MAX);
-    end
 
     ---
     -- Calculates the arc for a certain angle.
@@ -165,18 +125,6 @@ function Node.new(parent, path, name, x, y, spritebatch)
         return maxradius;
     end
 
-    ---
-    -- Update the node's position based on the calculated velocity and
-    -- acceleration.
-    --
-    local function move(dt)
-        velX = (velX + accX * dt * speed) * DAMPING_FACTOR;
-        velY = (velY + accY * dt * speed) * DAMPING_FACTOR;
-        posX = posX + velX;
-        posY = posY + velY;
-        accX, accY = 0, 0;
-    end
-
     -- ------------------------------------------------
     -- Public Functions
     -- ------------------------------------------------
@@ -201,43 +149,20 @@ function Node.new(parent, path, name, x, y, spritebatch)
         childCount = childCount - 1;
     end
 
-    function self:draw(ewidth)
-        for _, node in pairs(children) do
-            love.graphics.setColor(EDGE_COLOR);
-            love.graphics.setLineWidth(ewidth);
-            love.graphics.line(posX, posY, node:getX(), node:getY());
-            love.graphics.setLineWidth(1);
-            love.graphics.setColor(255, 255, 255, 255);
-            node:draw(ewidth);
-        end
-    end
-
-    function self:drawLabel(camrot, camscale)
-        love.graphics.setFont(LABEL_FONT);
-        love.graphics.print(name, posX, posY, -camrot, 1 / camscale, 1 / camscale, -radius * camscale, -radius * camscale);
-
-        for _, node in pairs(children) do
-            node:drawLabel(camrot, camscale);
-        end
-
-        love.graphics.setFont(DEFAULT_FONT);
-    end
-
-    function self:update(dt)
-        move(dt);
-        for name, file in pairs(files) do
+    function self:update( dt )
+        self:setMass( 0.015 * ( childCount + math.log( math.max( SPRITE_SIZE, radius ) )));
+        for name, file in pairs( files ) do
             if file:isDead() then
-                self:removeFile(name, file:getExtension());
+                self:removeFile( name, file:getExtension() );
             end
             file:update(dt);
-            file:setPosition(posX, posY);
+            file:setPosition( self:getPosition() );
 
             local color = file:getColor();
-            spritebatch:setColor(color.r, color.g, color.b, color.a);
+            spritebatch:setColor( color.r, color.g, color.b, color.a );
 
-            spritebatch:add(file:getX(), file:getY(), 0, SPRITE_SCALE_FACTOR, SPRITE_SCALE_FACTOR, SPRITE_OFFSET, SPRITE_OFFSET);
+            spritebatch:add( file:getX(), file:getY(), 0, SPRITE_SCALE_FACTOR, SPRITE_SCALE_FACTOR, SPRITE_OFFSET, SPRITE_OFFSET );
         end
-        return posX, posY;
     end
 
     ---
@@ -259,7 +184,7 @@ function Node.new(parent, path, name, x, y, spritebatch)
 
         -- Get the file color and extension from the FileManager and create the actual file object.
         local color = FileManager.add(name, extension);
-        files[name] = File.new(posX, posY, color, extension);
+        files[name] = File.new( self:getX(), self:getY(), color, extension);
         files[name]:setState('add');
         fileCount = fileCount + 1;
 
@@ -326,78 +251,28 @@ function Node.new(parent, path, name, x, y, spritebatch)
         return file;
     end
 
-    ---
-    -- Calculate and apply attraction and repulsion forces.
-    -- @param node
-    --
-    function self:calculateForces(node)
-        if self == node then return end
+    function self:incrementChildCount()
+        childCount = childCount + 1;
+    end
 
-        -- Calculate distance vector and normalise it.
-        local dx, dy = posX - node:getX(), posY - node:getY();
-        local distance = math.sqrt(dx * dx + dy * dy);
-        dx = dx / distance;
-        dy = dy / distance;
-
-        -- Attract to node if they are connected.
-        local strength;
-        if self:isConnectedTo(node) then
-            strength = FORCE_SPRING * distance;
-            applyForce(dx * strength, dy * strength);
-        end
-
-        -- Repel unconnected nodes.
-        strength = FORCE_CHARGE * ((self:getMass() * node:getMass()) / (distance * distance));
-        applyForce(dx * strength, dy * strength);
+    function self:decrementChildCount()
+        childCount = childCount - 1;
     end
 
     -- ------------------------------------------------
     -- Getters
     -- ------------------------------------------------
 
-    function self:getFileCount()
-        return fileCount;
-    end
-
-    function self:getChildCount()
-        return childCount;
-    end
-
-    function self:getPosition()
-        return posX, posY;
-    end
-
-    function self:getX()
-        return posX;
-    end
-
-    function self:getY()
-        return posY;
-    end
-
-    function self:getPath()
-        return path;
+    function self:getName()
+        return name;
     end
 
     function self:getParent()
         return parent;
     end
 
-    function self:getMass()
-        return 0.015 * (childCount + math.log(math.max(SPRITE_SIZE, radius)));
-    end
-
     function self:getRadius()
         return radius;
-    end
-
-    function self:isConnectedTo(node)
-        for _, child in pairs(children) do
-            if node == child then
-                return true;
-            end
-        end
-        return parent == node;
     end
 
     ---

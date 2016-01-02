@@ -9,7 +9,6 @@ local LOG_FILE = 'log.txt';
 local INFO_FILE = 'info.lua';
 
 local TAG_INFO = 'info: ';
-local ROOT_FOLDER = 'root';
 
 local WARNING_TITLE = 'No git log found.';
 local WARNING_MESSAGE = [[
@@ -110,7 +109,7 @@ local function buildCommitLine( line )
         path = '/' .. path;
     end
 
-    return { modifier = modifier, path = ROOT_FOLDER .. path, file = file, extension = extension };
+    return { modifier = modifier, path = path, file = file, extension = extension };
 end
 
 ---
