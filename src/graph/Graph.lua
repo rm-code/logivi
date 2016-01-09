@@ -127,19 +127,16 @@ function Graph.new(ewidth, showLabels)
     end
 
     ---
-    -- Checks if a node is dead. A node is considered dead if it doesn't contain
-    -- any files and doesn't link to any other nodes except for its own parent.
+    -- Removes a node from the graph.
     -- @param node - The node to check.
     --
-    local function removeDeadNode(node)
-        if node:isDead() then
-            -- print('DEL node [' .. path .. ']');
-            local parent = node:getParent();
-            if parent then
-                local path = node:getPath();
-                parent:removeChild(path);
-                nodes[path] = nil;
-            end
+    local function removeNode( node )
+        -- print('DEL node [' .. path .. ']');
+        local parent = node:getParent();
+        if parent then
+            local path = node:getPath();
+            parent:removeChild(path);
+            nodes[path] = nil;
         end
     end
 
@@ -199,7 +196,9 @@ function Graph.new(ewidth, showLabels)
 
             -- Remove the node if it doesn't contain files and only
             -- has a link to its parent.
-            removeDeadNode(nodeA);
+            if nodeA:isDead() then
+                removeNode( nodeA );
+            end
 
             minX, maxX, minY, maxY = updateBoundaries(minX, maxX, minY, maxY, nodeA:getRadius(), nodeA:update(dt));
         end
