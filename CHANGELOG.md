@@ -1,4 +1,17 @@
-# Version 0432 - 2015/12/14
+# WIP
+
+### Additions
+- Added [Graphoon](https://github.com/rm-code/Graphoon) library
+
+### Removals
+- Removed loading of custom avatars
+
+### Other Changes
+- Improve warning message displayed when running LoGiVi for the first time
+
+---
+
+# Version 0432 - 2015-12-14
 
 ### Additions
 - Added scaling for folder and name labels based on the camera's zoom factor
@@ -15,9 +28,11 @@
 
 ### Other Changes
 - LoGiVi now starts in windowed mode on first start
-- Canged design of the file panel to be less intrusive
+- Changed design of the file panel to be less intrusive
 
-# Version 0404 - 2015/11/24
+---
+
+# Version 0404 - 2015-11-24
 
 ### Additions
 - Added option to add a repository by dropping its folder onto LoGiVi (Closes [#46](https://github.com/rm-code/logivi/issues/46))
@@ -29,7 +44,9 @@
 - Fixed [#44](https://github.com/rm-code/logivi/issues/44) - File paths are validated after the config has been validated
 - Fixed direction of camera rotation
 
-# Version 0375 - 2015/11/11
+---
+
+# Version 0375 - 2015-11-11
 
 **Important**: With this version LoGiVi now ***requires*** LÖVE Version [0.10.0](https://love2d.org/wiki/0.10.0) to run and will no longer work with LÖVE 0.9.2! LÖVE 0.10.0 has not yet been officially released, but can be compiled from the source. For more information check out the [official LÖVE repository](https://bitbucket.org/rude/love/overview).
 
@@ -41,7 +58,9 @@
 ### Other Changes
 - Updated LoGiVi to run on LÖVE 0.10.0
 
-# Version 0351 - 2015/08/01
+---
+
+# Version 0351 - 2015-08-01
 
 ### Additions
 - Added authors' names to their avatars
@@ -58,8 +77,9 @@
 ### Other Changes
 - Display a default string when no custom information about a project can be loaded
 
+---
 
-# Version 0312 - 2015/04/20
+# Version 0312 - 2015-04-20
 
 ### Additions
 - Added keybinding for easy exiting
@@ -92,7 +112,7 @@
 - Fixed [#30](https://github.com/rm-code/logivi/issues/30) - Ignore files when no changes were applied
 - Fixed [#29](https://github.com/rm-code/logivi/issues/29) - Reset the FileManager when MainScreen is closed
 - Fixed [#27](https://github.com/rm-code/logivi/issues/27) - Replace escape characters in the path to a repository
-- Fixed [#23](https://github.com/rm-code/logivi/issues/23) - Increase speed at which example is written to the harddrive
+- Fixed [#23](https://github.com/rm-code/logivi/issues/23) - Increase speed at which example is written to the HDD
 - Fixed [#20](https://github.com/rm-code/logivi/issues/20) - Center the screen when it is resized in the config
 - Fixed [#19](https://github.com/rm-code/logivi/issues/19) - Allow multiple key bindings
 - Fixed [#5](https://github.com/rm-code/logivi/issues/5) - Improve author movement
@@ -104,7 +124,9 @@
 - Reduced time before authors start fading
 - Config file now uses a custom format based on ini-files
 
-# Version 0204 - 2015/04/10
+---
+
+# Version 0204 - 2015-04-10
 
 ### Additions
 - Added option to set the visibility of folder labels in the config file
@@ -112,13 +134,13 @@
 - Added keybinding for pausing the automatic commit loading
 - Added keybinding for manually loading the next commit
 - Added keybinding for manually loading the previous commit
-- Added keybinding for rewersing the graph creation (will run back until it reaches the first commit)
+- Added keybinding for reversing the graph creation (will run back until it reaches the first commit)
 - Added keybinding for toggling fullscreen mode
 - Added a timeline
 	- Indicates the current position of the log compared to the total commit history and shows the date of the currently indexed commit
 	- Allows the user to quickly jump around in time (forward and backwards) while still rendering the full graph (Closes [#10](https://github.com/rm-code/logivi/issues/10))
 	- Can be hidden via keybinding or in the config file
-- Added option to the config file which makes the visualisation start at the end of the git log (so it starts with the newest commit and moves towards the oldest)
+- Added option to the config file which makes the visualization start at the end of the git log (so it starts with the newest commit and moves towards the oldest)
 - Added option to disable autoplay in the config file
 
 ### Fixes
@@ -135,7 +157,7 @@
 
 ---
 
-# Version 0142 - 2015/04/01
+# Version 0142 - 2015-04-01
 
 ### Additions
 - Added more options to the logivi config file
@@ -157,14 +179,14 @@
 - Fixed [#2](https://github.com/rm-code/logivi/issues/2) - Edges are removed correctly when a node is killed
 
 ### Other Changes
-- Updated message box when no git log is found and added a button to directly open the logivi wiki
+- Updated message box when no git log is found and added a button to directly open the LoGiVi wiki
 - Improved graph layout by tweaking the mass calculation and charge of each node (edges should now be shorter which reduces the total size of the graph)
 - Increased width of the graph's edges
 - Replaced old movement code for authors with physical based approach (Closes [#5](https://github.com/rm-code/logivi/issues/5))
 
 ---
 
-# Version 0104 - 2015/03/30
+# Version 0104 - 2015-03-30
 
 ### Additions
 - Added debug information about the user's system and supported features of the LÖVE framework which will be printed to the console
@@ -207,17 +229,17 @@
 
 ---
 
-# Version 0052 - 2015/01/18
+# Version 0052 - 2015-01-18
 
 ### Additions
-- Added (rudimentary) Force-Directed Graph which - visualises the files and folders of a git repository at a given point in time
+- Added (rudimentary) Force-Directed Graph which - visualizes the files and folders of a git repository at a given point in time
 	- Files are represented as evenly distributed leaves around their parent folder node
 		- Depending on the amount of files in one folder new folders will be created automatically)
-		- Modified files are coloured red and fade back to their original color over time
+		- Modified files are colored red and fade back to their original color over time
 	- Folders are represented as single green dots (this will be changed in one of the next releases) and are connected by lines
 - Added list of all authors contributing to the project
 - Added list of all file extensions found in the project
-- Added colouring of file nodes based on their file extensions
+- Added coloring of file nodes based on their file extensions
 - Added camera which keeps tracking the generated graph automatically
 - Added floating authors
 	- Authors will show links to the files they currently edit
