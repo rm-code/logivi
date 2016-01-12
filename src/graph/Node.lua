@@ -129,26 +129,6 @@ function Node.new( id, x, y, anchor, parent, path, spritebatch, name )
     -- Public Functions
     -- ------------------------------------------------
 
-    ---
-    -- Adds a child node to this node and increments the child counter.
-    -- @param name - The name of the node to add.
-    -- @param node - The actual node object.
-    --
-    function self:addChild(name, node)
-        children[name] = node;
-        childCount = childCount + 1;
-        return children[name];
-    end
-
-    ---
-    -- Removes a child node from this node and decrements the child counter.
-    -- @param name - The name of the node to remove.
-    --
-    function self:removeChild(name)
-        children[name] = nil;
-        childCount = childCount - 1;
-    end
-
     function self:update( dt )
         self:setMass( 0.015 * ( childCount + math.log( math.max( SPRITE_SIZE, radius ) )));
         for name, file in pairs( files ) do
