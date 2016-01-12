@@ -44,8 +44,8 @@ function Node.new( id, x, y, anchor, parent, spritebatch, name )
     -- @param radius
     -- @param angle
     --
-    local function calcArc(radius, angle)
-        return math.pi * radius * (angle / 180);
+    local function calcArc( layerRadius, angle )
+        return math.pi * layerRadius * ( angle / 180 );
     end
 
     ---
@@ -55,72 +55,82 @@ function Node.new( id, x, y, anchor, parent, spritebatch, name )
     --
     local function createOnionLayers(count)
         local fileCounter = 0;
-        local radius = -SPRITE_SIZE; -- Radius of the circle around the node.
+        local layerRadius = -SPRITE_SIZE; -- Radius of the circle around the node.
         local layers = {
-            { radius = radius, amount = fileCounter }
+            { radius = layerRadius, amount = fileCounter }
         };
 
-        for i = 1, count do
+        for _ = 1, count do
             fileCounter = fileCounter + 1;
 
             -- Calculate the arc between the file nodes on the current layer.
             -- The more files are on it the smaller it gets.
-            local arc = calcArc(layers[#layers].radius, 360 / fileCounter);
+            local arc = calcArc( layers[#layers].radius, 360 / fileCounter );
 
             -- If the arc is smaller than the allowed minimum we store the radius
             -- of the current layer and the number of nodes that can be placed
             -- on that layer and move to the next layer.
             if arc < MIN_ARC_SIZE then
-                radius = radius + SPRITE_SIZE;
+                layerRadius = layerRadius + SPRITE_SIZE;
 
                 -- Create a new layer.
-                layers[#layers + 1] = { radius = radius, amount = 1 };
+                layers[#layers + 1] = { radius = layerRadius, amount = 1 };
                 fileCounter = 1;
             else
                 layers[#layers].amount = fileCounter;
             end
         end
 
-        return layers, radius;
+        return layers, layerRadius;
+    end
+
+    ---
+    -- Calculates the new position of a file on its layer around the folder node.
+    -- @param fileNumber - The n-th file on the layer.
+    -- @param fileCount - The total amount of files on the same layer.
+    -- @param layerRadius - The radius of the layer.
+    --
+    local function calculateFilePosition( fileNumber, layerFileCount, layerRadius )
+        local angle = 360 / layerFileCount;
+        local slice = angle * ( fileNumber - 1 ) * ( math.pi / 180 );
+        local fx = layerRadius * math.cos( slice );
+        local fy = layerRadius * math.sin( slice );
+        return fx, fy;
     end
 
     ---
     -- Distributes files nodes evenly on a circle around the parent node.
-    -- @param files
     --
-    local function plotCircle(files, count)
+    local function plotCircle( count )
         -- Sort files based on their extension before placing them.
         local toSort = {};
-        for _, file in pairs(files) do
+        for _, file in pairs( files ) do
             toSort[#toSort + 1] = { extension = file:getExtension(), file = file };
         end
-        table.sort(toSort, function(a, b)
+        table.sort(toSort, function( a, b )
             return a.extension > b.extension;
         end)
 
         -- Get a blueprint of how the file nodes need to be distributed amongst different layers.
-        local layers, maxradius = createOnionLayers(count);
+        local layers, maxradius = createOnionLayers( count );
 
         -- Update the position of the file nodes based on the previously calculated onion-layers.
-        local fileCounter = 0;
+        local fileNumber = 0;
         local layer = 1;
         for i = 1, #toSort do
             local file = toSort[i].file;
-            fileCounter = fileCounter + 1;
+            fileNumber = fileNumber + 1;
 
             -- If we have more files on the current layer than allowed, we "move"
             -- the file to the next layer (this is why we reset the counter to one
             -- instead of zero).
-            if fileCounter > layers[layer].amount then
+            if fileNumber > layers[layer].amount then
                 layer = layer + 1;
-                fileCounter = 1;
+                fileNumber = 1;
             end
 
             -- Calculate the new position of the file on its layer around the folder node.
-            local angle = 360 / layers[layer].amount;
-            local x = (layers[layer].radius * math.cos((angle * (fileCounter - 1)) * (math.pi / 180)));
-            local y = (layers[layer].radius * math.sin((angle * (fileCounter - 1)) * (math.pi / 180)));
-            file:setOffset(x, y);
+            file:setOffset( calculateFilePosition( fileNumber, layers[layer].amount, layers[layer].radius ));
         end
         return maxradius;
     end
@@ -130,10 +140,10 @@ function Node.new( id, x, y, anchor, parent, spritebatch, name )
     -- ------------------------------------------------
 
     function self:update( dt )
-        self:setMass( 0.015 * ( childCount + math.log( math.max( SPRITE_SIZE, radius ) )));
-        for name, file in pairs( files ) do
+        self:setMass( fileCount + childCount );
+        for fileName, file in pairs( files ) do
             if file:isDead() then
-                self:removeFile( name, file:getExtension() );
+                self:removeFile( fileName, file:getExtension() );
             end
             file:update(dt);
             file:setPosition( self:getPosition() );
@@ -152,36 +162,36 @@ function Node.new( id, x, y, anchor, parent, spritebatch, name )
     -- requested from the FileManager and a new File object is created. After
     -- the file object has been added to the file list of this node, the layout
     -- of the files around the nodes is recalculated.
-    -- @param name - The name of the file to add.
+    -- @param fileName - The name of the file to add.
     -- @param extension - The extension of the file to add.
     --
-    function self:addFile(name, extension)
+    function self:addFile( fileName, extension )
         -- Exit early if the file already exists.
-        if files[name] then
-            files[name]:setState('add');
-            return files[name];
+        if files[fileName] then
+            files[fileName]:setState( 'add' );
+            return files[fileName];
         end
 
         -- Get the file color and extension from the FileManager and create the actual file object.
-        local color = FileManager.add(name, extension);
-        files[name] = File.new( self:getX(), self:getY(), color, extension);
-        files[name]:setState('add');
+        local color = FileManager.add( fileName, extension );
+        files[fileName] = File.new( self:getX(), self:getY(), color, extension );
+        files[fileName]:setState( 'add' );
         fileCount = fileCount + 1;
 
         -- Update layout of the files.
-        radius = plotCircle(files, fileCount);
-        return files[name];
+        radius = plotCircle( fileCount );
+        return files[fileName];
     end
 
     ---
     -- Sets a file's modifier to deletion.
     -- @param name - The name of the file to modify.
     --
-    function self:markFileForDeletion(name)
-        local file = files[name];
+    function self:markFileForDeletion( fileName )
+        local file = files[fileName];
 
         if not file then
-            print('- Can not rem file: ' .. name .. ' - It doesn\'t exist.');
+            print('- Can not rem file: ' .. fileName .. ' - It doesn\'t exist.');
             return;
         end
 
@@ -195,24 +205,24 @@ function Node.new( id, x, y, anchor, parent, spritebatch, name )
     -- FileManager that it also needs to be removed from the global file
     -- list. Once the file is removed, the layout of the files around the nodes
     -- is recalculated.
-    -- @param name - The name of the file to remove.
+    -- @param fileName - The name of the file to remove.
     -- @param extension - The extension of the file to remove.
     --
-    function self:removeFile(name, extension)
-        local file = files[name];
+    function self:removeFile( fileName, extension )
+        local file = files[fileName];
 
         if not file then
-            print('- Can not rem file: ' .. name .. ' - It doesn\'t exist.');
+            print('- Can not rem file: ' .. fileName .. ' - It doesn\'t exist.');
             return;
         end
 
         -- Store a reference to the file which can be returned
         -- after the file has been removed from the table.
-        FileManager.remove(name, extension);
-        files[name] = nil;
+        FileManager.remove( fileName, extension );
+        files[fileName] = nil;
         fileCount = fileCount - 1;
 
-        radius = plotCircle(files, fileCount);
+        radius = plotCircle( fileCount );
         return file;
     end
 
@@ -220,14 +230,14 @@ function Node.new( id, x, y, anchor, parent, spritebatch, name )
     -- Sets a file's modifier to "modification" and returns the file object.
     -- @param name - The file to modify.
     --
-    function self:modifyFile(name)
-        local file = files[name]
+    function self:modifyFile( fileName )
+        local file = files[fileName]
         if not file then
-            print('~ Can not mod file: ' .. name .. ' - It doesn\'t exist.');
+            print('~ Can not mod file: ' .. fileName .. ' - It doesn\'t exist.');
             return;
         end
 
-        file:setState('mod');
+        file:setState( 'mod' );
         return file;
     end
 
