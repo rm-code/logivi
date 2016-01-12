@@ -14,14 +14,18 @@ local Graph = {};
 
 local ROOT_FOLDER = '';
 local MOD_ADD = 'A';
-local MOD_COPY = 'C';
 local MOD_DELETE = 'D';
 local MOD_MODIFY = 'M';
+
+--[[
+-- Unused git modifiers.
+local MOD_COPY = 'C';
 local MOD_RENAME = 'R';
 local MOD_CHANGE = 'T';
 local MOD_UNMERGE = 'U';
 local MOD_UNKNOWN = 'X';
 local MOD_BROKEN_PAIRING = 'B';
+--]]
 
 local EVENT_UPDATE_DIMENSIONS = 'GRAPH_UPDATE_DIMENSIONS';
 local EVENT_UPDATE_CENTER = 'GRAPH_UPDATE_CENTER';
