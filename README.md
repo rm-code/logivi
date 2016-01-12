@@ -4,7 +4,7 @@ LoGiVi is a [Git](https://git-scm.com/)-respository visualisation tool inspired 
 
 Note: Since version [0375](https://github.com/rm-code/logivi/releases/tag/0375) LoGiVi uses version [0.10.0](https://love2d.org/wiki/0.10.0) of the LÖVE framework.
 
-![Example Visualization](https://github.com/rm-code/logivi/wiki/media/logivi_0312.gif)
+![Example Visualization](https://raw.githubusercontent.com/wiki/rm-code/logivi/media/logivi_0312.gif)
 
 # Instructions
 When you run LoGiVi for the first time it will set up all necessary folders, an example git log and a configuration file in the save directory on your harddrive.
