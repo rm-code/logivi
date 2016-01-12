@@ -40,7 +40,7 @@ function Node.new( id, x, y, anchor, parent, spritebatch, name )
     -- ------------------------------------------------
 
     ---
-    -- Calculates the arc for a certain angle.
+    -- Calculates the arc on a layer for a certain angle.
     -- @param radius
     -- @param angle
     --
@@ -52,8 +52,9 @@ function Node.new( id, x, y, anchor, parent, spritebatch, name )
     -- Calculates how many layers we need and how many files
     -- can be placed on each layer. This basically generates a
     -- blueprint of how the files need to be arranged.
+    -- @param count - The total amount of files in this node.
     --
-    local function createOnionLayers(count)
+    local function createOnionLayers( count )
         local fileCounter = 0;
         local layerRadius = -SPRITE_SIZE; -- Radius of the circle around the node.
         local layers = {
@@ -100,6 +101,7 @@ function Node.new( id, x, y, anchor, parent, spritebatch, name )
 
     ---
     -- Distributes files nodes evenly on a circle around the parent node.
+    -- @param count - The total amount of files in this node.
     --
     local function plotCircle( count )
         -- Sort files based on their extension before placing them.
