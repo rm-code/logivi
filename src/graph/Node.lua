@@ -21,7 +21,7 @@ local MIN_ARC_SIZE = SPRITE_SIZE;
 -- Constructor
 -- ------------------------------------------------
 
-function Node.new( id, x, y, anchor, parent, path, spritebatch, name )
+function Node.new( id, x, y, anchor, parent, spritebatch, name )
     local self = GraphLibraryNode.new( id, x, y, anchor );
 
     -- ------------------------------------------------

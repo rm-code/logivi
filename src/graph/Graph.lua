@@ -51,7 +51,7 @@ function Graph.new( edgeWidth, showLabels )
     -- Create a new graph class.
     GraphLibrary.setNodeClass( Node ); -- Use custom class for Nodes.
     local graph = GraphLibrary.new();
-    graph:addNode( ROOT_FOLDER, love.graphics.getWidth() * 0.5, love.graphics.getHeight() * 0.5, true, nil, ROOT_FOLDER, spritebatch, ROOT_FOLDER );
+    graph:addNode( ROOT_FOLDER, love.graphics.getWidth() * 0.5, love.graphics.getHeight() * 0.5, true, nil, spritebatch, ROOT_FOLDER );
 
     -- ------------------------------------------------
     -- Local Functions
@@ -86,7 +86,7 @@ function Graph.new( edgeWidth, showLabels )
         local parentX, parentY = parent:getPosition();
         local offsetX = 100 * randomSign();
         local offsetY = 100 * randomSign();
-        return graph:addNode( id, parentX + offsetX, parentY + offsetY, false, parentID, nodeID, spritebatch, name );
+        return graph:addNode( id, parentX + offsetX, parentY + offsetY, false, parentID, spritebatch, name );
     end
 
     ---
