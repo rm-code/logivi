@@ -170,7 +170,7 @@ function MainScreen.new()
 
         graph:update(dt);
 
-        AuthorManager.update(dt);
+        AuthorManager.update( dt, camera:getRotation() );
         filePanel:update(dt);
         timeline:update(dt);
         timeline:setCurrentCommit(LogReader.getCurrentIndex());

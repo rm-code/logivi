@@ -34,7 +34,7 @@ local LINK_COLOR = {
 -- Constructor
 -- ------------------------------------------------
 
-function Author.new(name, avatar, cx, cy)
+function Author.new(name, avatar, spritebatch, cx, cy)
     local self = {};
 
     local active = true;
@@ -90,9 +90,7 @@ function Author.new(name, avatar, cx, cy)
                 love.graphics.line(posX, posY, links[i].file:getX(), links[i].file:getY());
             end
             love.graphics.setLineWidth(1);
-
-            love.graphics.setColor(255, 255, 255, avatarAlpha);
-            love.graphics.draw(avatar, posX, posY, -rotation, AVATAR_SIZE / aw, AVATAR_SIZE / ah, aw * 0.5, ah * 0.5);
+            love.graphics.setColor( 255, 255, 255, avatarAlpha );
             love.graphics.setFont(LABEL_FONT);
             love.graphics.print(name, posX, posY, -rotation, 1 / scale, 1 / scale, LABEL_FONT:getWidth(name) * 0.5, - AVATAR_SIZE * scale);
             love.graphics.setFont(DEFAULT_FONT);
@@ -100,7 +98,7 @@ function Author.new(name, avatar, cx, cy)
         end
     end
 
-    function self:update(dt)
+    function self:update( dt, cameraRotation)
         if active then
             move(dt);
 
@@ -118,6 +116,9 @@ function Author.new(name, avatar, cx, cy)
                 active = false;
                 self:resetLinks();
             end
+
+            spritebatch:setColor( 255, 255, 255, avatarAlpha );
+            spritebatch:add( posX, posY, -cameraRotation, AVATAR_SIZE / aw, AVATAR_SIZE / ah, aw * 0.5, ah * 0.5 );
         end
     end
 

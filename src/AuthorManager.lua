@@ -21,6 +21,7 @@ local authors;
 local aliases;
 local addresses;
 local visible;
+local spritebatch;
 
 local activeAuthor;
 
@@ -40,6 +41,8 @@ function AuthorManager.init(naliases, visibility)
     visible = visibility;
 
     graphCenterX, graphCenterY = 0, 0;
+
+    spritebatch = love.graphics.newSpriteBatch( AVATAR_SPRITE, 1000, 'stream' );
 end
 
 ---
@@ -51,15 +54,17 @@ function AuthorManager.drawLabels(rotation, scale)
             author:draw(rotation, scale);
         end
     end
+    love.graphics.draw( spritebatch );
 end
 
 ---
 -- Updates all authors.
 -- @param dt
 --
-function AuthorManager.update(dt)
+function AuthorManager.update( dt, cameraRotation )
+    spritebatch:clear();
     for name, author in pairs(authors) do
-        author:update(dt);
+        author:update( dt, cameraRotation );
     end
 end
 
@@ -107,7 +112,7 @@ function AuthorManager.setCommitAuthor(nemail, nauthor)
     local nickname = aliases[nemail] or addresses[nemail] or nauthor;
     if not authors[nickname] then
         addresses[nemail] = nauthor; -- Store this name as the default for this email address.
-        authors[nickname] = Author.new( nickname, AVATAR_SPRITE, graphCenterX, graphCenterY );
+        authors[nickname] = Author.new( nickname, AVATAR_SPRITE, spritebatch, graphCenterX, graphCenterY );
     end
 
     activeAuthor = authors[nickname];
