@@ -128,7 +128,7 @@ function MainScreen.new()
         -- Load keybindings.
         assignKeyBindings(config);
 
-        AuthorManager.init(info.aliases, info.avatars, config.options.showAuthors);
+        AuthorManager.init( info.aliases, config.options.showAuthors );
 
         -- Create the camera.
         camera = Camera.new();

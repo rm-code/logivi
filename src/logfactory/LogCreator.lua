@@ -65,7 +65,6 @@ function LogCreator.createInfoFile(projectname, path, force)
         handle:close();
 
         fileContent = fileContent .. '    aliases = {},\r\n';
-        fileContent = fileContent .. '    avatars = {},\r\n';
         fileContent = fileContent .. '    colors = {}\r\n';
 
         fileContent = fileContent .. '};\r\n';

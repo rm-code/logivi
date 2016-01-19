@@ -211,7 +211,6 @@ function LogLoader.loadInfo(name)
             info.firstCommit = createDateFromUnixTimestamp(info.firstCommit);
             info.latestCommit = createDateFromUnixTimestamp(info.latestCommit);
             info.aliases = info.aliases or {};
-            info.avatars = info.avatars or {};
             info.colors = info.colors or {};
             return info;
         end
@@ -222,7 +221,6 @@ function LogLoader.loadInfo(name)
         latestCommit = '<no information available>',
         totalCommits = '<no information available>',
         aliases = {},
-        avatars = {},
         colors = {},
     };
 end

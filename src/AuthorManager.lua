@@ -1,5 +1,4 @@
 local Author = require('src.Author');
-local http = require('socket.http');
 
 -- ------------------------------------------------
 -- Module
@@ -11,7 +10,6 @@ local AuthorManager = {};
 -- Constants
 -- ------------------------------------------------
 
-local PATH_AVATARS = 'tmp/avatars/';
 local PATH_DEFAULT_AVATAR = 'res/img/avatar.png';
 
 -- ------------------------------------------------
@@ -19,7 +17,7 @@ local PATH_DEFAULT_AVATAR = 'res/img/avatar.png';
 -- ------------------------------------------------
 
 local authors;
-local avatars;
+local defaultAvatar;
 local aliases;
 local addresses;
 local visible;
@@ -29,65 +27,19 @@ local activeAuthor;
 local graphCenterX, graphCenterY;
 
 -- ------------------------------------------------
--- Local Functions
--- ------------------------------------------------
-
----
--- Tries to load user avatars from the local filesystem or the internet.
--- @param urlList
---
-local function grabAvatars(urlList)
-    local counter = 0;
-    local avatars = {};
-    for author, url in pairs(urlList) do
-        -- If the file exists locally we load it as usual.
-        -- If it doesn't we see if the url returns something useful.
-        if love.filesystem.isFile(url) then
-            avatars[author] = love.graphics.newImage(url);
-        else
-            local body = http.request(url);
-            if body then
-                -- Set up the temporary folder if we don't have one yet.
-                if not love.filesystem.isDirectory(PATH_AVATARS) then
-                    love.filesystem.createDirectory(PATH_AVATARS);
-                end
-
-                -- Write file to a temporary folder.
-                love.filesystem.write(string.format(PATH_AVATARS .. "tmp_%03d.png", counter), body);
-
-                local ok, image = pcall(love.graphics.newImage, string.format(PATH_AVATARS .. "tmp_%03d.png", counter));
-                if ok then
-                    avatars[author] = image;
-                    counter = counter + 1;
-                else
-                    print("Couldn't load avatar from " .. url .. " - A default avatar will be used instead.");
-                end
-                counter = counter + 1;
-            end
-        end
-    end
-
-    -- Load the default user avatar.
-    avatars['default'] = love.graphics.newImage(PATH_DEFAULT_AVATAR);
-
-    return avatars;
-end
-
--- ------------------------------------------------
 -- Public Functions
 -- ------------------------------------------------
 
-function AuthorManager.init(naliases, avatarUrls, visibility)
+function AuthorManager.init(naliases, visibility)
     -- Set up the table to store all authors.
     authors = {};
 
     addresses = {};
     aliases = naliases;
 
-    -- Load avatars from the local filesystem or an online location.
-    avatars = grabAvatars(avatarUrls);
-
     visible = visibility;
+
+    defaultAvatar = love.graphics.newImage( PATH_DEFAULT_AVATAR );
 
     graphCenterX, graphCenterY = 0, 0;
 end
@@ -157,7 +109,7 @@ function AuthorManager.setCommitAuthor(nemail, nauthor)
     local nickname = aliases[nemail] or addresses[nemail] or nauthor;
     if not authors[nickname] then
         addresses[nemail] = nauthor; -- Store this name as the default for this email address.
-        authors[nickname] = Author.new(nickname, avatars[nickname] or avatars['default'], graphCenterX, graphCenterY);
+        authors[nickname] = Author.new( nickname, defaultAvatar, graphCenterX, graphCenterY );
     end
 
     activeAuthor = authors[nickname];
