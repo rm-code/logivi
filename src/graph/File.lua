@@ -18,7 +18,7 @@ local MOD_COLOR = {
 -- Constructor
 -- ------------------------------------------------
 
-function File.new(posX, posY, defaultColor, extension)
+function File.new( posX, posY, defaultColor, extension )
     local self = {};
 
     local state;
@@ -38,8 +38,8 @@ function File.new(posX, posY, defaultColor, extension)
     ---
     -- Linear interpolation between a and b.
     --
-    local function lerp(a, b, t)
-        return a + (b - a) * t;
+    local function lerp( a, b, t )
+        return a + ( b - a ) * t;
     end
 
     ---
@@ -50,9 +50,9 @@ function File.new(posX, posY, defaultColor, extension)
     -- @param tarX - The target offset on the x-axis.
     -- @param tarY - The target offset on the y-axis.
     --
-    local function animate(dt, tarX, tarY)
-        currentOffsetX = lerp(currentOffsetX, tarX, dt * ANIM_TIMER);
-        currentOffsetY = lerp(currentOffsetY, tarY, dt * ANIM_TIMER);
+    local function animate( dt, tarX, tarY )
+        currentOffsetX = lerp( currentOffsetX, tarX, dt * ANIM_TIMER );
+        currentOffsetY = lerp( currentOffsetY, tarY, dt * ANIM_TIMER );
     end
 
     -- ------------------------------------------------
@@ -64,17 +64,17 @@ function File.new(posX, posY, defaultColor, extension)
     -- the modified color to the default file color.
     -- @param dt
     --
-    function self:update(dt)
-        animate(dt, targetOffsetX, targetOffsetY);
+    function self:update( dt )
+        animate( dt, targetOffsetX, targetOffsetY );
 
         -- Slowly change the color from the modified color back to the default.
-        currentColor.r = lerp(currentColor.r, defaultColor.r, dt * MOD_TIMER);
-        currentColor.g = lerp(currentColor.g, defaultColor.g, dt * MOD_TIMER);
-        currentColor.b = lerp(currentColor.b, defaultColor.b, dt * MOD_TIMER);
+        currentColor.r = lerp( currentColor.r, defaultColor.r, dt * MOD_TIMER );
+        currentColor.g = lerp( currentColor.g, defaultColor.g, dt * MOD_TIMER );
+        currentColor.b = lerp( currentColor.b, defaultColor.b, dt * MOD_TIMER );
 
         -- Slowly fade out the file when it has been marked for deletion.
         if state == 'del' then
-            currentColor.a = math.max(0, math.min(currentColor.a - FADE_TIMER, 255));
+            currentColor.a = math.max( 0, math.min( currentColor.a - FADE_TIMER, 255 ));
             if currentColor.a == 0 then
                 state = 'dead';
             end
@@ -86,7 +86,7 @@ function File.new(posX, posY, defaultColor, extension)
     -- color based on the used modifier.
     -- @param mod - The modifier used on the file.
     --
-    function self:setState(mod)
+    function self:setState( mod )
         state = mod;
 
         currentColor.r = MOD_COLOR[mod].r;
@@ -147,7 +147,7 @@ function File.new(posX, posY, defaultColor, extension)
     -- @param ox - The offset on the x-axis.
     -- @param oy - The offset on the y-axis.
     --
-    function self:setOffset(ox, oy)
+    function self:setOffset( ox, oy )
         targetOffsetX, targetOffsetY = ox, oy;
     end
 
@@ -156,7 +156,7 @@ function File.new(posX, posY, defaultColor, extension)
     -- @param nx - The new position on the x-axis.
     -- @param ny - The new position on the y-axis.
     --
-    function self:setPosition(nx, ny)
+    function self:setPosition( nx, ny )
         posX, posY = nx, ny;
     end
 

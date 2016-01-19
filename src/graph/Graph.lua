@@ -55,7 +55,7 @@ function Graph.new( edgeWidth, showLabels )
     -- Create a new graph class.
     GraphLibrary.setNodeClass( Node ); -- Use custom class for Nodes.
     local graph = GraphLibrary.new();
-    graph:addNode( ROOT_FOLDER, love.graphics.getWidth() * 0.5, love.graphics.getHeight() * 0.5, true, nil, spritebatch, ROOT_FOLDER );
+    graph:addNode( ROOT_FOLDER, love.graphics.getWidth() * 0.5, love.graphics.getHeight() * 0.5, false, nil, spritebatch, ROOT_FOLDER );
 
     -- ------------------------------------------------
     -- Local Functions
@@ -73,9 +73,9 @@ function Graph.new( edgeWidth, showLabels )
     -- @param event
     -- @param ...
     --
-    local function notify(event, ...)
+    local function notify( event, ... )
         for i = 1, #observers do
-            observers[i]:receive(event, ...);
+            observers[i]:receive( event, ... );
         end
     end
 
@@ -221,7 +221,7 @@ function Graph.new( edgeWidth, showLabels )
     -- Register an observer.
     -- @param observer
     --
-    function self:register(observer)
+    function self:register( observer )
         observers[#observers + 1] = observer;
     end
 
@@ -230,9 +230,9 @@ function Graph.new( edgeWidth, showLabels )
     -- @param event
     -- @param ...
     --
-    function self:receive(event, ...)
+    function self:receive( event, ... )
         if event == 'LOGREADER_CHANGED_FILE' then
-            applyGitModifier(...)
+            applyGitModifier( ... )
         end
     end
 
