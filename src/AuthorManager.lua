@@ -1,3 +1,4 @@
+local Resources = require('src.Resources');
 local Author = require('src.Author');
 
 -- ------------------------------------------------
@@ -10,14 +11,13 @@ local AuthorManager = {};
 -- Constants
 -- ------------------------------------------------
 
-local PATH_DEFAULT_AVATAR = 'res/img/avatar.png';
+local AVATAR_SPRITE  = Resources.loadImage( 'avatar.png' );
 
 -- ------------------------------------------------
 -- Local Variables
 -- ------------------------------------------------
 
 local authors;
-local defaultAvatar;
 local aliases;
 local addresses;
 local visible;
@@ -38,8 +38,6 @@ function AuthorManager.init(naliases, visibility)
     aliases = naliases;
 
     visible = visibility;
-
-    defaultAvatar = love.graphics.newImage( PATH_DEFAULT_AVATAR );
 
     graphCenterX, graphCenterY = 0, 0;
 end
@@ -109,7 +107,7 @@ function AuthorManager.setCommitAuthor(nemail, nauthor)
     local nickname = aliases[nemail] or addresses[nemail] or nauthor;
     if not authors[nickname] then
         addresses[nemail] = nauthor; -- Store this name as the default for this email address.
-        authors[nickname] = Author.new( nickname, defaultAvatar, graphCenterX, graphCenterY );
+        authors[nickname] = Author.new( nickname, AVATAR_SPRITE, graphCenterX, graphCenterY );
     end
 
     activeAuthor = authors[nickname];
