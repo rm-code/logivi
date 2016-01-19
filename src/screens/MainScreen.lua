@@ -29,14 +29,14 @@ local toggleFullscreen;
 
 local exit;
 
-local camera_zoomIn;
-local camera_zoomOut;
-local camera_rotateL;
-local camera_rotateR;
-local camera_n;
-local camera_s;
-local camera_e;
-local camera_w;
+local cameraZoomIn;
+local cameraZoomOut;
+local cameraRotateL;
+local cameraRotateR;
+local cameraN;
+local cameraS;
+local cameraE;
+local cameraW;
 
 -- ------------------------------------------------
 -- Module
@@ -66,7 +66,7 @@ function MainScreen.new()
     -- local variable for faster access.
     -- @param config
     --
-    local function assignKeyBindings(config)
+    local function assignKeyBindings( config )
         toggleAuthors = config.keyBindings.toggleAuthors;
         toggleFilePanel = config.keyBindings.toggleFileList;
         toggleLabels = config.keyBindings.toggleLabels;
@@ -81,36 +81,36 @@ function MainScreen.new()
 
         exit = config.keyBindings.exit;
 
-        camera_zoomIn = config.keyBindings.camera_zoomIn;
-        camera_zoomOut = config.keyBindings.camera_zoomOut;
-        camera_rotateL = config.keyBindings.camera_rotateL;
-        camera_rotateR = config.keyBindings.camera_rotateR;
-        camera_n = config.keyBindings.camera_n;
-        camera_s = config.keyBindings.camera_s;
-        camera_e = config.keyBindings.camera_e;
-        camera_w = config.keyBindings.camera_w;
+        cameraZoomIn = config.keyBindings.camera_zoomIn;
+        cameraZoomOut = config.keyBindings.camera_zoomOut;
+        cameraRotateL = config.keyBindings.camera_rotateL;
+        cameraRotateR = config.keyBindings.camera_rotateR;
+        cameraN = config.keyBindings.camera_n;
+        cameraS = config.keyBindings.camera_s;
+        cameraE = config.keyBindings.camera_e;
+        cameraW = config.keyBindings.camera_w;
     end
 
-    local function controlCamera(dt)
-        if InputHandler.isDown(camera_zoomIn) then
-            camera:zoom(dt, 1);
-        elseif InputHandler.isDown(camera_zoomOut) then
-            camera:zoom(dt, -1);
+    local function controlCamera( dt )
+        if InputHandler.isDown( cameraZoomIn ) then
+            camera:zoom( dt, 1 );
+        elseif InputHandler.isDown( cameraZoomOut ) then
+            camera:zoom( dt, -1 );
         end
-        if InputHandler.isDown(camera_rotateL) then
-            camera:rotate(dt, -1);
-        elseif InputHandler.isDown(camera_rotateR) then
-            camera:rotate(dt, 1);
+        if InputHandler.isDown( cameraRotateL ) then
+            camera:rotate( dt, -1 );
+        elseif InputHandler.isDown( cameraRotateR ) then
+            camera:rotate( dt, 1 );
         end
-        if InputHandler.isDown(camera_w) then
-            camera:move(dt, -1, 0);
-        elseif InputHandler.isDown(camera_e) then
-            camera:move(dt, 1, 0);
+        if InputHandler.isDown( cameraW ) then
+            camera:move( dt, -1, 0 );
+        elseif InputHandler.isDown( cameraE ) then
+            camera:move( dt, 1, 0 );
         end
-        if InputHandler.isDown(camera_n) then
-            camera:move(dt, 0, -1);
-        elseif InputHandler.isDown(camera_s) then
-            camera:move(dt, 0, 1);
+        if InputHandler.isDown( cameraN ) then
+            camera:move( dt, 0, -1 );
+        elseif InputHandler.isDown( cameraS ) then
+            camera:move( dt, 0, 1 );
         end
     end
 
@@ -118,15 +118,15 @@ function MainScreen.new()
     -- Public Functions
     -- ------------------------------------------------
 
-    function self:init(param)
+    function self:init( param )
         -- Store the name of the currently displayed log.
         log = param.log;
 
         local config = ConfigReader.init();
-        local info = LogLoader.loadInfo(log);
+        local info = LogLoader.loadInfo( log );
 
         -- Load keybindings.
-        assignKeyBindings(config);
+        assignKeyBindings( config );
 
         AuthorManager.init( info.aliases, config.options.showAuthors );
 
@@ -134,30 +134,30 @@ function MainScreen.new()
         camera = Camera.new();
 
         -- Load custom colors.
-        FileManager.setColorTable(info.colors);
+        FileManager.setColorTable( info.colors );
 
-        graph = Graph.new(config.options.edgeWidth, config.options.showLabels);
-        graph:register(AuthorManager);
-        graph:register(camera);
+        graph = Graph.new( config.options.edgeWidth, config.options.showLabels );
+        graph:register( AuthorManager );
+        graph:register( camera );
 
         -- Initialise LogReader and register observers.
-        LogReader.init(LogLoader.load(log), config.options.commitDelay, config.options.mode, config.options.autoplay);
-        LogReader.register(AuthorManager);
-        LogReader.register(graph);
+        LogReader.init( LogLoader.load( log ), config.options.commitDelay, config.options.mode, config.options.autoplay );
+        LogReader.register( AuthorManager );
+        LogReader.register( graph );
 
         -- Create panel.
-        filePanel = FilePanel.new(FileManager.draw, FileManager.update, 0, 0, 150, love.graphics.getHeight() - 40);
-        filePanel:setActive(config.options.showFileList);
+        filePanel = FilePanel.new( FileManager.draw, FileManager.update, 0, 0, 150, love.graphics.getHeight() - 40 );
+        filePanel:setActive( config.options.showFileList );
 
-        timeline = Timeline.new(config.options.showTimeline, LogReader.getTotalCommits(), LogReader.getCurrentDate());
+        timeline = Timeline.new( config.options.showTimeline, LogReader.getTotalCommits(), LogReader.getCurrentDate() );
 
         -- Run one complete cycle of garbage collection.
-        collectgarbage('collect');
+        collectgarbage( 'collect' );
     end
 
     function self:draw()
         camera:draw(function()
-            graph:draw(camera:getRotation(), camera:getScale());
+            graph:draw( camera:getRotation(), camera:getScale() );
             AuthorManager.draw( camera:getRotation(), camera:getScale() );
         end);
 
@@ -165,20 +165,20 @@ function MainScreen.new()
         timeline:draw();
     end
 
-    function self:update(dt)
-        LogReader.update(dt);
+    function self:update( dt )
+        LogReader.update( dt );
 
-        graph:update(dt);
+        graph:update( dt );
 
         AuthorManager.update( dt, camera:getRotation() );
-        filePanel:update(dt);
-        timeline:update(dt);
-        timeline:setCurrentCommit(LogReader.getCurrentIndex());
-        timeline:setCurrentDate(LogReader.getCurrentDate());
+        filePanel:update( dt );
+        timeline:update( dt );
+        timeline:setCurrentCommit( LogReader.getCurrentIndex() );
+        timeline:setCurrentDate( LogReader.getCurrentDate() );
 
-        controlCamera(dt);
+        controlCamera( dt );
 
-        camera:update(dt);
+        camera:update( dt );
     end
 
     function self:close()
@@ -186,59 +186,59 @@ function MainScreen.new()
     end
 
     function self:quit()
-        if ConfigReader.getConfig('options').removeTmpFiles then
+        if ConfigReader.getConfig( 'options' ).removeTmpFiles then
             ConfigReader.removeTmpFiles();
         end
     end
 
-    function self:keypressed(key)
-        if InputHandler.isPressed(key, toggleAuthors) then
-            AuthorManager.setVisible(not AuthorManager.isVisible());
-        elseif InputHandler.isPressed(key, toggleFilePanel) then
+    function self:keypressed( key )
+        if InputHandler.isPressed( key, toggleAuthors ) then
+            AuthorManager.setVisible( not AuthorManager.isVisible() );
+        elseif InputHandler.isPressed( key, toggleFilePanel ) then
             filePanel:toggle();
-        elseif InputHandler.isPressed(key, toggleLabels) then
+        elseif InputHandler.isPressed( key, toggleLabels ) then
             graph:toggleLabels();
-        elseif InputHandler.isPressed(key, toggleSimulation) then
+        elseif InputHandler.isPressed( key, toggleSimulation ) then
             LogReader.toggleSimulation();
-        elseif InputHandler.isPressed(key, toggleRewind) then
+        elseif InputHandler.isPressed( key, toggleRewind ) then
             LogReader.toggleRewind();
-        elseif InputHandler.isPressed(key, loadNextCommit) then
+        elseif InputHandler.isPressed( key, loadNextCommit ) then
             LogReader.loadNextCommit();
-        elseif InputHandler.isPressed(key, loadPrevCommit) then
+        elseif InputHandler.isPressed( key, loadPrevCommit ) then
             LogReader.loadPrevCommit();
-        elseif InputHandler.isPressed(key, toggleFullscreen) then
-            love.window.setFullscreen(not love.window.getFullscreen());
-        elseif InputHandler.isPressed(key, toggleTimeline) then
+        elseif InputHandler.isPressed( key, toggleFullscreen ) then
+            love.window.setFullscreen( not love.window.getFullscreen() );
+        elseif InputHandler.isPressed( key, toggleTimeline ) then
             timeline:toggle();
-        elseif InputHandler.isPressed(key, exit) then
-            ScreenManager.switch('selection', { log = log });
+        elseif InputHandler.isPressed( key, exit ) then
+            ScreenManager.switch( 'selection', { log = log } );
         end
     end
 
-    function self:mousepressed(x, y, b)
-        local pos = timeline:getCommitAt(x, y);
+    function self:mousepressed( x, y )
+        local pos = timeline:getCommitAt( x, y );
         if pos then
-            LogReader.setCurrentIndex(pos);
+            LogReader.setCurrentIndex( pos );
         end
     end
 
-    function self:mousemoved(x, y, dx, dy)
-        if love.mouse.isDown(1) then
-            camera:move(love.timer.getDelta(), dx * 0.5, dy * 0.5);
+    function self:mousemoved( _, _, dx, dy )
+        if love.mouse.isDown( 1 ) then
+            camera:move( love.timer.getDelta(), dx * 0.5, dy * 0.5 );
         end
     end
 
-    function self:wheelmoved(x, y)
+    function self:wheelmoved( x, y )
         local mx, my = love.mouse.getPosition();
-        if filePanel:intersects(mx, my) then
-            filePanel:wheelmoved(x, y);
+        if filePanel:intersects( mx, my ) then
+            filePanel:wheelmoved( x, y );
         else
-            camera:zoom(love.timer.getDelta(), y);
+            camera:zoom( love.timer.getDelta(), y );
         end
     end
 
-    function self:resize(nx, ny)
-        timeline:resize(nx, ny);
+    function self:resize( nx, ny )
+        timeline:resize( nx, ny );
     end
 
     return self;
