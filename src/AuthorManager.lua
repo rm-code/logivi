@@ -47,8 +47,10 @@ end
 
 ---
 -- Draws a list of all authors working on the project.
+-- @param rotation (number) The camera's current rotation.
+-- @param scale    (number) The camera's current scale.
 --
-function AuthorManager.drawLabels(rotation, scale)
+function AuthorManager.draw( rotation, scale )
     if visible then
         for _, author in pairs(authors) do
             author:draw(rotation, scale);
