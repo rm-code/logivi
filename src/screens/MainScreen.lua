@@ -185,12 +185,6 @@ function MainScreen.new()
         FileManager.reset();
     end
 
-    function self:quit()
-        if ConfigReader.getConfig( 'options' ).removeTmpFiles then
-            ConfigReader.removeTmpFiles();
-        end
-    end
-
     function self:keypressed( key )
         if InputHandler.isPressed( key, toggleAuthors ) then
             AuthorManager.setVisible( not AuthorManager.isVisible() );

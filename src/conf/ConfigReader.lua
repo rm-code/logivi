@@ -152,29 +152,6 @@ function ConfigReader.init()
     return config;
 end
 
-function ConfigReader.removeTmpFiles()
-    print('Removing temporary files...');
-    local function recursivelyDelete(item, depth)
-        local ws = '';
-        for _ = 1, depth do
-            ws = ws .. '    ';
-        end
-        print(ws .. item);
-        if love.filesystem.isDirectory(item) then
-            for _, child in pairs(love.filesystem.getDirectoryItems(item)) do
-                recursivelyDelete(item .. '/' .. child, depth + 1);
-                love.filesystem.remove(item .. '/' .. child);
-            end
-        elseif love.filesystem.isFile(item) then
-            love.filesystem.remove(item);
-        end
-        love.filesystem.remove(item);
-    end
-
-    recursivelyDelete('tmp', 0);
-    print('... Done!');
-end
-
 -- ------------------------------------------------
 -- Getters
 -- ------------------------------------------------
