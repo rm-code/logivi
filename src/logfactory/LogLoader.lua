@@ -37,16 +37,16 @@ local list;
 -- @param line
 -- @param tag
 --
-local function removeTag(line, tag)
-    return line:gsub(tag, '');
+local function removeTag( line, tag )
+    return line:gsub( tag, '' );
 end
 
 ---
 -- @param author
 --
-local function splitLine(line, delimiter)
+local function splitLine( line, delimiter )
     local tmp = {}
-    for part in line:gmatch('[^' .. delimiter .. ']+') do
+    for part in line:gmatch( '[^' .. delimiter .. ']+' ) do
         tmp[#tmp + 1] = part;
     end
     return tmp;
@@ -58,12 +58,12 @@ end
 -- and the path to the log files in those folders.
 -- @param dir
 --
-local function fetchProjectFolders(dir)
+local function fetchProjectFolders( dir )
     local folders = {};
 
-    for _, name in ipairs(love.filesystem.getDirectoryItems(dir)) do
+    for _, name in ipairs( love.filesystem.getDirectoryItems(dir) ) do
         local subdir = dir .. '/' .. name;
-        if love.filesystem.isDirectory(subdir) and love.filesystem.isFile(subdir .. '/' .. LOG_FILE) then
+        if love.filesystem.isDirectory( subdir ) and love.filesystem.isFile( subdir .. '/' .. LOG_FILE ) then
             folders[#folders + 1] = { name = name, path = subdir .. '/' .. LOG_FILE };
         end
     end
@@ -75,9 +75,9 @@ end
 -- Reads the whole log file and stores each line in a sequence.
 -- @param path
 --
-local function parseLog(path)
+local function parseLog( path )
     local file = {};
-    for line in love.filesystem.lines(path) do
+    for line in love.filesystem.lines( path ) do
         if line ~= '' then
             file[#file + 1] = line;
         end
@@ -89,9 +89,9 @@ end
 -- Turns a unix timestamp into a human readable date string.
 -- @param timestamp
 --
-local function createDateFromUnixTimestamp(timestamp)
-    local date = os.date('*t', tonumber(timestamp));
-    return string.format("%02d:%02d:%02d - %02d-%02d-%04d", date.hour, date.min, date.sec, date.day, date.month, date.year);
+local function createDateFromUnixTimestamp( timestamp )
+    local date = os.date( '*t', tonumber( timestamp ));
+    return string.format( "%02d:%02d:%02d - %02d-%02d-%04d", date.hour, date.min, date.sec, date.day, date.month, date.year );
 end
 
 ---
@@ -116,21 +116,21 @@ end
 -- Splits the log table into commits. Each commit is a new nested table.
 -- @param log
 --
-local function splitCommits(log)
+local function splitCommits( log )
     local commits = {};
     local index = 0;
     for i = 1, #log do
         local line = log[i];
 
-        if line:find(TAG_INFO) then
+        if line:find( TAG_INFO ) then
             index = index + 1;
             commits[index] = {};
 
-            local info = splitLine(removeTag(line, TAG_INFO), '|');
+            local info = splitLine( removeTag( line, TAG_INFO ), '|' );
             commits[index].author, commits[index].email, commits[index].date = info[1], info[2], info[3];
 
             -- Transform unix timestamp to a table containing a human-readable date.
-            commits[index].date = createDateFromUnixTimestamp(commits[index].date);
+            commits[index].date = createDateFromUnixTimestamp( commits[index].date );
         elseif commits[index] then
             commits[index][#commits[index] + 1] = buildCommitLine( line );
         end
@@ -143,8 +143,8 @@ end
 -- Returns the index of a stored log if it can be found.
 -- @param name
 --
-local function searchLog(name)
-    for i, log in ipairs(list) do
+local function searchLog( name )
+    for i, log in ipairs( list ) do
         if log.name == name then
             return i;
         end
@@ -155,7 +155,7 @@ end
 -- Checks if the log folder exists and if it is empty or not.
 --
 local function hasLogs()
-    return (love.filesystem.isDirectory(LOG_FOLDER) and #list ~= 0);
+    return ( love.filesystem.isDirectory( LOG_FOLDER ) and #list ~= 0 );
 end
 
 ---
@@ -165,13 +165,13 @@ end
 local function showWarning()
     local buttons = { "Proceed", "Open Folder", "Show Help (Online)", enterbutton = 1 };
 
-    local msg = string.format(WARNING_MESSAGE, buttons[1], buttons[2], buttons[3]);
+    local msg = string.format( WARNING_MESSAGE, buttons[1], buttons[2], buttons[3] );
 
-    local pressedbutton = love.window.showMessageBox(WARNING_TITLE, msg, buttons, 'warning', false);
+    local pressedbutton = love.window.showMessageBox( WARNING_TITLE, msg, buttons, 'warning', false );
     if pressedbutton == 2 then
-        love.system.openURL('file://' .. love.filesystem.getSaveDirectory());
+        love.system.openURL( 'file://' .. love.filesystem.getSaveDirectory() );
     elseif pressedbutton == 3 then
-        love.system.openURL('https://github.com/rm-code/logivi/wiki#instructions');
+        love.system.openURL( 'https://github.com/rm-code/logivi/wiki#instructions' );
     end
 end
 
@@ -179,10 +179,10 @@ end
 -- Write an example log file to the save directory.
 --
 local function createExample()
-    love.filesystem.createDirectory(EXAMPLE_TARGET_PATH);
-    if not love.filesystem.isFile(EXAMPLE_TARGET_PATH .. LOG_FILE) then
-        local example = love.filesystem.read(EXAMPLE_TEMPLATE_PATH);
-        love.filesystem.write(EXAMPLE_TARGET_PATH .. LOG_FILE, example);
+    love.filesystem.createDirectory( EXAMPLE_TARGET_PATH );
+    if not love.filesystem.isFile( EXAMPLE_TARGET_PATH .. LOG_FILE ) then
+        local example = love.filesystem.read( EXAMPLE_TEMPLATE_PATH );
+        love.filesystem.write( EXAMPLE_TARGET_PATH .. LOG_FILE, example );
     end
 end
 
@@ -193,23 +193,23 @@ end
 ---
 -- Try to load a certain log stored in the list.
 --
-function LogLoader.load(log)
-    local index = searchLog(log);
-    local rawLog = parseLog(list[index].path);
-    return splitCommits(rawLog);
+function LogLoader.load( log )
+    local index = searchLog( log );
+    local rawLog = parseLog( list[index].path );
+    return splitCommits( rawLog );
 end
 
 ---
 -- Loads information about a git repository.
 -- @param name
 --
-function LogLoader.loadInfo(name)
-    if love.filesystem.isFile(LOG_FOLDER .. '/' .. name .. '/' .. INFO_FILE) then
-        local successful, info = pcall(love.filesystem.load, LOG_FOLDER .. '/' .. name .. '/' .. INFO_FILE);
+function LogLoader.loadInfo( name )
+    if love.filesystem.isFile( LOG_FOLDER .. '/' .. name .. '/' .. INFO_FILE ) then
+        local successful, info = pcall( love.filesystem.load, LOG_FOLDER .. '/' .. name .. '/' .. INFO_FILE );
         if successful then
             info = info(); -- Run the lua file.
-            info.firstCommit = createDateFromUnixTimestamp(info.firstCommit);
-            info.latestCommit = createDateFromUnixTimestamp(info.latestCommit);
+            info.firstCommit = createDateFromUnixTimestamp( info.firstCommit );
+            info.latestCommit = createDateFromUnixTimestamp( info.latestCommit );
             info.aliases = info.aliases or {};
             info.colors = info.colors or {};
             return info;
@@ -231,12 +231,12 @@ end
 -- warning to the user.
 --
 function LogLoader.init()
-    list = fetchProjectFolders(LOG_FOLDER);
+    list = fetchProjectFolders( LOG_FOLDER );
 
     if not hasLogs() then
         createExample();
         showWarning();
-        list = fetchProjectFolders(LOG_FOLDER);
+        list = fetchProjectFolders( LOG_FOLDER );
     end
 
     return list;
