@@ -6,7 +6,6 @@ local ButtonList = require('src.ui.ButtonList');
 local Button = require('src.ui.components.Button');
 local Header = require('src.ui.components.Header');
 local StaticPanel = require('src.ui.components.StaticPanel');
-local ConfigReader = require('src.conf.ConfigReader');
 local InputHandler = require('src.InputHandler');
 local OpenFolderCommand = require('src.ui.commands.OpenFolderCommand');
 local RefreshLogCommand = require('src.ui.commands.RefreshLogCommand');
@@ -25,17 +24,6 @@ local SelectionScreen = {};
 
 local TEXT_FONT    = Resources.loadFont('SourceCodePro-Medium.otf', 15);
 local DEFAULT_FONT = Resources.loadFont('default', 12);
-
-local BUTTON_OK = 'Ok';
-local BUTTON_HELP = 'Help (online)';
-
-local URL_INSTRUCTIONS = 'https://github.com/rm-code/logivi#generating-git-logs-automatically';
-
-local WARNING_TITLE_NO_GIT   = 'Git is not available';
-local WARNING_MESSAGE_NO_GIT = 'LoGiVi can\'t find git in your PATH. This means LoGiVi won\'t be able to create git logs automatically, but can still be used to view pre-generated logs.';
-
-local WARNING_TITLE_NO_REPO   = 'Not a valid git repository';
-local WARNING_MESSAGE_NO_REPO = 'The path "%s" does not point to a valid git repository. Make sure you have specified the full path in the settings file.';
 
 local UI_ELEMENT_PADDING = 20;
 local UI_ELEMENT_MARGIN  =  5;
@@ -60,33 +48,6 @@ function SelectionScreen.new()
     -- ------------------------------------------------
     -- Private Functions
     -- ------------------------------------------------
-
-    ---
-    -- Checks if git is available and attempts to create git logs based on the
-    -- list of repositories read from the user's config file.
-    --
-    local function createGitLogs()
-        -- Exit early if git isn't available.
-        if not LogCreator.isGitAvailable() then
-            -- Show a warning to the user.
-            local pressedbutton = love.window.showMessageBox(WARNING_TITLE_NO_GIT, WARNING_MESSAGE_NO_GIT, { BUTTON_OK, BUTTON_HELP, enterbutton = 1, escapebutton = 1 }, 'warning', false);
-            if pressedbutton == 2 then
-                love.system.openURL(URL_INSTRUCTIONS);
-            end
-            return;
-        end
-
-        for name, path in pairs(config.repositories) do
-            -- Check if the path points to a valid git repository before attempting
-            -- to create a git log and the info file for it.
-            if LogCreator.isGitRepository(path) then
-                LogCreator.createGitLog(name, path);
-                LogCreator.createInfoFile(name, path);
-            else
-                love.window.showMessageBox(WARNING_TITLE_NO_REPO, string.format(WARNING_MESSAGE_NO_REPO, path), 'warning', false);
-            end
-        end
-    end
 
     ---
     -- Updates the project's window settings based on the config file.
@@ -117,14 +78,11 @@ function SelectionScreen.new()
     -- ------------------------------------------------
 
     function self:init( param )
-        config = ( param and param.config ) or ConfigReader.init();
+        config = param.config;
 
         -- Set the background color based on the option in the config file.
         love.graphics.setBackgroundColor(config.options.backgroundColor);
         setWindowMode(config.options);
-
-        -- Create git logs for repositories specified in the config file.
-        createGitLogs(config);
 
         -- Intitialise LogLoader.
         logList = LogLoader.init();
@@ -227,13 +185,11 @@ function SelectionScreen.new()
     end
 
     function self:directorydropped(path)
-        local temporaryConfig = {};
         local name = path:match("/?([^/]+)$"); -- Use the folder's name to store the repo.
-        temporaryConfig.repositories = {
-            [name] = path
-        };
 
-        createGitLogs(temporaryConfig);
+        config.repositories[name] = path;
+
+        ScreenManager.switch( 'loading', { config = config } );
 
         -- Intitialise LogLoader.
         logList = LogLoader.init();
