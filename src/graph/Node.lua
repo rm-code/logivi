@@ -175,7 +175,7 @@ function Node.new( id, x, y, anchor, parent, spritebatch, name )
         end
 
         -- Get the file color and extension from the FileManager and create the actual file object.
-        local color = FileManager.add( fileName, extension );
+        local color = FileManager.add( extension );
         files[fileName] = File.new( self:getX(), self:getY(), color, extension );
         files[fileName]:setState( 'add' );
         fileCount = fileCount + 1;
@@ -220,7 +220,7 @@ function Node.new( id, x, y, anchor, parent, spritebatch, name )
 
         -- Store a reference to the file which can be returned
         -- after the file has been removed from the table.
-        FileManager.remove( fileName, extension );
+        FileManager.remove( extension );
         files[fileName] = nil;
         fileCount = fileCount - 1;
 
