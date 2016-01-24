@@ -30,9 +30,9 @@ local observers;
 -- @param event
 -- @param ...
 --
-local function notify(event, ...)
+local function notify( event, ... )
     for i = 1, #observers do
-        observers[i]:receive(event, ...);
+        observers[i]:receive( event, ... );
     end
 end
 
@@ -41,7 +41,7 @@ end
 -- opposite of it.
 -- @param modifier
 --
-local function reverseGitStatus(modifier)
+local function reverseGitStatus( modifier )
     if modifier == MOD_ADD then
         return MOD_DELETE;
     elseif modifier == MOD_DELETE then
@@ -56,11 +56,11 @@ local function applyNextCommit()
     end
     index = index + 1;
 
-    notify(EVENT_NEW_COMMIT, log[index].email, log[index].author);
+    notify( EVENT_NEW_COMMIT, log[index].email, log[index].author );
 
     for i = 1, #log[index] do
         local change = log[index][i];
-        notify(EVENT_CHANGED_FILE, change.modifier, change.path, change.file, change.extension, 'normal');
+        notify( EVENT_CHANGED_FILE, change.modifier, change.path, change.file, change.extension, 'normal' );
     end
 end
 
@@ -69,11 +69,11 @@ local function reverseCurCommit()
         return;
     end
 
-    notify(EVENT_NEW_COMMIT, log[index].email, log[index].author);
+    notify( EVENT_NEW_COMMIT, log[index].email, log[index].author );
 
     for i = 1, #log[index] do
         local change = log[index][i];
-        notify(EVENT_CHANGED_FILE, reverseGitStatus(change.modifier), change.path, change.file, change.extension, 'normal');
+        notify( EVENT_CHANGED_FILE, reverseGitStatus(change.modifier), change.path, change.file, change.extension, 'normal' );
     end
 
     index = index - 1;
@@ -85,7 +85,7 @@ end
 -- and only are interested in additions and deletions.
 -- @param to -- The index of the commit to go to.
 --
-local function fastForward(to)
+local function fastForward( to )
     -- We start at index + 1 because the current index has already
     -- been loaded (or it was 0 and therefore nonrelevant anyway).
     for i = index + 1, to do
@@ -95,7 +95,7 @@ local function fastForward(to)
             local change = commit[j];
             -- Ignore modifications we just need to know about additions and deletions.
             if change.modifier ~= 'M' then
-                notify(EVENT_CHANGED_FILE, change.modifier, change.path, change.file, change.extension, 'fast');
+                notify( EVENT_CHANGED_FILE, change.modifier, change.path, change.file, change.extension, 'fast' );
             end
         end
     end
@@ -107,7 +107,7 @@ end
 -- and only are interested in additions and deletions.
 -- @param to -- The index of the commit to go to.
 --
-local function fastBackward(to)
+local function fastBackward( to )
     -- We start at the current index, because it has already been loaded
     -- and we have to reverse it too.
     for i = index, to, -1 do
@@ -122,7 +122,7 @@ local function fastBackward(to)
             local change = commit[j];
             -- Ignore modifications we just need to know about additions and deletions.
             if change.modifier ~= 'M' then
-                notify(EVENT_CHANGED_FILE, reverseGitStatus(change.modifier), change.path, change.file, change.extension, 'fast');
+                notify( EVENT_CHANGED_FILE, reverseGitStatus(change.modifier), change.path, change.file, change.extension, 'fast' );
             end
         end
     end
@@ -136,7 +136,7 @@ end
 -- Loads the file and stores it line for line in a lua table.
 -- @param logpath
 --
-function LogReader.init(gitlog, delay, playmode, autoplay)
+function LogReader.init( gitlog, delay, playmode, autoplay )
     log = gitlog;
 
     -- Set default values.
@@ -144,10 +144,10 @@ function LogReader.init(gitlog, delay, playmode, autoplay)
     if playmode == 'default' then
         rewind = false;
     elseif playmode == 'rewind' then
-        fastForward(#log);
+        fastForward( #log );
         rewind = true;
     else
-        error("Unsupported playmode '" .. playmode .. "' - please use either 'default' or 'rewind'");
+        error( "Unsupported playmode '" .. playmode .. "' - please use either 'default' or 'rewind'" );
     end
     commitTimer = 0;
     commitDelay = delay;
@@ -156,7 +156,7 @@ function LogReader.init(gitlog, delay, playmode, autoplay)
     observers = {};
 end
 
-function LogReader.update(dt)
+function LogReader.update( dt )
     if not play then return end
 
     commitTimer = commitTimer + dt;
@@ -196,14 +196,14 @@ end
 -- position. If the target commit is bigger than the
 -- current one, we fast-forward instead.
 --
-function LogReader.setCurrentIndex(ni)
+function LogReader.setCurrentIndex( ni )
     if log[ni] then
         if index == ni then
             return;
         elseif index < ni then
-            fastForward(ni);
+            fastForward( ni );
         elseif index > ni then
-            fastBackward(ni);
+            fastBackward( ni );
         end
     end
 end
@@ -224,7 +224,7 @@ end
 -- Register an observer.
 -- @param observer
 --
-function LogReader.register(observer)
+function LogReader.register( observer )
     observers[#observers + 1] = observer;
 end
 
