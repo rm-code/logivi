@@ -1,12 +1,6 @@
 local ScreenManager = require('lib.screenmanager.ScreenManager');
 
 -- ------------------------------------------------
--- Local Variables
--- ------------------------------------------------
-
-local showDebug = false;
-
--- ------------------------------------------------
 -- Local Functions
 -- ------------------------------------------------
 
@@ -20,24 +14,6 @@ local function checkSupport()
 
     print("\n----  SYSTEM   ---- ");
     print(love.system.getOS());
-end
-
-local function drawStats()
-    local h = love.graphics.getHeight();
-    love.graphics.setColor(100, 100, 100, 255);
-    love.graphics.rectangle('fill', 5, h - 185, 200, 200);
-    love.graphics.setColor(255, 255, 255, 255);
-    love.graphics.print(string.format("FT: %.3f ms", 1000 * love.timer.getAverageDelta()), 10, h - 180);
-    love.graphics.print(string.format("FPS: %.3f fps", love.timer.getFPS()), 10, h - 160);
-    love.graphics.print(string.format("MEM: %.3f kb", collectgarbage("count")), 10, h - 140);
-
-    local stats = love.graphics.getStats();
-    love.graphics.print(string.format("Drawcalls: %d", stats.drawcalls), 10, h - 120);
-    love.graphics.print(string.format("Canvas Switches: %d", stats.canvasswitches), 10, h - 100);
-    love.graphics.print(string.format("TextureMemory: %.2f kb", stats.texturememory / 1024), 10, h - 80);
-    love.graphics.print(string.format("Images: %d", stats.images), 10, h - 60);
-    love.graphics.print(string.format("Canvases: %d", stats.canvases), 10, h - 40);
-    love.graphics.print(string.format("Fonts: %d", stats.fonts), 10, h - 20);
 end
 
 -- ------------------------------------------------
@@ -68,10 +44,6 @@ end
 
 function love.draw()
     ScreenManager.draw();
-
-    if showDebug then
-        drawStats();
-    end
 end
 
 function love.update(dt)
@@ -90,10 +62,6 @@ function love.keypressed(key)
     -- Transform strings to numbers to fit the control values we read from the config file.
     if tonumber(key) then
         key = tonumber(key);
-    end
-
-    if key == 'f1' then
-        showDebug = not showDebug;
     end
 
     ScreenManager.keypressed(key);
