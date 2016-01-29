@@ -55,8 +55,8 @@ function AuthorManager.draw( rotation, scale )
         for _, author in pairs(authors) do
             author:draw(rotation, scale);
         end
+        love.graphics.draw( spritebatch );
     end
-    love.graphics.draw( spritebatch );
 end
 
 ---
