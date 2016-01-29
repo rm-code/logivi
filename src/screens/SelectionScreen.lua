@@ -64,9 +64,8 @@ function SelectionScreen.new()
     ---
     -- Checks if git is available and attempts to create git logs based on the
     -- list of repositories read from the user's config file.
-    -- @param options
     --
-    local function createGitLogs(config)
+    local function createGitLogs()
         -- Exit early if git isn't available.
         if not LogCreator.isGitAvailable() then
             -- Show a warning to the user.
@@ -117,8 +116,8 @@ function SelectionScreen.new()
     -- Public Functions
     -- ------------------------------------------------
 
-    function self:init(param)
-        config = ConfigReader.init();
+    function self:init( param )
+        config = ( param and param.config ) or ConfigReader.init();
 
         -- Set the background color based on the option in the config file.
         love.graphics.setBackgroundColor(config.options.backgroundColor);
@@ -185,7 +184,7 @@ function SelectionScreen.new()
     end
 
     function self:watchLog()
-        ScreenManager.switch('main', { log = info.name });
+        ScreenManager.switch( 'main', { log = info.name, config = config } );
     end
 
     function self:refreshLog()

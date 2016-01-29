@@ -3,7 +3,6 @@ local Screen = require('lib.screenmanager.Screen');
 local LogReader = require('src.logfactory.LogReader');
 local LogLoader = require('src.logfactory.LogLoader');
 local Camera = require('src.ui.CamWrapper');
-local ConfigReader = require('src.conf.ConfigReader');
 local AuthorManager = require('src.AuthorManager');
 local FileManager = require('src.FileManager');
 local Graph = require('src.graph.Graph');
@@ -56,6 +55,7 @@ function MainScreen.new()
     local filePanel;
     local timeline;
     local log;
+    local config;
 
     -- ------------------------------------------------
     -- Private Functions
@@ -64,9 +64,8 @@ function MainScreen.new()
     ---
     -- Assigns keybindings loaded from the config file to a
     -- local variable for faster access.
-    -- @param config
     --
-    local function assignKeyBindings( config )
+    local function assignKeyBindings()
         toggleAuthors = config.keyBindings.toggleAuthors;
         toggleFilePanel = config.keyBindings.toggleFileList;
         toggleLabels = config.keyBindings.toggleLabels;
@@ -122,7 +121,7 @@ function MainScreen.new()
         -- Store the name of the currently displayed log.
         log = param.log;
 
-        local config = ConfigReader.init();
+        config = param.config;
         local info = LogLoader.loadInfo( log );
 
         -- Load keybindings.
@@ -205,7 +204,7 @@ function MainScreen.new()
         elseif InputHandler.isPressed( key, toggleTimeline ) then
             timeline:toggle();
         elseif InputHandler.isPressed( key, exit ) then
-            ScreenManager.switch( 'selection', { log = log } );
+            ScreenManager.switch( 'selection', { log = log, config = config } );
         end
     end
 
