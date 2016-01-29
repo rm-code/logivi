@@ -1,5 +1,9 @@
 # LoGiVi
 
+[![Version](https://img.shields.io/badge/Version-0432-blue.svg)](https://github.com/rm-code/logivi/releases/latest)
+[![LOVE](https://img.shields.io/badge/L%C3%96VE-0.10.0-EA316E.svg)](http://love2d.org/)
+[![License](http://img.shields.io/badge/Licence-MIT-brightgreen.svg)](LICENSE.md)
+
 LoGiVi is a [Git](https://git-scm.com/)-respository visualisation tool inspired by [Gource](http://gource.io/) and __currently in development__. It was written from scratch using [Lua](http://www.lua.org/) and the [LÖVE](https://love2d.org/) framework.
 
 Note: Since version [0375](https://github.com/rm-code/logivi/releases/tag/0375) LoGiVi uses version [0.10.0](https://love2d.org/wiki/0.10.0) of the LÖVE framework.
