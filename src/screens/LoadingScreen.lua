@@ -8,6 +8,17 @@ local Resources = require('src.Resources');
 -- Constants
 -- ------------------------------------------------
 
+local BUTTON_OK = 'Ok';
+local BUTTON_HELP = 'Help (online)';
+
+local URL_INSTRUCTIONS = 'https://github.com/rm-code/logivi#generating-git-logs-automatically';
+
+local WARNING_TITLE_NO_GIT   = 'Git is not available';
+local WARNING_MESSAGE_NO_GIT = 'LoGiVi can\'t find git in your PATH. This means LoGiVi won\'t be able to create git logs automatically, but can still be used to view pre-generated logs.';
+
+local WARNING_TITLE_NO_REPO   = 'Not a valid git repository';
+local WARNING_MESSAGE_NO_REPO = 'The path "%s" does not point to a valid git repository. Make sure you have specified the full path in the settings file.';
+
 local SPRITE_SIZE = 24;
 local SPRITE_SCALE_FACTOR = SPRITE_SIZE / 256;
 local SPRITE_OFFSET = 128;
@@ -95,11 +106,25 @@ function LoadingScreen.new()
     function self:update( dt )
         graph:update( dt );
 
-        local err = thread:getError()
-        assert( not err, err );
+        local threadError = thread:getError()
+        assert( not threadError, threadError );
 
-        local channel = love.thread.getChannel( 'info' );
-        local info = channel:pop();
+        local errChannel = love.thread.getChannel( 'error' );
+        local err = errChannel:pop();
+        if err then
+            if err.msg == 'git_not_found' then
+                -- Show a warning to the user.
+                local pressedbutton = love.window.showMessageBox(WARNING_TITLE_NO_GIT, WARNING_MESSAGE_NO_GIT, { BUTTON_OK, BUTTON_HELP, enterbutton = 1, escapebutton = 1 }, 'warning', false);
+                if pressedbutton == 2 then
+                    love.system.openURL(URL_INSTRUCTIONS);
+                end
+            elseif err.msg == 'no_repository' then
+                love.window.showMessageBox(WARNING_TITLE_NO_REPO, string.format(WARNING_MESSAGE_NO_REPO, err.data), 'warning', false);
+            end
+        end
+
+        local infoChannel = love.thread.getChannel( 'info' );
+        local info = infoChannel:pop();
         if info then
             graph:addNode( info, love.graphics.getWidth() * 0.5 + randomSign() * love.math.random( 5, 15 ), love.graphics.getHeight() * 0.5 + randomSign() * love.math.random( 5, 15 ));
             graph:connectIDs( '', info );
