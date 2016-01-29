@@ -7,10 +7,10 @@ local PROJECT_IDENTITY = "rmcode_LoGiVi";
 local LOVE_VERSION = "0.10.0";
 
 ---
--- Initialise löve's config file.
--- @param t
+-- Initialise LÖVE's config file.
+-- @param t (table) The table containing LÖVE's default values.
 --
-function love.conf(t)
+function love.conf( t )
     t.identity = PROJECT_IDENTITY;
     t.version = LOVE_VERSION;
     t.console = true;
@@ -50,6 +50,7 @@ end
 
 ---
 -- Returns the project's version.
+-- @return (string) The project's version.
 --
 function getVersion()
     if PROJECT_VERSION then
@@ -59,6 +60,7 @@ end
 
 ---
 -- Returns the project's title.
+-- @return (string) The project's title.
 --
 function getTitle()
     if PROJECT_TITLE then
