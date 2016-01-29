@@ -87,10 +87,6 @@ function LoadingScreen.new()
     function self:init( param )
         config = ( param and param.config ) or ConfigReader.init();
 
-        for i, v in pairs(config.repositories) do
-            print(i,v)
-        end
-
         graph = GraphLibrary.new();
         graph:addNode( '', love.graphics.getWidth() * 0.5, love.graphics.getHeight() * 0.5, true );
 
