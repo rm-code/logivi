@@ -1,4 +1,29 @@
-local Resources = require('src.Resources');
+local Resources = require( 'src.Resources' );
+
+-- ------------------------------------------------
+-- Constants
+-- ------------------------------------------------
+
+local LABEL_FONT   = Resources.loadFont( 'SourceCodePro-Medium.otf', 20 );
+local DEFAULT_FONT = Resources.loadFont( 'default', 12 );
+
+local AVATAR_SIZE = 48;
+local INACTIVITY_TIMER = 2;
+local MOVEMENT_TIMER = 0.5;
+local FADE_FACTOR = 125;
+local DEFAULT_AVATAR_ALPHA = 255;
+local DEFAULT_LINK_ALPHA = 100;
+local DAMPING_FACTOR = 0.90;
+local FORCE_MAX = 2;
+local FORCE_SPRING = -0.5;
+local BEAM_WIDTH = 3;
+local MOVEMENT_SPEED = 32;
+
+local LINK_COLOR = {
+    A = { r =   0, g = 255, b = 0 },
+    D = { r = 255, g =   0, b = 0 },
+    M = { r = 254, g = 140, b = 0 },
+};
 
 -- ------------------------------------------------
 -- Module
@@ -7,39 +32,15 @@ local Resources = require('src.Resources');
 local Author = {};
 
 -- ------------------------------------------------
--- Constants
--- ------------------------------------------------
-
-local LABEL_FONT   = Resources.loadFont('SourceCodePro-Medium.otf', 20);
-local DEFAULT_FONT = Resources.loadFont('default', 12);
-
-local AVATAR_SIZE = 48;
-local AUTHOR_INACTIVITY_TIMER = 2;
-local LINK_INACTIVITY_TIMER = 2;
-local FADE_FACTOR = 125;
-local DEFAULT_AVATAR_ALPHA = 255;
-local DEFAULT_LINK_ALPHA = 100;
-local DAMPING_FACTOR = 0.90;
-local FORCE_MAX = 2;
-local FORCE_SPRING = -0.5;
-local BEAM_WIDTH = 3;
-
-local LINK_COLOR = {
-    A = { 0, 255, 0 },
-    D = { 255, 0, 0 },
-    M = { 254, 140, 0 },
-};
-
--- ------------------------------------------------
 -- Constructor
 -- ------------------------------------------------
 
-function Author.new(name, avatar, spritebatch, cx, cy)
+function Author.new( name, avatar, spritebatch, cx, cy )
     local self = {};
 
     local active = true;
 
-    local posX, posY = cx + love.math.random(5, 200) * (love.math.random(0, 1) == 0 and -1 or 1), cy + love.math.random(5, 200) * (love.math.random(0, 1) == 0 and -1 or 1);
+    local posX, posY = cx + love.math.random( 5, 200 ) * ( love.math.random( 0, 1 ) == 0 and -1 or 1 ), cy + love.math.random( 5, 200 ) * ( love.math.random( 0, 1 ) == 0 and -1 or 1 );
     local accX, accY = 0, 0;
     local velX, velY = 0, 0;
 
@@ -55,10 +56,20 @@ function Author.new(name, avatar, spritebatch, cx, cy)
     -- Private Functions
     -- ------------------------------------------------
 
-    local function clamp(min, val, max)
-        return math.max(min, math.min(val, max));
+    ---
+    -- Clamps a value to a certain range.
+    -- @param min (number) The minimum value to clamp to.
+    -- @param val (number) The value to clamp.
+    -- @param max (number) The maximum value to clamp to.
+    -- @return    (number) The clamped value.
+    --
+    local function clamp( min, val, max )
+        return math.max( min, math.min( val, max ));
     end
 
+    ---
+    -- Resets an author's state.
+    --
     local function reactivate()
         inactivity = 0;
         active = true;
@@ -66,75 +77,120 @@ function Author.new(name, avatar, spritebatch, cx, cy)
         linkAlpha = DEFAULT_LINK_ALPHA;
     end
 
-    local function move(dt)
-        velX = (velX + accX * dt * 32) * DAMPING_FACTOR;
-        velY = (velY + accY * dt * 32) * DAMPING_FACTOR;
+    ---
+    -- Deactivates an author and hides resets his links.
+    --
+    local function deactivate()
+        active = false;
+        self:resetLinks();
+    end
+
+    ---
+    -- Moves the author.
+    -- @param dt (number) The delta time between frames.
+    --
+    local function move( dt )
+        velX = ( velX + accX * dt * MOVEMENT_SPEED ) * DAMPING_FACTOR;
+        velY = ( velY + accY * dt * MOVEMENT_SPEED ) * DAMPING_FACTOR;
         posX = posX + velX;
         posY = posY + velY;
     end
 
-    local function applyForce(fx, fy)
-        accX = clamp(-FORCE_MAX, accX + fx, FORCE_MAX);
-        accY = clamp(-FORCE_MAX, accY + fy, FORCE_MAX);
+    ---
+    -- Changes the acceleration of an author based on the force values.
+    -- The actual moving is handled by the move function.
+    -- @param fx (number) The force along the x-axis.
+    -- @param fy (number) The force along the y-axis.
+    --
+    local function applyForce( fx, fy )
+        accX = clamp( -FORCE_MAX, accX + fx, FORCE_MAX );
+        accY = clamp( -FORCE_MAX, accY + fy, FORCE_MAX );
     end
 
     -- ------------------------------------------------
     -- Public Functions
     -- ------------------------------------------------
 
-    function self:draw(rotation, scale)
+    ---
+    -- Draws the author.
+    -- @param rotation (number) The camera's rotation.
+    -- @param scale    (number) The camera's zoom factor.
+    --
+    function self:draw( rotation, scale )
         if active then
-            love.graphics.setLineWidth(BEAM_WIDTH);
+            love.graphics.setLineWidth( BEAM_WIDTH );
             for i = 1, #links do
-                love.graphics.setColor(LINK_COLOR[links[i].mod][1], LINK_COLOR[links[i].mod][2], LINK_COLOR[links[i].mod][3], linkAlpha);
-                love.graphics.line(posX, posY, links[i].file:getX(), links[i].file:getY());
+                local link = links[i];
+                local type = link.mod;
+                love.graphics.setColor( LINK_COLOR[type].r, LINK_COLOR[type].g, LINK_COLOR[type].b, linkAlpha );
+                love.graphics.line( posX, posY, link.file:getX(), link.file:getY() );
             end
-            love.graphics.setLineWidth(1);
+            love.graphics.setLineWidth( 1 );
             love.graphics.setColor( 255, 255, 255, avatarAlpha );
-            love.graphics.setFont(LABEL_FONT);
-            love.graphics.print(name, posX, posY, -rotation, 1 / scale, 1 / scale, LABEL_FONT:getWidth(name) * 0.5, - AVATAR_SIZE * scale);
-            love.graphics.setFont(DEFAULT_FONT);
-            love.graphics.setColor(255, 255, 255, 255);
+            love.graphics.setFont( LABEL_FONT );
+            love.graphics.print( name, posX, posY, -rotation, 1 / scale, 1 / scale, LABEL_FONT:getWidth(name) * 0.5, - AVATAR_SIZE * scale );
+            love.graphics.setFont( DEFAULT_FONT );
+            love.graphics.setColor( 255, 255, 255, 255 );
         end
     end
 
-    function self:update( dt, cameraRotation)
+    ---
+    -- Updates the author.
+    -- This function checks how much time has passed since the author last was
+    -- active. If it was inactive too long it starts fading out and eventually
+    -- is deactivated. It can be reactivated via reactivate().
+    -- @param dt             (number) The delta time between frames.
+    -- @param cameraRotation (number) The camera's rotation.
+    --
+    function self:update( dt, cameraRotation )
         if active then
-            move(dt);
+            move( dt );
 
-            inactivity = inactivity + dt;
-            if inactivity > AUTHOR_INACTIVITY_TIMER then
-                avatarAlpha = clamp(0, avatarAlpha - dt * FADE_FACTOR, 255);
+            -- Fade out the author after it has been inactive for too long.
+            if inactivity > INACTIVITY_TIMER then
+                avatarAlpha = clamp( 0, avatarAlpha - dt * FADE_FACTOR, 255 );
+                linkAlpha   = clamp( 0, linkAlpha   - dt * FADE_FACTOR, 255 );
             end
-            if inactivity > LINK_INACTIVITY_TIMER then
-                linkAlpha = clamp(0, linkAlpha - dt * FADE_FACTOR, 255);
-            end
-            if inactivity > 0.5 then
+
+            -- Stop the author's movement after a short inactivity.
+            if inactivity > MOVEMENT_TIMER then
                 accX, accY = 0, 0;
             end
+
+            -- Deactivate the author when it becomes fully invisible.
             if avatarAlpha <= 0 then
-                active = false;
-                self:resetLinks();
+                deactivate();
             end
 
             spritebatch:setColor( 255, 255, 255, avatarAlpha );
             spritebatch:add( posX, posY, -cameraRotation, AVATAR_SIZE / aw, AVATAR_SIZE / ah, aw * 0.5, ah * 0.5 );
+
+            inactivity = inactivity + dt;
         end
     end
 
-    function self:addLink(file, modifier)
+    ---
+    -- Adds a link to the author.
+    -- This represents a file the author has either added, modified or deleted.
+    -- @param file     (table)  The file to link to.
+    -- @param modifier (string) The kind of modifier used on the file.
+    --
+    function self:addLink( file, modifier )
         reactivate();
         links[#links + 1] = { file = file, mod = modifier };
 
         local dx, dy = posX - file:getX(), posY - file:getY();
-        local distance = math.sqrt(dx * dx + dy * dy);
+        local distance = math.sqrt( dx * dx + dy * dy );
         dx = dx / distance;
         dy = dy / distance;
 
         local strength = FORCE_SPRING * distance;
-        applyForce(dx * strength, dy * strength);
+        applyForce( dx * strength, dy * strength );
     end
 
+    ---
+    -- Removes an old set of links by allocating a new table.
+    --
     function self:resetLinks()
         links = {};
     end
