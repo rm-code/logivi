@@ -1,11 +1,5 @@
-local Resources = require('src.Resources');
-local Author = require('src.Author');
-
--- ------------------------------------------------
--- Module
--- ------------------------------------------------
-
-local AuthorManager = {};
+local Resources = require( 'src.Resources' );
+local Author = require( 'src.Author' );
 
 -- ------------------------------------------------
 -- Constants
@@ -14,7 +8,13 @@ local AuthorManager = {};
 local AVATAR_SPRITE  = Resources.loadImage( 'avatar.png' );
 
 -- ------------------------------------------------
--- Local Variables
+-- Module
+-- ------------------------------------------------
+
+local AuthorManager = {};
+
+-- ------------------------------------------------
+-- Private Class Variables
 -- ------------------------------------------------
 
 local authors;
@@ -31,14 +31,19 @@ local graphCenterX, graphCenterY;
 -- Public Functions
 -- ------------------------------------------------
 
-function AuthorManager.init(naliases, visibility)
+---
+-- Initialises the AuthorManager.
+-- @param naliases (table)   Aliases used to replace author names.
+-- @param nvisible (boolean) Wether to hide or show the AuthorManager.
+--
+function AuthorManager.init( naliases, nvisible )
     -- Set up the table to store all authors.
     authors = {};
 
     addresses = {};
     aliases = naliases;
 
-    visible = visibility;
+    visible = nvisible;
 
     graphCenterX, graphCenterY = 0, 0;
 
@@ -61,59 +66,56 @@ end
 
 ---
 -- Updates all authors.
--- @param dt
+-- @param dt (number) The delta time between frames.
 --
 function AuthorManager.update( dt, cameraRotation )
     spritebatch:clear();
-    for name, author in pairs(authors) do
+    for _, author in pairs( authors ) do
         author:update( dt, cameraRotation );
     end
 end
 
 ---
 -- Adds a link from the current author to a file.
--- @param file
+-- @param file     (table)  The file to link to.
+-- @param modifier (string) The kind of modifier used on the file.
 --
-function AuthorManager.addFileLink(file, modifier)
-    activeAuthor:addLink(file, modifier)
+function AuthorManager.addFileLink( file, modifier )
+    activeAuthor:addLink( file, modifier )
 end
 
 ---
 -- Receives a notification from an observable.
--- @param self
--- @param event
--- @param ...
+-- @param self  (table)  A reference to the AuthorManager table.
+-- @param event (string) The identifier for a particular event.
+-- @param ...   (vararg) One or multiple values sent with the event.
 --
-function AuthorManager.receive(self, event, ...)
+function AuthorManager.receive( self, event, ... )
     if event == 'NEW_COMMIT' then
-        AuthorManager.setCommitAuthor(...);
+        AuthorManager.setCommitAuthor( ... );
     elseif event == 'GRAPH_UPDATE_FILE' then
-        AuthorManager.addFileLink(...)
+        AuthorManager.addFileLink( ... )
     elseif event == 'GRAPH_UPDATE_CENTER' then
-        AuthorManager.setGraphCenter(...);
+        AuthorManager.setGraphCenter( ... );
     end
 end
 
 ---
--- Sets the author of the currently processed commit and resets the previously
--- active one. If he doesn't exist yet he will be created and added to the list
--- of authors for. Before storing the author the function checks the config file
--- to see if an alias is associated with the specific email address.
--- If it is, it will use the alias and ignore the name found in the log file.
--- If there isn't an alias, it will check if there already is another nickname
--- stored for that email address. If there isn't, it will use the nickname found
--- in the log.
--- @param nemail
--- @param nauthor
--- @param cx
--- @param cy
+-- Sets the author of the currently processed commit to be the active author.
+-- @param email (string) The email adress of the author to set.
+-- @param name  (string) The name of the author to set.
 --
-function AuthorManager.setCommitAuthor(nemail, nauthor)
+function AuthorManager.setCommitAuthor( email, name )
+    -- Reset the previous author.
     if activeAuthor then activeAuthor:resetLinks() end
 
-    local nickname = aliases[nemail] or addresses[nemail] or nauthor;
+    -- Check if we already have an alias or a name for this email address. If
+    -- not we use the author's name.
+    local nickname = aliases[email] or addresses[email] or name;
+
+    -- If we don't have an author for that name yet, we create it.
     if not authors[nickname] then
-        addresses[nemail] = nauthor; -- Store this name as the default for this email address.
+        addresses[email] = name; -- Store this name as the default for this email address.
         authors[nickname] = Author.new( nickname, AVATAR_SPRITE, spritebatch, graphCenterX, graphCenterY );
     end
 
@@ -121,25 +123,26 @@ function AuthorManager.setCommitAuthor(nemail, nauthor)
 end
 
 ---
--- Shows / Hides authors.
--- @param nv
+-- Sets the visibility of all authors.
+-- @param nv (boolean) Wether or not to display authors.
 --
-function AuthorManager.setVisible(nv)
+function AuthorManager.setVisible( nv )
     visible = nv;
 end
 
 ---
--- Returns visibility of authors.
+-- Returns the visibility of all authors.
 --
 function AuthorManager.isVisible()
     return visible;
 end
 
 ---
--- @param ncx
--- @param ncy
+-- Sets the graph's center coordinates.
+-- @param ncx (number) The graph's center along the x-axis.
+-- @param ncy (number) The graph's center along the y-axis.
 --
-function AuthorManager.setGraphCenter(ncx, ncy)
+function AuthorManager.setGraphCenter( ncx, ncy )
     graphCenterX, graphCenterY = ncx, ncy;
 end
 
