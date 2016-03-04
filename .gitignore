@@ -40,4 +40,5 @@ luac.out
 *.hex
 
 # IntelliJ Idea Project Files
+*.iml
 .idea
