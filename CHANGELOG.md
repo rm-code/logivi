@@ -17,8 +17,8 @@
 - Added scaling for folder and name labels based on the camera's zoom factor
 - Added MessageBox which displays a warning in case git isn't found on the user's system (Closes [#50](https://github.com/rm-code/logivi/issues/50))
 - Added mouse panning and scaling (Closes [#45](https://github.com/rm-code/logivi/issues/45))
-	- The mouse can be used to drag around the camera while the left button is pressed
-	- The mouse wheel can be used to zoom in and out
+    - The mouse can be used to drag around the camera while the left button is pressed
+    - The mouse wheel can be used to zoom in and out
 
 ### Fixes
 - Fixed [#51](https://github.com/rm-code/logivi/issues/51) - Fixed crash caused by faulty variable
@@ -84,20 +84,20 @@
 ### Additions
 - Added keybinding for easy exiting
 - Added selection screen
-	- LoGiVi can keep track of multiple git logs
-	- User can select which log to visualize on the selections screen
-	- User can use "exit"-key to return to the selection screen
-	- Log-selection list is scrollable with the mouse wheel
-	- Added watch button which takes the user to the visualization of the selected log
+    - LoGiVi can keep track of multiple git logs
+    - User can select which log to visualize on the selections screen
+    - User can use "exit"-key to return to the selection screen
+    - Log-selection list is scrollable with the mouse wheel
+    - Added watch button which takes the user to the visualization of the selected log
 - Added example log which will be written to the save directory if no logs are found
 - Added option to specify a custom color for a file extension in the config file
 - Git logs can now be created from within LoGiVi (Closes [#3](https://github.com/rm-code/logivi/issues/3))
-	- The user can specify the path to a local repository in the config file
-	- LoGiVi will automatically create a log and load this repository on start
-	- Information about the repository will be automatically written to the project folder (first commit, latest commit, total number of commits)
-		- This currently doesn't work on Windows (See [#28](https://github.com/rm-code/logivi/issues/28))
-		- Information is displayed on the info panel
-	- Added a refresh button to the SelectionScreen's info panel, which can be used to update the selected log
+    - The user can specify the path to a local repository in the config file
+    - LoGiVi will automatically create a log and load this repository on start
+    - Information about the repository will be automatically written to the project folder (first commit, latest commit, total number of commits)
+        - This currently doesn't work on Windows (See [#28](https://github.com/rm-code/logivi/issues/28))
+        - Information is displayed on the info panel
+    - Added a refresh button to the SelectionScreen's info panel, which can be used to update the selected log
 - Added function to sort files based on their extension while placing them around their folder node (Closes [#22](https://github.com/rm-code/logivi/issues/22))
 - Added button to SelectionScreen which opens the save directory
 - Added tooltips
@@ -137,9 +137,9 @@
 - Added keybinding for reversing the graph creation (will run back until it reaches the first commit)
 - Added keybinding for toggling fullscreen mode
 - Added a timeline
-	- Indicates the current position of the log compared to the total commit history and shows the date of the currently indexed commit
-	- Allows the user to quickly jump around in time (forward and backwards) while still rendering the full graph (Closes [#10](https://github.com/rm-code/logivi/issues/10))
-	- Can be hidden via keybinding or in the config file
+    - Indicates the current position of the log compared to the total commit history and shows the date of the currently indexed commit
+    - Allows the user to quickly jump around in time (forward and backwards) while still rendering the full graph (Closes [#10](https://github.com/rm-code/logivi/issues/10))
+    - Can be hidden via keybinding or in the config file
 - Added option to the config file which makes the visualization start at the end of the git log (so it starts with the newest commit and moves towards the oldest)
 - Added option to disable autoplay in the config file
 
@@ -191,7 +191,7 @@
 ### Additions
 - Added debug information about the user's system and supported features of the LÖVE framework which will be printed to the console
 - Added configuration file reader which will contain all options for LoGiVi
-	- This means we can get rid of the _aliases_ and _avatars_ files since they now are bundled in the config file
+    - This means we can get rid of the _aliases_ and _avatars_ files since they now are bundled in the config file
 - Added option to set a background color in the configuration file
 - Added option for setting a resolution in the configuration file
 - Added possibility use local images as avatars
@@ -211,10 +211,10 @@
 
 ### Other Changes
 - Rewrote most of the graph system
-	- The graph is structured and handled completely different than before with files, folder nodes and edges being independent from each other
-	- Gets rid of a lot of issues like edges overlaying other nodes
-	- The arrangement of files around folder nodes is no longer updated every frame
-	- Major improvements in memory usage, performance and garbage production
+    - The graph is structured and handled completely different than before with files, folder nodes and edges being independent from each other
+    - Gets rid of a lot of issues like edges overlaying other nodes
+    - The arrangement of files around folder nodes is no longer updated every frame
+    - Major improvements in memory usage, performance and garbage production
 - Updated log reader to separate commits based on the author tag instead of looking for the "special" logivi_commit tag (which was pretty useless anyway)
 - Updated log reader to digest unix timestamps and transform them into human readable dates
 - Updated arrangement of file nodes to make them fill up the empty space where the folder nodes used to be
@@ -233,16 +233,16 @@
 
 ### Additions
 - Added (rudimentary) Force-Directed Graph which - visualizes the files and folders of a git repository at a given point in time
-	- Files are represented as evenly distributed leaves around their parent folder node
-		- Depending on the amount of files in one folder new folders will be created automatically)
-		- Modified files are colored red and fade back to their original color over time
-	- Folders are represented as single green dots (this will be changed in one of the next releases) and are connected by lines
+    - Files are represented as evenly distributed leaves around their parent folder node
+        - Depending on the amount of files in one folder new folders will be created automatically)
+        - Modified files are colored red and fade back to their original color over time
+    - Folders are represented as single green dots (this will be changed in one of the next releases) and are connected by lines
 - Added list of all authors contributing to the project
 - Added list of all file extensions found in the project
 - Added coloring of file nodes based on their file extensions
 - Added camera which keeps tracking the generated graph automatically
 - Added floating authors
-	- Authors will show links to the files they currently edit
-	- Authors can be assigned an alias
-	- Authors can be assigned an avatar (grabbed online)
+    - Authors will show links to the files they currently edit
+    - Authors can be assigned an alias
+    - Authors can be assigned an avatar (grabbed online)
 - Added warning message if no log file can be found
