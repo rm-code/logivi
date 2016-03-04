@@ -57,6 +57,8 @@ function LoadingScreen.new()
 
     local loadingTimer;
 
+    local colors;
+
     -- ------------------------------------------------
     -- Private Functions
     -- ------------------------------------------------
@@ -97,6 +99,10 @@ function LoadingScreen.new()
         dotTimer = 0;
 
         loadingTimer = 0;
+
+        colors = {
+            [''] = { 255, 255, 255 }
+        };
     end
 
     function self:update( dt )
@@ -122,6 +128,11 @@ function LoadingScreen.new()
         local infoChannel = love.thread.getChannel( 'info' );
         local info = infoChannel:pop();
         if info then
+            colors[info] = {
+                love.math.random( 0, 255 ),
+                love.math.random( 0, 255 ),
+                love.math.random( 0, 255 )
+            };
             graph:addNode( info, love.graphics.getWidth() * 0.5 + randomSign() * love.math.random( 5, 15 ), love.graphics.getHeight() * 0.5 + randomSign() * love.math.random( 5, 15 ));
             graph:connectIDs( '', info );
         end
@@ -138,7 +149,9 @@ function LoadingScreen.new()
     function self:draw()
         graph:draw( function( node )
             local x, y = node:getPosition();
+            love.graphics.setColor( colors[node:getID()] );
             love.graphics.draw( FILE_SPRITE, x, y, 0, SPRITE_SCALE_FACTOR, SPRITE_SCALE_FACTOR, SPRITE_OFFSET, SPRITE_OFFSET );
+            love.graphics.setColor( 255, 255, 255 );
             love.graphics.setFont( LABEL_FONT );
             love.graphics.print( node:getID(), x, y, 0, 1, 1, -16, -16 );
             love.graphics.setFont( DEFAULT_FONT );
