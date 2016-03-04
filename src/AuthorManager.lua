@@ -1,5 +1,6 @@
 local Resources = require( 'src.Resources' );
 local Author = require( 'src.Author' );
+local Messenger = require( 'src.messenger.Messenger' );
 
 -- ------------------------------------------------
 -- Constants
@@ -85,22 +86,6 @@ function AuthorManager.addFileLink( file, modifier )
 end
 
 ---
--- Receives a notification from an observable.
--- @param self  (table)  A reference to the AuthorManager table.
--- @param event (string) The identifier for a particular event.
--- @param ...   (vararg) One or multiple values sent with the event.
---
-function AuthorManager.receive( self, event, ... )
-    if event == 'NEW_COMMIT' then
-        AuthorManager.setCommitAuthor( ... );
-    elseif event == 'GRAPH_UPDATE_FILE' then
-        AuthorManager.addFileLink( ... )
-    elseif event == 'GRAPH_UPDATE_CENTER' then
-        AuthorManager.setGraphCenter( ... );
-    end
-end
-
----
 -- Sets the author of the currently processed commit to be the active author.
 -- @param email (string) The email adress of the author to set.
 -- @param name  (string) The name of the author to set.
@@ -145,6 +130,22 @@ end
 function AuthorManager.setGraphCenter( ncx, ncy )
     graphCenterX, graphCenterY = ncx, ncy;
 end
+
+-- ------------------------------------------------
+-- Observed Events
+-- ------------------------------------------------
+
+Messenger.observe( 'NEW_COMMIT', function( ... )
+    AuthorManager.setCommitAuthor( ... );
+end)
+
+Messenger.observe( 'GRAPH_UPDATE_FILE', function( ... )
+    AuthorManager.addFileLink( ... );
+end)
+
+Messenger.observe( 'GRAPH_UPDATE_CENTER', function( ... )
+    AuthorManager.setGraphCenter( ... );
+end)
 
 -- ------------------------------------------------
 -- Return Module

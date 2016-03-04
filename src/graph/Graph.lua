@@ -1,6 +1,7 @@
 local Node = require('src.graph.Node');
 local Resources = require('src.Resources');
 local GraphLibrary = require('lib.graphoon.Graphoon').Graph;
+local Messenger = require('src.messenger.Messenger');
 
 -- ------------------------------------------------
 -- Module
@@ -40,8 +41,6 @@ local EDGE_COLOR = { 60, 60, 60, 255 };
 function Graph.new( edgeWidth, showLabels )
     local self = {};
 
-    local observers = {};
-
     local spritebatch = love.graphics.newSpriteBatch( FILE_SPRITE, 10000, 'stream' );
 
     -- Create a new graph class.
@@ -59,17 +58,6 @@ function Graph.new( edgeWidth, showLabels )
     --
     local function randomSign()
         return love.math.random( 0, 1 ) == 0 and -1 or 1;
-    end
-
-    ---
-    -- Notify observers about the event.
-    -- @param event (string)  The event identifier.
-    -- @param ...   (varargs) Variable arguments.
-    --
-    local function notify( event, ... )
-        for i = 1, #observers do
-            observers[i]:receive( event, ... );
-        end
     end
 
     ---
@@ -159,7 +147,7 @@ function Graph.new( edgeWidth, showLabels )
 
         -- We only notify observers if the graph isn't modifed in fast forward / rewind mode.
         if mode == 'normal' and modifiedFile then
-            notify( EVENT_UPDATE_FILE, modifiedFile, modifier );
+            Messenger.publish( EVENT_UPDATE_FILE, modifiedFile, modifier );
         end
     end
 
@@ -205,8 +193,8 @@ function Graph.new( edgeWidth, showLabels )
             end
         end);
 
-        notify( EVENT_UPDATE_CENTER, graph:getCenter() );
-        notify( EVENT_UPDATE_DIMENSIONS, graph:getBoundaries() );
+        Messenger.publish( EVENT_UPDATE_CENTER, graph:getCenter() );
+        Messenger.publish( EVENT_UPDATE_DIMENSIONS, graph:getBoundaries() );
     end
 
     ---
@@ -216,24 +204,13 @@ function Graph.new( edgeWidth, showLabels )
         showLabels = not showLabels;
     end
 
-    ---
-    -- Registers an observer.
-    -- @param observer (Object) The observer to add.
-    --
-    function self:register( observer )
-        observers[#observers + 1] = observer;
-    end
+    -- ------------------------------------------------
+    -- Observed Events
+    -- ------------------------------------------------
 
-    ---
-    -- Receives a notification from an observable.
-    -- @param event (string)  The event identifier.
-    -- @param ...   (varargs) Variable arguments.
-    --
-    function self:receive( event, ... )
-        if event == 'LOGREADER_CHANGED_FILE' then
-            applyGitModifier( ... );
-        end
-    end
+    Messenger.observe( 'LOGREADER_CHANGED_FILE', function( ... )
+        applyGitModifier( ... );
+    end)
 
     return self;
 end

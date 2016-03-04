@@ -1,3 +1,9 @@
+local Messenger = require('src.messenger.Messenger');
+
+-- ------------------------------------------------
+-- Module
+-- ------------------------------------------------
+
 local LogReader = {};
 
 -- ------------------------------------------------
@@ -19,22 +25,10 @@ local commitTimer;
 local commitDelay;
 local play;
 local rewind;
-local observers;
 
 -- ------------------------------------------------
 -- Local Functions
 -- ------------------------------------------------
-
----
--- Notify observers about the event.
--- @param event
--- @param ...
---
-local function notify( event, ... )
-    for i = 1, #observers do
-        observers[i]:receive( event, ... );
-    end
-end
 
 ---
 -- This function will take a git modifier and return the direct
@@ -56,11 +50,11 @@ local function applyNextCommit()
     end
     index = index + 1;
 
-    notify( EVENT_NEW_COMMIT, log[index].email, log[index].author );
+    Messenger.publish( EVENT_NEW_COMMIT, log[index].email, log[index].author );
 
     for i = 1, #log[index] do
         local change = log[index][i];
-        notify( EVENT_CHANGED_FILE, change.modifier, change.path, change.file, change.extension, 'normal' );
+        Messenger.publish( EVENT_CHANGED_FILE, change.modifier, change.path, change.file, change.extension, 'normal' );
     end
 end
 
@@ -69,11 +63,11 @@ local function reverseCurCommit()
         return;
     end
 
-    notify( EVENT_NEW_COMMIT, log[index].email, log[index].author );
+    Messenger.publish( EVENT_NEW_COMMIT, log[index].email, log[index].author );
 
     for i = 1, #log[index] do
         local change = log[index][i];
-        notify( EVENT_CHANGED_FILE, reverseGitStatus(change.modifier), change.path, change.file, change.extension, 'normal' );
+        Messenger.publish( EVENT_CHANGED_FILE, reverseGitStatus(change.modifier), change.path, change.file, change.extension, 'normal' );
     end
 
     index = index - 1;
@@ -95,7 +89,7 @@ local function fastForward( to )
             local change = commit[j];
             -- Ignore modifications we just need to know about additions and deletions.
             if change.modifier ~= 'M' then
-                notify( EVENT_CHANGED_FILE, change.modifier, change.path, change.file, change.extension, 'fast' );
+                Messenger.publish( EVENT_CHANGED_FILE, change.modifier, change.path, change.file, change.extension, 'fast' );
             end
         end
     end
@@ -122,7 +116,7 @@ local function fastBackward( to )
             local change = commit[j];
             -- Ignore modifications we just need to know about additions and deletions.
             if change.modifier ~= 'M' then
-                notify( EVENT_CHANGED_FILE, reverseGitStatus(change.modifier), change.path, change.file, change.extension, 'fast' );
+                Messenger.publish( EVENT_CHANGED_FILE, reverseGitStatus(change.modifier), change.path, change.file, change.extension, 'fast' );
             end
         end
     end
@@ -152,8 +146,6 @@ function LogReader.init( gitlog, delay, playmode, autoplay )
     commitTimer = 0;
     commitDelay = delay;
     play = autoplay;
-
-    observers = {};
 end
 
 function LogReader.update( dt )
@@ -218,14 +210,6 @@ end
 
 function LogReader.getCurrentDate()
     return index ~= 0 and log[index].date or '';
-end
-
----
--- Register an observer.
--- @param observer
---
-function LogReader.register( observer )
-    observers[#observers + 1] = observer;
 end
 
 -- ------------------------------------------------

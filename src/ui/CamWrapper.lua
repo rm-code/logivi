@@ -1,4 +1,5 @@
 local Camera = require('lib.camera.Camera');
+local Messenger = require('src.messenger.Messenger');
 
 -- ------------------------------------------------
 -- Module
@@ -127,19 +128,6 @@ function CamWrapper.new()
     end
 
     ---
-    -- Receives events from an observable.
-    -- @param event
-    -- @param ...
-    --
-    function self:receive(event, ...)
-        if event == 'GRAPH_UPDATE_CENTER' then
-            updateCenter(...);
-        elseif event == 'GRAPH_UPDATE_DIMENSIONS' then
-            updateGraphDimensions(...);
-        end
-    end
-
-    ---
     -- Returns the camera's rotation.
     --
     function self:getRotation()
@@ -149,6 +137,18 @@ function CamWrapper.new()
     function self:getScale()
         return camera.scale;
     end
+
+    -- ------------------------------------------------
+    -- Observed Events
+    -- ------------------------------------------------
+
+    Messenger.observe( 'GRAPH_UPDATE_CENTER', function( ... )
+        updateCenter( ... );
+    end)
+
+    Messenger.observe( 'GRAPH_UPDATE_DIMENSIONS', function( ... )
+        updateGraphDimensions( ... );
+    end)
 
     return self;
 end

@@ -136,13 +136,8 @@ function MainScreen.new()
         FileManager.setColorTable( info.colors );
 
         graph = Graph.new( config.options.edgeWidth, config.options.showLabels );
-        graph:register( AuthorManager );
-        graph:register( camera );
 
-        -- Initialise LogReader and register observers.
         LogReader.init( LogLoader.load( log ), config.options.commitDelay, config.options.mode, config.options.autoplay );
-        LogReader.register( AuthorManager );
-        LogReader.register( graph );
 
         -- Create panel.
         filePanel = FilePanel.new( FileManager.draw, FileManager.update, 0, 0, 150, love.graphics.getHeight() - 40 );
