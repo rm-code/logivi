@@ -6,6 +6,7 @@ local Messenger = require( 'src.messenger.Messenger' );
 -- Constants
 -- ------------------------------------------------
 
+local EVENT = require('src.messenger.Event');
 local AVATAR_SPRITE  = Resources.loadImage( 'avatar.png' );
 
 -- ------------------------------------------------
@@ -135,15 +136,15 @@ end
 -- Observed Events
 -- ------------------------------------------------
 
-Messenger.observe( 'NEW_COMMIT', function( ... )
+Messenger.observe( EVENT.NEW_COMMIT, function( ... )
     AuthorManager.setCommitAuthor( ... );
 end)
 
-Messenger.observe( 'GRAPH_UPDATE_FILE', function( ... )
+Messenger.observe( EVENT.GRAPH_UPDATE_FILE, function( ... )
     AuthorManager.addFileLink( ... );
 end)
 
-Messenger.observe( 'GRAPH_UPDATE_CENTER', function( ... )
+Messenger.observe( EVENT.GRAPH_UPDATE_CENTER, function( ... )
     AuthorManager.setGraphCenter( ... );
 end)
 

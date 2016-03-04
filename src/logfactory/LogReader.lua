@@ -10,8 +10,7 @@ local LogReader = {};
 -- Constants
 -- ------------------------------------------------
 
-local EVENT_NEW_COMMIT = 'NEW_COMMIT';
-local EVENT_CHANGED_FILE = 'LOGREADER_CHANGED_FILE';
+local EVENT = require('src.messenger.Event');
 local MOD_ADD = 'A';
 local MOD_DELETE = 'D';
 
@@ -50,11 +49,11 @@ local function applyNextCommit()
     end
     index = index + 1;
 
-    Messenger.publish( EVENT_NEW_COMMIT, log[index].email, log[index].author );
+    Messenger.publish( EVENT.NEW_COMMIT, log[index].email, log[index].author );
 
     for i = 1, #log[index] do
         local change = log[index][i];
-        Messenger.publish( EVENT_CHANGED_FILE, change.modifier, change.path, change.file, change.extension, 'normal' );
+        Messenger.publish( EVENT.LOGREADER_CHANGED_FILE, change.modifier, change.path, change.file, change.extension, 'normal' );
     end
 end
 
@@ -63,11 +62,11 @@ local function reverseCurCommit()
         return;
     end
 
-    Messenger.publish( EVENT_NEW_COMMIT, log[index].email, log[index].author );
+    Messenger.publish( EVENT.NEW_COMMIT, log[index].email, log[index].author );
 
     for i = 1, #log[index] do
         local change = log[index][i];
-        Messenger.publish( EVENT_CHANGED_FILE, reverseGitStatus(change.modifier), change.path, change.file, change.extension, 'normal' );
+        Messenger.publish( EVENT.LOGREADER_CHANGED_FILE, reverseGitStatus(change.modifier), change.path, change.file, change.extension, 'normal' );
     end
 
     index = index - 1;
@@ -89,7 +88,7 @@ local function fastForward( to )
             local change = commit[j];
             -- Ignore modifications we just need to know about additions and deletions.
             if change.modifier ~= 'M' then
-                Messenger.publish( EVENT_CHANGED_FILE, change.modifier, change.path, change.file, change.extension, 'fast' );
+                Messenger.publish( EVENT.LOGREADER_CHANGED_FILE, change.modifier, change.path, change.file, change.extension, 'fast' );
             end
         end
     end
@@ -116,7 +115,7 @@ local function fastBackward( to )
             local change = commit[j];
             -- Ignore modifications we just need to know about additions and deletions.
             if change.modifier ~= 'M' then
-                Messenger.publish( EVENT_CHANGED_FILE, reverseGitStatus(change.modifier), change.path, change.file, change.extension, 'fast' );
+                Messenger.publish( EVENT.LOGREADER_CHANGED_FILE, reverseGitStatus(change.modifier), change.path, change.file, change.extension, 'fast' );
             end
         end
     end

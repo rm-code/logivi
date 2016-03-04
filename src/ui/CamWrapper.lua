@@ -11,6 +11,8 @@ local CamWrapper = {};
 -- Constants
 -- ------------------------------------------------
 
+local EVENT = require('src.messenger.Event');
+
 local CAMERA_ROTATION_SPEED = 0.6;
 local CAMERA_TRANSLATION_SPEED = 400;
 local CAMERA_TRACKING_SPEED = 2;
@@ -142,11 +144,11 @@ function CamWrapper.new()
     -- Observed Events
     -- ------------------------------------------------
 
-    Messenger.observe( 'GRAPH_UPDATE_CENTER', function( ... )
+    Messenger.observe( EVENT.GRAPH_UPDATE_CENTER, function( ... )
         updateCenter( ... );
     end)
 
-    Messenger.observe( 'GRAPH_UPDATE_DIMENSIONS', function( ... )
+    Messenger.observe( EVENT.GRAPH_UPDATE_DIMENSIONS, function( ... )
         updateGraphDimensions( ... );
     end)
 

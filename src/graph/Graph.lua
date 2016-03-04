@@ -13,14 +13,12 @@ local Graph = {};
 -- Constants
 -- ------------------------------------------------
 
+local EVENT = require('src.messenger.Event');
+
 local ROOT_FOLDER = '';
 local MOD_ADD     = 'A';
 local MOD_DELETE  = 'D';
 local MOD_MODIFY  = 'M';
-
-local EVENT_UPDATE_DIMENSIONS = 'GRAPH_UPDATE_DIMENSIONS';
-local EVENT_UPDATE_CENTER     = 'GRAPH_UPDATE_CENTER';
-local EVENT_UPDATE_FILE       = 'GRAPH_UPDATE_FILE';
 
 local LABEL_FONT   = Resources.loadFont( 'SourceCodePro-Medium.otf', 20 );
 local DEFAULT_FONT = Resources.loadFont( 'default', 12 );
@@ -147,7 +145,7 @@ function Graph.new( edgeWidth, showLabels )
 
         -- We only notify observers if the graph isn't modifed in fast forward / rewind mode.
         if mode == 'normal' and modifiedFile then
-            Messenger.publish( EVENT_UPDATE_FILE, modifiedFile, modifier );
+            Messenger.publish( EVENT.GRAPH_UPDATE_FILE, modifiedFile, modifier );
         end
     end
 
@@ -193,8 +191,8 @@ function Graph.new( edgeWidth, showLabels )
             end
         end);
 
-        Messenger.publish( EVENT_UPDATE_CENTER, graph:getCenter() );
-        Messenger.publish( EVENT_UPDATE_DIMENSIONS, graph:getBoundaries() );
+        Messenger.publish( EVENT.GRAPH_UPDATE_CENTER, graph:getCenter() );
+        Messenger.publish( EVENT.GRAPH_UPDATE_DIMENSIONS, graph:getBoundaries() );
     end
 
     ---
@@ -208,7 +206,7 @@ function Graph.new( edgeWidth, showLabels )
     -- Observed Events
     -- ------------------------------------------------
 
-    Messenger.observe( 'LOGREADER_CHANGED_FILE', function( ... )
+    Messenger.observe( EVENT.LOGREADER_CHANGED_FILE, function( ... )
         applyGitModifier( ... );
     end)
 
