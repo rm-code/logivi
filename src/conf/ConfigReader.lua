@@ -90,10 +90,12 @@ end
 ---
 -- Validates a loaded config file by comparing it to the default config file.
 -- It checks if the file contains all the necessary sections and values. If it
--- doesn't a warning is displayed and the default config will be used.
--- @param default - The default file to use for comparison.
+-- doesn't, a warning is displayed and the default config will be used.
+-- @param default (table) The default config file to use for comparison.
+-- @param config  (table) The loaded config file to check.
+-- @param         (table) Either the default config file or the loaded one.
 --
-local function validateFile( default )
+local function validateFile( default, config )
     print( 'Validating configuration file ... ' );
     for skey, section in pairs( default ) do
 
@@ -115,6 +117,7 @@ local function validateFile( default )
     end
 
     print( 'Done!' );
+    return config;
 end
 
 ---
@@ -140,7 +143,7 @@ function ConfigReader.init()
     -- If the config hasn't been loaded yet, load and validate it.
     if not config then
         config = loadFile( FILE_NAME );
-        validateFile( default, config );
+        config = validateFile( default, config );
         validateRepositoryPaths();
     end
 
