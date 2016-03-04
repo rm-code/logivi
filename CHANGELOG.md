@@ -2,12 +2,21 @@
 
 ### Additions
 - Added [Graphoon](https://github.com/rm-code/Graphoon) library
+- Added a loading screen (Shows a nice graph animation while the repositories are loaded)
+
+### Fixes
+- Fixed default config not being used correctly
 
 ### Removals
 - Removed loading of custom avatars
+- Removed code for deletion of temporary files
+- Removed some of the debug output
 
 ### Other Changes
+- Use spritebatch when drawing avatars
 - Improve warning message displayed when running LoGiVi for the first time
+- Config Files are only loaded once when the program starts
+- Updated config file for use with LÖVE 0.10.1
 
 ---
 
