@@ -13,27 +13,13 @@ local Graph = {};
 -- ------------------------------------------------
 
 local ROOT_FOLDER = '';
-local MOD_ADD = 'A';
-local MOD_DELETE = 'D';
-local MOD_MODIFY = 'M';
-
---[[
--- Unused git modifiers.
-local MOD_COPY = 'C';
-local MOD_RENAME = 'R';
-local MOD_CHANGE = 'T';
-local MOD_UNMERGE = 'U';
-local MOD_UNKNOWN = 'X';
-local MOD_BROKEN_PAIRING = 'B';
---]]
+local MOD_ADD     = 'A';
+local MOD_DELETE  = 'D';
+local MOD_MODIFY  = 'M';
 
 local EVENT_UPDATE_DIMENSIONS = 'GRAPH_UPDATE_DIMENSIONS';
-local EVENT_UPDATE_CENTER = 'GRAPH_UPDATE_CENTER';
-local EVENT_UPDATE_FILE = 'GRAPH_UPDATE_FILE';
-
--- ------------------------------------------------
--- Local Variables
--- ------------------------------------------------
+local EVENT_UPDATE_CENTER     = 'GRAPH_UPDATE_CENTER';
+local EVENT_UPDATE_FILE       = 'GRAPH_UPDATE_FILE';
 
 local LABEL_FONT   = Resources.loadFont( 'SourceCodePro-Medium.otf', 20 );
 local DEFAULT_FONT = Resources.loadFont( 'default', 12 );
@@ -45,6 +31,12 @@ local EDGE_COLOR = { 60, 60, 60, 255 };
 -- Constructor
 -- ------------------------------------------------
 
+---
+-- Creates a new graph object.
+-- @param edgeWidth  (number)  The width of the connecting edges.
+-- @param showLabels (boolean) Wether or not to show labels.
+-- @return           (Graph)   A new instance of the graph.
+--
 function Graph.new( edgeWidth, showLabels )
     local self = {};
 
@@ -62,7 +54,8 @@ function Graph.new( edgeWidth, showLabels )
     -- ------------------------------------------------
 
     ---
-    -- Returns a random sign (+ or -).
+    -- Returns a random sign.
+    -- @return (number) Either -1 or 1.
     --
     local function randomSign()
         return love.math.random( 0, 1 ) == 0 and -1 or 1;
@@ -70,8 +63,8 @@ function Graph.new( edgeWidth, showLabels )
 
     ---
     -- Notify observers about the event.
-    -- @param event
-    -- @param ...
+    -- @param event (string)  The event identifier.
+    -- @param ...   (varargs) Variable arguments.
     --
     local function notify( event, ... )
         for i = 1, #observers do
@@ -81,10 +74,11 @@ function Graph.new( edgeWidth, showLabels )
 
     ---
     -- Spawns a new node.
-    -- @param name - The name of the node (the folder's name).
-    -- @param id - The id of the node to spawn (the full path to the folder).
-    -- @param parent - The parent of the node to spawn.
-    -- @param parentID - The parent's id.
+    -- @param name     (string) The node's name based on the folder's name.
+    -- @param id       (string) The node's unqiue id based on the folder's full path.
+    -- @param parent   (Node)   The parent of the node to spawn.
+    -- @param parentID (string) The parent's id.
+    -- @return         (Node)   The newly spawned node.
     --
     local function spawnNode( name, id, parent, parentID )
         local parentX, parentY = parent:getPosition();
@@ -95,7 +89,7 @@ function Graph.new( edgeWidth, showLabels )
 
     ---
     -- Removes a node from the graph.
-    -- @param node - The node to check.
+    -- @param node (Node) The node to remove.
     --
     local function removeNode( node )
         local parent = graph:getNode( node:getParent() );
@@ -106,16 +100,15 @@ function Graph.new( edgeWidth, showLabels )
     end
 
     ---
-    -- Checks if the folders of a path already exist as nodes in the graph.
-    -- If a folder doesn't exist yet, it will be created and connected to its
-    -- parent by an edge.
-    -- @param path - The path to resolve.
+    -- Creates all nodes belonging to a path if they don't exist yet.
+    -- @param path (string) The path to resolve.
+    -- @return     (Node)   The last node in the path.
     --
     local function createNodes( path )
         local parentID = ROOT_FOLDER;
         for folder in path:gmatch('[^/]+') do
             local nodeID = parentID .. '/' .. folder;
-            -- Create the path if doesn't exist in the graph yet.
+            -- Create the node if doesn't exist in the graph yet.
             if not graph:hasNode( nodeID ) then
                 local parentNode = graph:getNode( parentID );
                 local newNode = spawnNode( folder, nodeID, parentNode, parentID );
@@ -130,7 +123,8 @@ function Graph.new( edgeWidth, showLabels )
     ---
     -- Returns the node a path is pointng to. If the node doesn't exist in the
     -- graph yet, it will be created.
-    -- @param path - The path to resolve.
+    -- @param path (string) The path to resolve.
+    -- @return     (Node)   The last node in the path.
     --
     local function resolvePath( path )
         if graph:hasNode( path ) then
@@ -141,15 +135,11 @@ function Graph.new( edgeWidth, showLabels )
 
     ---
     -- This function will take a git modifier and apply it to a file.
-    -- If it encounters the 'A' modifier it will create a file at the
-    -- specified path. If it encounters the 'D' modifier it will remove
-    -- the file from the path. Nodes will be created and removed based
-    -- along the way.
-    -- @param modifier
-    -- @param path
-    -- @param filename
-    -- @param extension
-    -- @param mode
+    -- @param modifier  (string) The modifier to apply to the file.
+    -- @param path      (string) The path pointing to the modified file.
+    -- @param filename  (string) The file's name.
+    -- @param extension (string) The file's extension.
+    -- @param mode      (string) The current play mode.
     --
     local function applyGitModifier( modifier, path, filename, extension, mode )
         local targetNode = resolvePath( path );
@@ -177,6 +167,11 @@ function Graph.new( edgeWidth, showLabels )
     -- Public Functions
     -- ------------------------------------------------
 
+    ---
+    -- Draws the graph.
+    -- @param camrot   (number) The current camera rotation.
+    -- @param camscale (number) The current camera scale.
+    --
     function self:draw( camrot, camscale )
         graph:draw( function( node )
             if showLabels then
@@ -197,6 +192,10 @@ function Graph.new( edgeWidth, showLabels )
         love.graphics.draw( spritebatch );
     end
 
+    ---
+    -- Updates the graph.
+    -- @param dt (number) The delta time passed since the last frame.
+    --
     function self:update( dt )
         spritebatch:clear();
         graph:update( dt, function( node )
@@ -211,15 +210,15 @@ function Graph.new( edgeWidth, showLabels )
     end
 
     ---
-    -- Activate / Deactivate folder labels.
+    -- Toggles folder labels.
     --
     function self:toggleLabels()
         showLabels = not showLabels;
     end
 
     ---
-    -- Register an observer.
-    -- @param observer
+    -- Registers an observer.
+    -- @param observer (Object) The observer to add.
     --
     function self:register( observer )
         observers[#observers + 1] = observer;
@@ -227,12 +226,12 @@ function Graph.new( edgeWidth, showLabels )
 
     ---
     -- Receives a notification from an observable.
-    -- @param event
-    -- @param ...
+    -- @param event (string)  The event identifier.
+    -- @param ...   (varargs) Variable arguments.
     --
     function self:receive( event, ... )
         if event == 'LOGREADER_CHANGED_FILE' then
-            applyGitModifier( ... )
+            applyGitModifier( ... );
         end
     end
 
