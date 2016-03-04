@@ -30,8 +30,8 @@ end
 
 ---
 -- Creates a new settings file on the user's system based on the default template.
--- @param filename - The file name to use for the config file.
--- @param templatePath - The path to the template settings file.
+-- @param filename     (string) The file name to use for the config file.
+-- @param templatePath (string) The path to the template settings file.
 --
 local function createConfigFile( filename, templatePath )
     for line in love.filesystem.lines( templatePath ) do
@@ -41,7 +41,8 @@ end
 
 ---
 -- Tries to transform strings to their actual types if possible.
--- @param value - The value to transform.
+-- @param value (string)  The value to transform.
+-- @return      (various) The actual type of the setting.
 --
 local function toType( value )
     value = value:match( '^%s*(.-)%s*$' );
@@ -56,6 +57,12 @@ local function toType( value )
     end
 end
 
+---
+-- Parses the config file and stores the values in a table.
+--
+-- @param filePath (string) The path to the config file.
+-- @return         (table)  The loaded config stored in a table.
+--
 local function loadFile( filePath )
     local loadedConfig = {};
     local section;
