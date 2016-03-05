@@ -138,7 +138,7 @@ function LoadingScreen.new()
         end
 
         if not thread:isRunning() and loadingTimer > LOADING_TIME then
-            ScreenManager.switch( 'selection', { config = config } );
+            ScreenManager.switch( 'selection', { config = config, graph = graph, colors = colors } );
         end
 
         loadingTimer = loadingTimer + dt;

@@ -121,6 +121,8 @@ function MainScreen.new()
     function self:init( param )
         Messenger.clear();
 
+        LogLoader.init();
+
         -- Store the name of the currently displayed log.
         log = param.log;
 
@@ -202,7 +204,7 @@ function MainScreen.new()
         elseif InputHandler.isPressed( key, toggleTimeline ) then
             timeline:toggle();
         elseif InputHandler.isPressed( key, exit ) then
-            ScreenManager.switch( 'selection', { log = log, config = config } );
+            ScreenManager.switch( 'loading', { log = log, config = config } );
         end
     end
 
