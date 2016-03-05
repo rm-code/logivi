@@ -50,6 +50,18 @@ function AuthorManager.init( naliases, nvisible )
     graphCenterX, graphCenterY = 0, 0;
 
     spritebatch = love.graphics.newSpriteBatch( AVATAR_SPRITE, 1000, 'stream' );
+
+    Messenger.observe( EVENT.NEW_COMMIT, function( ... )
+        AuthorManager.setCommitAuthor( ... );
+    end)
+
+    Messenger.observe( EVENT.GRAPH_UPDATE_FILE, function( ... )
+        AuthorManager.addFileLink( ... );
+    end)
+
+    Messenger.observe( EVENT.GRAPH_UPDATE_CENTER, function( ... )
+        AuthorManager.setGraphCenter( ... );
+    end)
 end
 
 ---
@@ -131,22 +143,6 @@ end
 function AuthorManager.setGraphCenter( ncx, ncy )
     graphCenterX, graphCenterY = ncx, ncy;
 end
-
--- ------------------------------------------------
--- Observed Events
--- ------------------------------------------------
-
-Messenger.observe( EVENT.NEW_COMMIT, function( ... )
-    AuthorManager.setCommitAuthor( ... );
-end)
-
-Messenger.observe( EVENT.GRAPH_UPDATE_FILE, function( ... )
-    AuthorManager.addFileLink( ... );
-end)
-
-Messenger.observe( EVENT.GRAPH_UPDATE_CENTER, function( ... )
-    AuthorManager.setGraphCenter( ... );
-end)
 
 -- ------------------------------------------------
 -- Return Module

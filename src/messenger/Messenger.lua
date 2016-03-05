@@ -14,4 +14,8 @@ function Messenger.observe( message, callback )
     subscriptions[#subscriptions + 1] = { message = message, callback = callback };
 end
 
+function Messenger.clear()
+    subscriptions = {};
+end
+
 return Messenger;

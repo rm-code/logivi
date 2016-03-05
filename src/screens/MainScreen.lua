@@ -9,6 +9,7 @@ local Graph = require('src.graph.Graph');
 local FilePanel = require('src.ui.components.FilePanel');
 local Timeline = require('src.ui.Timeline');
 local InputHandler = require('src.InputHandler');
+local Messenger = require( 'src.messenger.Messenger' );
 
 -- ------------------------------------------------
 -- Controls
@@ -118,6 +119,8 @@ function MainScreen.new()
     -- ------------------------------------------------
 
     function self:init( param )
+        Messenger.clear();
+
         -- Store the name of the currently displayed log.
         log = param.log;
 
