@@ -3,20 +3,32 @@
 ### Additions
 - Added [Graphoon](https://github.com/rm-code/Graphoon) library
 - Added a loading screen (Shows a nice graph animation while the repositories are loaded)
+- Added a completely new selection screen
+    - Repositories can be named after being dropped on the application
 
 ### Fixes
 - Fixed default config not being used correctly
+- Fixed pattern matching for windows specific paths
+- Fixed camera being positioned off center when the visualisation starts
+- Fixed nodes spawning on a straight line occasionally
 
 ### Removals
 - Removed loading of custom avatars
 - Removed code for deletion of temporary files
 - Removed some of the debug output
+- Removed warning and creation of example log when LoGiVi is loaded for the first time
 
 ### Other Changes
+- Completely rewrote the Timeline
+    - Clicks should be much more precise now
+    - Timeline is fading out when the mouse isn't hovering over it (Date label changes position accordingly)
 - Use spritebatch when drawing avatars
 - Improve warning message displayed when running LoGiVi for the first time
 - Config Files are only loaded once when the program starts
 - Updated config file for use with LÖVE 0.10.1
+- Repositories are stored in a separate file now
+    - This way we can also refresh logs which have been added via the directorydropped callback
+    - Repositories are only updated if they have changed since the last time they were opened
 
 ---
 
