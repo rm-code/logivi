@@ -72,11 +72,7 @@ function LoadingScreen.new()
 
     local function updateDots( dt )
         if dotTimer > LOADING_DOT_TIME then
-            if dots:len() >= LOADING_MAX_LENGTH then
-                dots = '';
-            else
-                dots = dots .. LOADING_DOT;
-            end
+            dots = dots:len() >= LOADING_MAX_LENGTH and '' or dots .. LOADING_DOT;
             dotTimer = 0;
         end
         dotTimer = dotTimer + dt;
