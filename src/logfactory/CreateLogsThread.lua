@@ -19,7 +19,7 @@ for name, path in pairs( repositories ) do
     -- to create a git log and the info file for it.
     if LogCreator.isGitRepository(path) then
         LogCreator.createGitLog(name, path);
-        LogCreator.createInfoFile(name, path);
+        LogCreator.createInfoFile( name );
         local channel = love.thread.getChannel( 'info' );
         channel:push( name );
     else

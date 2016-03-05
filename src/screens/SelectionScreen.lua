@@ -122,16 +122,10 @@ function SelectionScreen.new()
     function self:draw()
         buttonList:draw();
 
-        local x = UI_ELEMENT_PADDING + (2 * UI_ELEMENT_MARGIN) + buttonList:getButtonWidth();
-        local y = UI_ELEMENT_PADDING;
-
         panel:draw();
         header:draw();
 
         love.graphics.setFont(TEXT_FONT);
-        love.graphics.print('First commit:  ' .. info.firstCommit, x + 25, y + 100);
-        love.graphics.print('Latest commit: ' .. info.latestCommit, x + 25, y + 125);
-        love.graphics.print('Total commits: ' .. info.totalCommits, x + 25, y + 150);
 
         for i = 1, #buttons do
             buttons[i]:draw();
@@ -149,7 +143,7 @@ function SelectionScreen.new()
         if info.name and LogCreator.isGitAvailable() and config.repositories[info.name] then
             local forceOverwrite = true;
             LogCreator.createGitLog(info.name, config.repositories[info.name], forceOverwrite);
-            LogCreator.createInfoFile(info.name, config.repositories[info.name], forceOverwrite);
+            LogCreator.createInfoFile(info.name, forceOverwrite);
             info = LogLoader.loadInfo(info.name);
         end
     end
