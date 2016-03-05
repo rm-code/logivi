@@ -171,13 +171,6 @@ function SelectionScreen.new()
         config.repositories[name] = path;
 
         ScreenManager.switch( 'loading', { config = config } );
-
-        -- Intitialise LogLoader.
-        logList = LogLoader.init();
-
-        -- A scrollable list of buttons which can be used to select a certain log.
-        buttonList = ButtonList.new(UI_ELEMENT_PADDING, UI_ELEMENT_PADDING, UI_ELEMENT_MARGIN);
-        buttonList:init(self, logList);
     end
 
     return self;
