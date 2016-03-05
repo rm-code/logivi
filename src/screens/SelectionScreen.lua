@@ -1,6 +1,5 @@
 local ScreenManager = require('lib.screenmanager.ScreenManager');
 local Screen = require('lib.screenmanager.Screen');
-local LogCreator = require('src.logfactory.LogCreator');
 local LogLoader = require('src.logfactory.LogLoader');
 local ButtonList = require('src.ui.ButtonList');
 local Button = require('src.ui.components.Button');
@@ -8,7 +7,6 @@ local Header = require('src.ui.components.Header');
 local StaticPanel = require('src.ui.components.StaticPanel');
 local InputHandler = require('src.InputHandler');
 local OpenFolderCommand = require('src.ui.commands.OpenFolderCommand');
-local RefreshLogCommand = require('src.ui.commands.RefreshLogCommand');
 local WatchCommand = require('src.ui.commands.WatchCommand');
 local Resources = require('src.Resources');
 
@@ -98,7 +96,6 @@ function SelectionScreen.new()
         buttons = {
             Button.new(OpenFolderCommand.new(love.filesystem.getSaveDirectory()), 'Open', UI_ELEMENT_PADDING + (2 * UI_ELEMENT_MARGIN) + 220, sh - UI_ELEMENT_PADDING - 10 - UI_ELEMENT_PADDING - 40, 100, 40);
             Button.new(WatchCommand.new(self), 'Watch', sw - UI_ELEMENT_PADDING - 10 - 100, sh - UI_ELEMENT_PADDING - 10 - UI_ELEMENT_PADDING - 40, 100, 40);
-            Button.new(RefreshLogCommand.new(self), 'Refresh', sw - UI_ELEMENT_PADDING - 20 - 200, sh - UI_ELEMENT_PADDING - 10 - UI_ELEMENT_PADDING - 40, 100, 40);
         };
 
         header = Header.new(info.name, UI_ELEMENT_PADDING + (2 * UI_ELEMENT_MARGIN) + 200 + 25, UI_ELEMENT_PADDING + 25);
@@ -116,7 +113,6 @@ function SelectionScreen.new()
         panel:setDimensions(nw - (UI_ELEMENT_PADDING + (2 * UI_ELEMENT_MARGIN) + 200) - 20, nh - UI_ELEMENT_PADDING - 40)
         buttons[1]:setPosition(UI_ELEMENT_PADDING + (2 * UI_ELEMENT_MARGIN) + 210, nh - UI_ELEMENT_PADDING - 10 - UI_ELEMENT_PADDING - 40);
         buttons[2]:setPosition(nw - UI_ELEMENT_PADDING - 10 - 100, nh - UI_ELEMENT_PADDING - 10 - UI_ELEMENT_PADDING - 40);
-        buttons[3]:setPosition(nw - UI_ELEMENT_PADDING - 20 - 200, nh - UI_ELEMENT_PADDING - 10 - UI_ELEMENT_PADDING - 40);
     end
 
     function self:draw()
@@ -137,15 +133,6 @@ function SelectionScreen.new()
 
     function self:watchLog()
         ScreenManager.switch( 'main', { log = info.name, config = config } );
-    end
-
-    function self:refreshLog()
-        if info.name and LogCreator.isGitAvailable() and config.repositories[info.name] then
-            local forceOverwrite = true;
-            LogCreator.createGitLog(info.name, config.repositories[info.name], forceOverwrite);
-            LogCreator.createInfoFile(info.name, forceOverwrite);
-            info = LogLoader.loadInfo(info.name);
-        end
     end
 
     function self:selectLog(name)
