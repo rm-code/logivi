@@ -1,6 +1,7 @@
 local ScreenManager = require('lib.screenmanager.ScreenManager');
 local Screen = require('lib.screenmanager.Screen');
 local ConfigReader = require('src.conf.ConfigReader');
+local RepositoryHandler = require('src.conf.RepositoryHandler');
 local GraphLibrary = require('lib.graphoon.Graphoon').Graph;
 local Resources = require('src.Resources');
 
@@ -84,12 +85,13 @@ function LoadingScreen.new()
 
     function self:init( param )
         config = ( param and param.config ) or ConfigReader.init();
+        RepositoryHandler.init();
 
         graph = GraphLibrary.new();
         graph:addNode( '', love.graphics.getWidth() * 0.5, love.graphics.getHeight() * 0.5, true );
 
         thread = love.thread.newThread( "src/logfactory/CreateLogsThread.lua" );
-        thread:start( config.repositories );
+        thread:start( RepositoryHandler.getRepositories() );
 
         dots = '';
         dotTimer = 0;
@@ -118,6 +120,7 @@ function LoadingScreen.new()
                 end
             elseif err.msg == 'no_repository' then
                 love.window.showMessageBox(WARNING_TITLE_NO_REPO, string.format(WARNING_MESSAGE_NO_REPO, err.data), 'warning', false);
+                RepositoryHandler.remove( err.name );
             end
         end
 

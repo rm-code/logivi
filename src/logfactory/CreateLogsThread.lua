@@ -24,7 +24,7 @@ for name, path in pairs( repositories ) do
         channel:push( name );
     else
         local channel = love.thread.getChannel( 'error' );
-        channel:push( { msg = 'no_repository', data = path } );
+        channel:push( { msg = 'no_repository', name = name, data = path } );
     end
 end
 
