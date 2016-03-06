@@ -35,6 +35,7 @@ function SelectionScreen.new()
     local config;
 
     local function watchLog( name )
+        love.window.setFullscreen( config.options.fullscreen, config.options.fullscreenType );
         ScreenManager.switch( 'main', { log = name, config = config } );
     end
 
@@ -67,7 +68,7 @@ function SelectionScreen.new()
         end);
     end
 
-    function self:mousepressed( mx, my )
+    function self:mousereleased( mx, my )
         local node = graph:getNodeAt( mx, my, 30 );
         if node then
             if node:getID() == '' then

@@ -204,6 +204,7 @@ function MainScreen.new()
         elseif InputHandler.isPressed( key, toggleTimeline ) then
             timeline:toggle();
         elseif InputHandler.isPressed( key, exit ) then
+            love.window.setFullscreen( false );
             ScreenManager.switch( 'loading', { log = log, config = config } );
         end
     end
