@@ -80,7 +80,7 @@ function SelectionScreen.new()
     end
 
     function self:directorydropped( path )
-        local name = path:match( '/?([^/]+)$' );
+        local name = path:match( '[\\/]?([^\\/]+)$' );
         RepositoryHandler.add( name, path );
         ScreenManager.switch( 'loading', { config = config } );
     end
