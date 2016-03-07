@@ -29,7 +29,17 @@ end
 -- @return (table) The repository file as a lua table.
 --
 local function load()
-    return love.filesystem.load( FILE_NAME )();
+    for line in love.filesystem.lines( FILE_NAME ) do
+        if line == '' or line:find( ';' ) == 1 then
+            -- Ignore comments and empty lines.
+        else
+            -- Store values in the section.
+            -- TODO: Expand pattern to match names with whitespaces: '(([%g]+[%s]*)+)%s+=%s+(.+)';
+            local key, value = line:match( '^([%g]+)%s+=%s+(.+)' );
+            print(key, value)
+            repositories[key] = value;
+        end
+    end
 end
 
 ---
@@ -38,12 +48,14 @@ end
 local function save()
     local file = love.filesystem.newFile( FILE_NAME, 'w' );
 
-    file:write( 'return {\r\n' );
-    file:write( '    -- ["Name"] = "Path",\r\n' );
+    file:write( '; This file keeps track of the paths where the repositories\r\n' );
+    file:write( '; are located on the user\'s hard drive.\r\n' );
+    file:write( '; Name = Path\r\n' );
     for key, value in pairs( repositories ) do
-        file:write( string.format('    ["%s"] = "%s",\r\n', key, value ));
+        local line = string.format( '%s = %s\r\n', key, value );
+        file:write( line );
     end
-    file:write( '}' );
+    file:close();
 end
 
 -- ------------------------------------------------
@@ -58,7 +70,7 @@ function RepositoryHandler.init()
     if not hasRepositoryFile() then
         save(); -- Create empty file.
     end
-    repositories = load();
+    load();
 end
 
 ---
