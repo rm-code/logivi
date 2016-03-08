@@ -36,7 +36,6 @@ local function load()
             -- Store values in the section.
             -- TODO: Expand pattern to match names with whitespaces: '(([%g]+[%s]*)+)%s+=%s+(.+)';
             local key, value = line:match( '^([%g]+)%s+=%s+(.+)' );
-            print(key, value)
             repositories[key] = value;
         end
     end

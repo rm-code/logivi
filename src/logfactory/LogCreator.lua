@@ -30,14 +30,12 @@ end
 -- @param path
 --
 function LogCreator.createGitLog( projectname, path )
-    io.write('Writing log for ' .. projectname .. '.\r\n');
     love.filesystem.createDirectory(LOG_FOLDER .. projectname);
 
     local cmd = GIT_COMMAND .. path .. LOG_COMMAND;
     local handle = io.popen(cmd);
     love.filesystem.write(LOG_FOLDER .. projectname .. LOG_FILE, handle:read('*all'));
     handle:close();
-    io.write('Done!\r\n');
 end
 
 function LogCreator.createInfoFile( projectname, path, force )
