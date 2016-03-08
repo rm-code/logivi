@@ -134,13 +134,15 @@ function MainScreen.new()
 
         AuthorManager.init( info.aliases, config.options.showAuthors );
 
-        -- Create the camera.
-        camera = Camera.new();
 
         -- Load custom colors.
         FileManager.setColorTable( info.colors );
 
         graph = Graph.new( config.options.edgeWidth, config.options.showLabels );
+
+        -- Create the camera.
+        camera = Camera.new();
+        camera:setPosition( love.graphics.getWidth() * 0.5, love.graphics.getHeight() * 0.5 );
 
         LogReader.init( LogLoader.load( log ), config.options.commitDelay, config.options.mode, config.options.autoplay );
 

@@ -140,6 +140,11 @@ function CamWrapper.new()
         return camera.scale;
     end
 
+    function self:setPosition( nx, ny )
+        camera:lookAt( nx, ny );
+        cx, cy = nx, ny;
+    end
+
     -- ------------------------------------------------
     -- Observed Events
     -- ------------------------------------------------
