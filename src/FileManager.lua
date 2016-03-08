@@ -1,13 +1,6 @@
 local FileManager = {};
 
 -- ------------------------------------------------
--- Constants
--- ------------------------------------------------
-
-local FRST_OFFSET = 10;
-local SCND_OFFSET = 50;
-
--- ------------------------------------------------
 -- Local Variables
 -- ------------------------------------------------
 
@@ -42,25 +35,6 @@ end
 -- ------------------------------------------------
 -- Public Functions
 -- ------------------------------------------------
-
----
--- Draws a counter of all files in the project and
--- a separate counter for each used file extension.
---
-function FileManager.draw( x, y )
-    love.graphics.print( totalFiles, x + FRST_OFFSET, y + 10 );
-    love.graphics.print( 'Files', x + SCND_OFFSET, y + 10 );
-    for i, tbl in ipairs( sortedList ) do
-        love.graphics.setColor( tbl.color.r, tbl.color.g, tbl.color.b );
-        love.graphics.print( tbl.amount, x + FRST_OFFSET, y + 10 + i * 20 );
-        love.graphics.print( tbl.extension, x + SCND_OFFSET, y + 10 + i * 20 );
-        love.graphics.setColor( 255, 255, 255 );
-    end
-end
-
-function FileManager.update()
-    return 0, 0, 0, 10 + ( #sortedList + 1 ) * 20;
-end
 
 ---
 -- Adds a new file extension to the list.
@@ -122,6 +96,14 @@ end
 --
 function FileManager.getColor( ext )
     return extensions[ext].color;
+end
+
+function FileManager.getSortedList()
+    return sortedList;
+end
+
+function FileManager.getTotalFiles()
+    return totalFiles;
 end
 
 -- ------------------------------------------------

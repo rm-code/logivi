@@ -6,7 +6,7 @@ local Camera = require('src.ui.CamWrapper');
 local AuthorManager = require('src.AuthorManager');
 local FileManager = require('src.FileManager');
 local Graph = require('src.graph.Graph');
-local FilePanel = require('src.ui.components.FilePanel');
+local FilePanel = require('src.ui.FilePanel');
 local Timeline = require('src.ui.Timeline');
 local InputHandler = require('src.InputHandler');
 local Messenger = require( 'src.messenger.Messenger' );
@@ -145,8 +145,7 @@ function MainScreen.new()
         LogReader.init( LogLoader.load( log ), config.options.commitDelay, config.options.mode, config.options.autoplay );
 
         -- Create panel.
-        filePanel = FilePanel.new( FileManager.draw, FileManager.update, 0, 0, 150, love.graphics.getHeight() - 40 );
-        filePanel:setActive( config.options.showFileList );
+        filePanel = FilePanel.new( config.options.showFileList, 0, 0, 150, love.graphics.getHeight() - 40 );
 
         timeline = Timeline.new( config.options.showTimeline, LogReader.getTotalCommits(), LogReader.getCurrentDate() );
 
@@ -170,7 +169,11 @@ function MainScreen.new()
         graph:update( dt );
 
         AuthorManager.update( dt, camera:getRotation() );
+
+        filePanel:setTotalFiles( FileManager.getTotalFiles() );
+        filePanel:setSortedList( FileManager.getSortedList() );
         filePanel:update( dt );
+
         timeline:update( dt );
         timeline:setCurrentCommit( LogReader.getCurrentIndex() );
         timeline:setCurrentDate( LogReader.getCurrentDate() );
@@ -225,7 +228,7 @@ function MainScreen.new()
     function self:wheelmoved( x, y )
         local mx, my = love.mouse.getPosition();
         if filePanel:intersects( mx, my ) then
-            filePanel:wheelmoved( x, y );
+            filePanel:scroll( x, y );
         else
             camera:zoom( love.timer.getDelta(), y );
         end
