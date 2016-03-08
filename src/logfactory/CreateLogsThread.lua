@@ -2,6 +2,7 @@ require("love.system");
 require("love.timer");
 
 local LogCreator = require('src.logfactory.LogCreator');
+local LogLoader = require('src.logfactory.LogLoader');
 
 local repositories = unpack( { ... } );
 
@@ -18,8 +19,12 @@ for name, path in pairs( repositories ) do
     -- Check if the path points to a valid git repository before attempting
     -- to create a git log and the info file for it.
     if LogCreator.isGitRepository(path) then
-        LogCreator.createGitLog(name, path);
-        LogCreator.createInfoFile( name );
+        local info = LogLoader.loadInfo( name );
+        if LogCreator.needsUpdate( path, info.totalCommits ) then
+            print( "Writing log for " .. name );
+            LogCreator.createGitLog(name, path);
+            LogCreator.createInfoFile( name, path );
+        end
         local channel = love.thread.getChannel( 'info' );
         channel:push( name );
     else

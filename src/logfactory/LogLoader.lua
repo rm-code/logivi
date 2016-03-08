@@ -207,19 +207,12 @@ function LogLoader.loadInfo( name )
     if love.filesystem.isFile( LOG_FOLDER .. '/' .. name .. '/' .. INFO_FILE ) then
         local successful, info = pcall( love.filesystem.load, LOG_FOLDER .. '/' .. name .. '/' .. INFO_FILE );
         if successful then
-            info = info(); -- Run the lua file.
-            info.firstCommit = createDateFromUnixTimestamp( info.firstCommit );
-            info.latestCommit = createDateFromUnixTimestamp( info.latestCommit );
-            info.aliases = info.aliases or {};
-            info.colors = info.colors or {};
-            return info;
+            return info();
         end
     end
     return {
         name = name,
-        firstCommit = '<no information available>',
-        latestCommit = '<no information available>',
-        totalCommits = '<no information available>',
+        totalCommits = 0,
         aliases = {},
         colors = {},
     };
