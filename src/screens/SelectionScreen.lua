@@ -85,6 +85,12 @@ function SelectionScreen.new()
         ScreenManager.switch( 'loading', { config = config } );
     end
 
+    function self:keypressed( key )
+        if key == 'escape' then
+            love.event.quit();
+        end
+    end
+
     return self;
 end
 
