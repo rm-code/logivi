@@ -10,18 +10,6 @@ local INFO_FILE = 'info.lua';
 
 local TAG_INFO = 'info: ';
 
-local WARNING_TITLE = 'No git log found.';
-local WARNING_MESSAGE = [[
-Looks like you are using LoGiVi for the first time. An example git log has been created in the save directory. Press '%s' to continue to the main menu, where you can watch the example.
-
-Press '%s' to open the save directory, where you can add your own logs and edit the configuration file.
-
-Press '%s' to view the wiki for more information on how to generate your own logs.
-]];
-
-local EXAMPLE_TEMPLATE_PATH = 'res/templates/example_log.txt';
-local EXAMPLE_TARGET_PATH = 'logs/example/';
-
 -- ------------------------------------------------
 -- Local variables
 -- ------------------------------------------------
@@ -151,41 +139,6 @@ local function searchLog( name )
     end
 end
 
----
--- Checks if the log folder exists and if it is empty or not.
---
-local function hasLogs()
-    return ( love.filesystem.isDirectory( LOG_FOLDER ) and #list ~= 0 );
-end
-
----
--- Displays a warning message for the user which gives him the option
--- to open the wiki page or the folder in which the logs need to be placed.
---
-local function showWarning()
-    local buttons = { "Proceed", "Open Folder", "Show Help (Online)", enterbutton = 1 };
-
-    local msg = string.format( WARNING_MESSAGE, buttons[1], buttons[2], buttons[3] );
-
-    local pressedbutton = love.window.showMessageBox( WARNING_TITLE, msg, buttons, 'warning', false );
-    if pressedbutton == 2 then
-        love.system.openURL( 'file://' .. love.filesystem.getSaveDirectory() );
-    elseif pressedbutton == 3 then
-        love.system.openURL( 'https://github.com/rm-code/logivi/wiki#instructions' );
-    end
-end
-
----
--- Write an example log file to the save directory.
---
-local function createExample()
-    love.filesystem.createDirectory( EXAMPLE_TARGET_PATH );
-    if not love.filesystem.isFile( EXAMPLE_TARGET_PATH .. LOG_FILE ) then
-        local example = love.filesystem.read( EXAMPLE_TEMPLATE_PATH );
-        love.filesystem.write( EXAMPLE_TARGET_PATH .. LOG_FILE, example );
-    end
-end
-
 -- ------------------------------------------------
 -- Public Functions
 -- ------------------------------------------------
@@ -225,12 +178,6 @@ end
 --
 function LogLoader.init()
     list = fetchProjectFolders( LOG_FOLDER );
-
-    if not hasLogs() then
-        createExample();
-        showWarning();
-        list = fetchProjectFolders( LOG_FOLDER );
-    end
 
     return list;
 end
