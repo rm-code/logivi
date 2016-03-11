@@ -1,5 +1,5 @@
 local Resources = require( 'src.Resources' );
-local Author = require( 'src.Author' );
+local Author = require( 'src.authors.Author' );
 local Messenger = require( 'src.messenger.Messenger' );
 
 -- ------------------------------------------------
