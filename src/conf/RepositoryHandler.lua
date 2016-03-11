@@ -1,4 +1,4 @@
-local FILE_NAME = 'repositories.lua';
+local FILE_NAME = 'repositories.cfg';
 
 -- ------------------------------------------------
 -- Module
