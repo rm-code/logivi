@@ -26,6 +26,7 @@ function love.load()
         loading = require( 'src.screens.LoadingScreen' ),
         selection = require( 'src.screens.SelectionScreen' ),
         main = require( 'src.screens.MainScreen' ),
+        input = require( 'src.screens.InputPanel' )
     };
 
     ScreenManager.init( screens, 'loading' );
@@ -77,4 +78,8 @@ end
 
 function love.directorydropped( path )
     ScreenManager.directorydropped( path );
+end
+
+function love.textinput( txt )
+    ScreenManager.textinput( txt );
 end

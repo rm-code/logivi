@@ -1,6 +1,5 @@
 local ScreenManager = require('lib.screenmanager.ScreenManager');
 local Screen = require('lib.screenmanager.Screen');
-local RepositoryHandler = require('src.conf.RepositoryHandler');
 local Resources = require('src.Resources');
 
 -- ------------------------------------------------
@@ -80,9 +79,7 @@ function SelectionScreen.new()
     end
 
     function self:directorydropped( path )
-        local name = path:match( '[\\/]?([^\\/]+)$' );
-        RepositoryHandler.add( name, path );
-        ScreenManager.switch( 'loading', { config = config } );
+        ScreenManager.push( 'input', path, { config = config } );
     end
 
     function self:keypressed( key )
