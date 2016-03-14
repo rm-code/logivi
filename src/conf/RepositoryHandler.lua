@@ -34,8 +34,7 @@ local function load()
             -- Ignore comments and empty lines.
         else
             -- Store values in the section.
-            -- TODO: Expand pattern to match names with whitespaces: '(([%g]+[%s]*)+)%s+=%s+(.+)';
-            local key, value = line:match( '^([%g]+)%s+=%s+(.+)' );
+            local key, value = line:match( '^%s*([%g%s]*%g)%s*=%s*(.+)$' );
             repositories[key] = value;
         end
     end
