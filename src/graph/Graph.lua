@@ -68,8 +68,8 @@ function Graph.new( edgeWidth, showLabels )
     --
     local function spawnNode( name, id, parent, parentID )
         local parentX, parentY = parent:getPosition();
-        local offsetX = 100 * randomSign();
-        local offsetY = 100 * randomSign();
+        local offsetX = love.math.random( 100 ) * randomSign();
+        local offsetY = love.math.random( 100 ) * randomSign();
         return graph:addNode( id, parentX + offsetX, parentY + offsetY, false, parentID, spritebatch, name );
     end
 
