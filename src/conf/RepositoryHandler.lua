@@ -103,4 +103,15 @@ function RepositoryHandler.getRepositories()
     return repositories;
 end
 
+---
+-- Returns true if at least one repository exists.
+-- @return (boolean) Wether or not a repository exists.
+--
+function RepositoryHandler.hasRepositories()
+    for _, v in pairs( repositories ) do
+        if v then return true end
+    end
+    return false;
+end
+
 return RepositoryHandler;
