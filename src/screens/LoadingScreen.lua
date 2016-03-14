@@ -85,6 +85,9 @@ function LoadingScreen.new()
 
     function self:init( param )
         config = ( param and param.config ) or ConfigReader.init();
+
+        love.window.setMode( config.options.screenWidth, config.options.screenHeight, { borderless = true, msaa = config.options.msaa, vsync = config.options.vsync } );
+
         RepositoryHandler.init();
 
         graph = GraphLibrary.new();
