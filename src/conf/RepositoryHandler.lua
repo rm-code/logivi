@@ -78,6 +78,9 @@ end
 -- @param path (string) The repository's location.
 --
 function RepositoryHandler.add( name, path )
+    if repositories[name] then
+        name = name .. '_' .. os.time();
+    end
     repositories[name] = path;
     save();
 end
