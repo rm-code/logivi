@@ -28,7 +28,6 @@ local InputPanel = {};
 function InputPanel.new()
     local self = Screen.new();
 
-    local active = true;
     local input = {};
     local index = 1;
     local text = '';
