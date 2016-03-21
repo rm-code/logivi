@@ -20,6 +20,8 @@ local FILE_SPRITE  = Resources.loadImage( 'file.png' );
 local MESSAGE_FONT   = Resources.loadFont( 'SourceCodePro-Medium.otf', 15 );
 local NO_REPO_MESSAGE = "Add a repository by dragging its folder on this window!";
 
+local HAND_CURSOR = love.mouse.getSystemCursor( 'hand' );
+
 -- ------------------------------------------------
 -- Module
 -- ------------------------------------------------
@@ -55,6 +57,14 @@ function SelectionScreen.new()
         ScreenManager.switch( 'main', { log = name, config = config } );
     end
 
+    local function updateMouseCursor()
+        if graph:getNodeAt( love.mouse.getX(), love.mouse.getY(), 20 ) then
+            love.mouse.setCursor( HAND_CURSOR );
+        else
+            love.mouse.setCursor();
+        end
+    end
+
     function self:init( params )
         graph = params.graph;
         colors = params.colors;
@@ -64,6 +74,8 @@ function SelectionScreen.new()
     function self:update( dt )
         graph:update( dt );
         alpha = pulsate( dt );
+
+        updateMouseCursor();
     end
 
     function self:draw()
