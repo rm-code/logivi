@@ -20,6 +20,8 @@ local MOUSE_HOVERING_BOUNDS = 30;
 local FADED_ALPHA = 10;
 local VISIBLE_ALPHA = 150;
 
+local HAND_CURSOR = love.mouse.getSystemCursor( 'hand' );
+
 -- ------------------------------------------------
 -- Constructor
 -- ------------------------------------------------
@@ -60,6 +62,14 @@ function Timeline.new( visible, totalCommits, date )
     --
     local function mouseOver()
         return love.mouse.getY() > sh - MOUSE_HOVERING_BOUNDS;
+    end
+
+    local function updateMouseCursor()
+        if mouseOver() then
+            love.mouse.setCursor( HAND_CURSOR );
+        else
+            love.mouse.setCursor();
+        end
     end
 
     -- ------------------------------------------------
@@ -106,6 +116,8 @@ function Timeline.new( visible, totalCommits, date )
         local hover = mouseOver();
         alpha = lerp( alpha, hover and VISIBLE_ALPHA or FADED_ALPHA, dt * 4 );
         datePosition = lerp( datePosition, hover and ( sh - TEXT_FONT:getHeight( date ) - HEIGHT - MARGIN - MARGIN ) or ( sh - HEIGHT - MARGIN - MARGIN ), dt * 4 );
+
+        updateMouseCursor();
     end
 
     ---
