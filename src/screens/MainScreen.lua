@@ -176,9 +176,9 @@ function MainScreen.new()
         filePanel:setSortedList( FileManager.getSortedList() );
         filePanel:update( dt );
 
-        timeline:update( dt );
         timeline:setCurrentCommit( LogReader.getCurrentIndex() );
         timeline:setCurrentDate( LogReader.getCurrentDate() );
+        timeline:update( dt );
 
         controlCamera( dt );
 
@@ -214,8 +214,8 @@ function MainScreen.new()
         end
     end
 
-    function self:mousepressed( x, y )
-        local pos = timeline:getCommitAt( x, y );
+    function self:mousepressed( x, _ )
+        local pos = timeline:getCommitAt( x );
         if pos then
             LogReader.setCurrentIndex( pos );
         end

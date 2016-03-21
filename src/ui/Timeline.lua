@@ -12,104 +12,151 @@ local Timeline = {};
 
 local TEXT_FONT    = Resources.loadFont('SourceCodePro-Medium.otf', 15);
 local DEFAULT_FONT = Resources.loadFont('default', 12);
-local MARGIN_LEFT = 10;
-local MARGIN_RIGHT = 10;
-local MARGIN_LABEL = 35;
-local HEIGHT = 30;
-local TOTAL_STEPS = 128;
 
-local DEFAULT_STEP_SCALE = 0.4;
-local HIGHLIGHT_STEP_SCALE = 0.7;
-local CURRENT_STEP_SCALE = 0.6;
+local MARGIN = 5;
+local HEIGHT = 10;
+local MOUSE_HOVERING_BOUNDS = 30;
+
+local FADED_ALPHA = 10;
+local VISIBLE_ALPHA = 150;
 
 -- ------------------------------------------------
 -- Constructor
 -- ------------------------------------------------
 
-function Timeline.new(visible, totalCommits, date)
+function Timeline.new( visible, totalCommits, date )
     local self = {};
 
-    local steps = totalCommits < TOTAL_STEPS and totalCommits or TOTAL_STEPS;
-    local stepWidth = (love.graphics.getWidth() - MARGIN_LEFT - MARGIN_RIGHT) / steps;
-    local currentStep = 0;
-    local highlighted = -1;
+    local sw, sh = love.graphics.getDimensions();
+    local currentCommit = 0;
 
-    local stepSprite  = Resources.loadImage('step.png');
-    local spritebatch = love.graphics.newSpriteBatch(stepSprite, TOTAL_STEPS, 'dynamic');
-    spritebatch:setColor(100, 100, 100, 255);
+    local alpha = FADED_ALPHA;
+    local datePosition = sh - HEIGHT - MARGIN - MARGIN;
 
-    -- Create the timeline.
-    for i = 1, steps do
-        spritebatch:add(MARGIN_LEFT + (i - 1) * stepWidth, love.graphics.getHeight() - (stepSprite:getHeight() * DEFAULT_STEP_SCALE), 0, DEFAULT_STEP_SCALE, DEFAULT_STEP_SCALE);
+    -- ------------------------------------------------
+    -- Private Functions
+    -- ------------------------------------------------
+
+    ---
+    -- Linear interpolation between a and b.
+    --
+    local function lerp( a, b, t )
+        return a + ( b - a ) * t;
     end
 
     ---
-    -- Calculates which timestep the user has clicked on and returns the
-    -- index of the commit which has been mapped to that location.
-    -- @param x - The clicked x-position
+    -- Takes a pixel coordinate and tries to map it to a commit at this position
+    -- on the timeline or close by.
+    -- @param x (number) The position in pixels.
+    -- @return  (number) The commit at this position on the timeline.
     --
-    local function calculateCommitIndex(x)
-        return math.floor(totalCommits / (steps / math.floor((x / stepWidth))));
+    local function transformPixelsToCommits( x )
+        return math.floor(( x - MARGIN ) / (( sw - MARGIN - MARGIN ) / totalCommits ));
     end
 
     ---
-    -- Maps a certain commit to a timestep.
+    -- Checks wether the mouse is hovering over the timeline.
+    -- @return (boolean) True if the mouse is hovering, false otherwise.
     --
-    local function calculateTimelineIndex(cindex)
-        return math.floor((cindex / totalCommits) * (steps - 1) + 1);
+    local function mouseOver()
+        return love.mouse.getY() > sh - MOUSE_HOVERING_BOUNDS;
     end
 
+    -- ------------------------------------------------
+    -- Public Functions
+    -- ------------------------------------------------
+
+    ---
+    -- Draws the timeline.
+    --
     function self:draw()
-        if not visible then return end
-        love.graphics.draw(spritebatch);
-
-        local sw, sh = love.graphics.getDimensions();
-        love.graphics.setColor(120, 120, 120, 255);
-        love.graphics.draw(stepSprite, MARGIN_LEFT + (currentStep - 1) * stepWidth, sh - (stepSprite:getHeight() * CURRENT_STEP_SCALE), 0, CURRENT_STEP_SCALE, CURRENT_STEP_SCALE);
-
-        love.graphics.setColor(255, 0, 0);
-        love.graphics.draw(stepSprite, MARGIN_LEFT + (highlighted - 1) * stepWidth, sh - (stepSprite:getHeight() * HIGHLIGHT_STEP_SCALE), 0, HIGHLIGHT_STEP_SCALE, HIGHLIGHT_STEP_SCALE);
-
-        love.graphics.setColor(100, 100, 100);
-        love.graphics.setFont(TEXT_FONT);
-        love.graphics.print(date, sw * 0.5 - TEXT_FONT:getWidth(date) * 0.5, sh - MARGIN_LABEL);
-        love.graphics.setFont(DEFAULT_FONT)
-        love.graphics.setColor(255, 255, 255);
-    end
-
-    function self:update(dt)
-        if love.mouse.getY() > love.graphics.getHeight() - HEIGHT then
-            highlighted = math.floor(love.mouse.getX() / stepWidth);
-        else
-            highlighted = -1;
+        if not visible then
+            return;
         end
+
+        -- Draw the date label.
+        local labelX =  sw * 0.5 - TEXT_FONT:getWidth( date ) * 0.5;
+        love.graphics.setColor( 0, 0, 0, 210 );
+        love.graphics.rectangle( 'fill', labelX - 2, datePosition - 2, TEXT_FONT:getWidth( date ) + 4, TEXT_FONT:getHeight( date ) + 4 );
+        love.graphics.setColor( 215, 215, 215, 255 );
+        love.graphics.setFont( TEXT_FONT );
+        love.graphics.print( date, labelX, datePosition );
+        love.graphics.setFont( DEFAULT_FONT )
+        love.graphics.setColor( 255, 255, 255, 255 );
+
+        -- Draw the timeline.
+        love.graphics.setColor( 215, 215, 215, alpha );
+        love.graphics.rectangle( 'line', MARGIN, sh - HEIGHT - MARGIN, sw - ( 2 * MARGIN ), HEIGHT );
+        love.graphics.setColor( 200, 200, 200, alpha );
+        love.graphics.rectangle( 'fill', MARGIN, sh - HEIGHT - MARGIN, ( sw - ( 2 * MARGIN )) * ( currentCommit / totalCommits ), HEIGHT );
+        love.graphics.setColor( 255, 255, 255, 255 );
     end
 
-    function self:setCurrentCommit(commit)
-        currentStep = calculateTimelineIndex(commit);
+    ---
+    -- Updates the timeline.
+    --
+    function self:update( dt )
+        if not visible then
+            return;
+        end
+
+        -- Update the alpha channel of the timeline and the position of the
+        -- date label based on wether the mouse is hovering over the timeline
+        -- or not.
+        local hover = mouseOver();
+        alpha = lerp( alpha, hover and VISIBLE_ALPHA or FADED_ALPHA, dt * 4 );
+        datePosition = lerp( datePosition, hover and ( sh - TEXT_FONT:getHeight( date ) - HEIGHT - MARGIN - MARGIN ) or ( sh - HEIGHT - MARGIN - MARGIN ), dt * 4 );
     end
 
-    function self:setCurrentDate(ndate)
-        date = ndate;
-    end
-
+    ---
+    -- Toggles the timeline.
+    --
     function self:toggle()
         visible = not visible;
     end
 
-    function self:getCommitAt(x, y)
-        if y > love.graphics.getHeight() - HEIGHT then
-            return calculateCommitIndex(x);
-        end
+    ---
+    -- Updates the screen's dimensions when it has been resized.
+    -- @param nx (number) The new screen width in pixels.
+    -- @param ny (number) The new screen width in pixels.
+    --
+    function self:resize( nx, ny )
+        sw, sh = nx, ny;
     end
 
-    function self:resize(nx, ny)
-        stepWidth = (nx - MARGIN_LEFT - MARGIN_RIGHT) / steps;
+    -- ------------------------------------------------
+    -- Setters
+    -- ------------------------------------------------
 
-        -- Recreate the spritebatch when the window is resized.
-        spritebatch:clear();
-        for i = 1, steps do
-            spritebatch:add(MARGIN_LEFT + (i - 1) * stepWidth, ny - (stepSprite:getHeight() * DEFAULT_STEP_SCALE), 0, DEFAULT_STEP_SCALE, DEFAULT_STEP_SCALE);
+    ---
+    -- Updates the current commit counter.
+    -- @param commit (number) The index of the currently displayed commit.
+    --
+    function self:setCurrentCommit( commit )
+        currentCommit = commit;
+    end
+
+    ---
+    -- Updates the current date.
+    -- @param ndate (string) The date of the currently displayed commit.
+    --
+    function self:setCurrentDate( ndate )
+        date = ndate;
+    end
+
+    -- ------------------------------------------------
+    -- Getters
+    -- ------------------------------------------------
+
+    ---
+    -- Returns a commit at a certain position on the timeline or close by.
+    -- @param x (number) The horizontal screen position in pixels.
+    -- @param _ (number) The vertical screen position in pixels (unused).
+    -- @return  (number) The commit at this position on the timeline.
+    --
+    function self:getCommitAt( x )
+        if mouseOver() then
+            return transformPixelsToCommits( x );
         end
     end
 
