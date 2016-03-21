@@ -17,8 +17,9 @@ local LABEL_FONT   = Resources.loadFont( 'SourceCodePro-Medium.otf', 20 );
 local DEFAULT_FONT = Resources.loadFont( 'default', 12 );
 local FILE_SPRITE  = Resources.loadImage( 'file.png' );
 
-local MESSAGE_FONT   = Resources.loadFont( 'SourceCodePro-Medium.otf', 15 );
+local MESSAGE_FONT = Resources.loadFont( 'SourceCodePro-Medium.otf', 15 );
 local NO_REPO_MESSAGE = "Add a repository by dragging its folder on this window!";
+local CONFIG_FOLDER_MESSAGE = "Click on the node above to open the config folder!";
 
 local HAND_CURSOR = love.mouse.getSystemCursor( 'hand' );
 
@@ -100,6 +101,7 @@ function SelectionScreen.new()
             love.graphics.setFont( MESSAGE_FONT );
             love.graphics.setColor( 255, 255, 255, alpha );
             love.graphics.print( NO_REPO_MESSAGE, love.graphics.getWidth() * 0.5 - MESSAGE_FONT:getWidth( NO_REPO_MESSAGE ) * 0.5, love.graphics.getHeight() * 0.5 - 60 );
+            love.graphics.print( CONFIG_FOLDER_MESSAGE, love.graphics.getWidth() * 0.5 - MESSAGE_FONT:getWidth( CONFIG_FOLDER_MESSAGE ) * 0.5, love.graphics.getHeight() * 0.5 + 60 - MESSAGE_FONT:getHeight( CONFIG_FOLDER_MESSAGE ) );
             love.graphics.setFont( DEFAULT_FONT );
             love.graphics.setColor( 255, 255, 255, 255 );
         end
