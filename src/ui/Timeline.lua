@@ -17,7 +17,7 @@ local MARGIN = 5;
 local HEIGHT = 10;
 local MOUSE_HOVERING_BOUNDS = 30;
 
-local FADED_ALPHA = 10;
+local FADED_ALPHA = 0;
 local VISIBLE_ALPHA = 150;
 
 local HAND_CURSOR = love.mouse.getSystemCursor( 'hand' );
