@@ -26,6 +26,13 @@ local HAND_CURSOR = love.mouse.getSystemCursor( 'hand' );
 -- Constructor
 -- ------------------------------------------------
 
+---
+-- Creates a new Timeline object.
+-- @param visible      (boolean)  Wether to show the timeline.
+-- @param totalCommits (number)   The total number of commits to display.
+-- @param date         (string)   The starting date.
+-- @return             (Timeline) A new timeline object.
+--
 function Timeline.new( visible, totalCommits, date )
     local self = {};
 
@@ -64,6 +71,10 @@ function Timeline.new( visible, totalCommits, date )
         return love.mouse.getY() > sh - MOUSE_HOVERING_BOUNDS;
     end
 
+    ---
+    -- Changes the mouse cursor to a hand symbol if the mouse is hovering over
+    -- the timeline and changes it back if it isn't.
+    --
     local function updateMouseCursor()
         if mouseOver() then
             love.mouse.setCursor( HAND_CURSOR );
@@ -104,6 +115,7 @@ function Timeline.new( visible, totalCommits, date )
 
     ---
     -- Updates the timeline.
+    -- @param dt (number) Time since the last update in seconds.
     --
     function self:update( dt )
         if not visible then
@@ -163,7 +175,6 @@ function Timeline.new( visible, totalCommits, date )
     ---
     -- Returns a commit at a certain position on the timeline or close by.
     -- @param x (number) The horizontal screen position in pixels.
-    -- @param _ (number) The vertical screen position in pixels (unused).
     -- @return  (number) The commit at this position on the timeline.
     --
     function self:getCommitAt( x )
