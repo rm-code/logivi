@@ -59,7 +59,6 @@ end
 
 ---
 -- Parses the config file and stores the values in a table.
---
 -- @param filePath (string) The path to the config file.
 -- @return         (table)  The loaded config stored in a table.
 --
@@ -99,10 +98,8 @@ end
 -- It checks if the file contains all the necessary sections and values. If it
 -- doesn't, a warning is displayed and the default config will be used.
 -- @param default (table) The default config file to use for comparison.
--- @param config  (table) The loaded config file to check.
--- @param         (table) Either the default config file or the loaded one.
 --
-local function validateFile( default, config )
+local function validateFile( default )
     print( 'Validating configuration file ... ' );
     for skey, section in pairs( default ) do
 
@@ -122,9 +119,7 @@ local function validateFile( default, config )
             end
         end
     end
-
     print( 'Done!' );
-    return config;
 end
 
 -- ------------------------------------------------
@@ -141,7 +136,7 @@ function ConfigReader.init()
     -- If the config hasn't been loaded yet, load and validate it.
     if not config then
         config = loadFile( FILE_NAME );
-        config = validateFile( default, config );
+        validateFile( default );
     end
 
     return config;
