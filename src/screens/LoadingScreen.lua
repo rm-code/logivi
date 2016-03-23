@@ -93,7 +93,7 @@ function LoadingScreen.new()
         graph = GraphLibrary.new();
         graph:addNode( '', love.graphics.getWidth() * 0.5, love.graphics.getHeight() * 0.5, true );
 
-        thread = love.thread.newThread( "src/logfactory/CreateLogsThread.lua" );
+        thread = love.thread.newThread( 'src/logfactory/LogCreationThread.lua' );
         thread:start( RepositoryHandler.getRepositories() );
 
         dots = '';
