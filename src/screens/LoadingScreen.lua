@@ -28,6 +28,8 @@ local LABEL_FONT   = Resources.loadFont( 'SourceCodePro-Medium.otf', 20 );
 local DEFAULT_FONT = Resources.loadFont( 'default', 12 );
 local FILE_SPRITE  = Resources.loadImage( 'file.png' );
 
+local VERSION_STRING = string.format( 'Version %s', getVersion() );
+
 local LOADING_DOT = ' .';
 local LOADING_MAX_LENGTH = 6;
 local LOADING_DOT_TIME = 0.2;
@@ -167,6 +169,7 @@ function LoadingScreen.new()
         end);
 
         love.graphics.print( 'Loading' .. dots, 10, love.graphics.getHeight() - 20 );
+        love.graphics.print( VERSION_STRING, love.graphics.getWidth() - DEFAULT_FONT:getWidth( VERSION_STRING ) - 10, love.graphics.getHeight() - 20 );
     end
 
     return self;
