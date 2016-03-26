@@ -6,7 +6,7 @@ local ScreenManager = require( 'lib.screenmanager.ScreenManager' );
 function love.load()
     print( "===================" );
     print( string.format( "Title: '%s'", getTitle() ));
-    print( string.format( "Version: %.4d", getVersion() ));
+    print( string.format( "Version: %s", getVersion() ));
     print( string.format( "LOVE Version: %d.%d.%d (%s)", love.getVersion() ));
     print( string.format( "Resolution: %dx%d", love.graphics.getDimensions() ));
 
