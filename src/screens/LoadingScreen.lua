@@ -39,8 +39,6 @@ local LOADING_DOTS = {
 }
 local LOADING_DOT_TIME = 0.15;
 
-local LOADING_TIME = 2;
-
 local EDGE_COLOR = { 60, 60, 60, 255 };
 
 -- ------------------------------------------------
@@ -181,7 +179,7 @@ function LoadingScreen.new()
             addNewNode( info );
         end
 
-        if not thread:isRunning() and loadingTimer > LOADING_TIME then
+        if not thread:isRunning() then
             ScreenManager.switch( 'selection', { config = config, graph = graph, colors = colors } );
         end
 
