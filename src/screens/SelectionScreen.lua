@@ -23,6 +23,8 @@ local CONFIG_FOLDER_MESSAGE = "Click on the node above to open the config folder
 
 local HAND_CURSOR = love.mouse.getSystemCursor( 'hand' );
 
+local VERSION_STRING = string.format( 'Version %s', getVersion() );
+
 -- ------------------------------------------------
 -- Module
 -- ------------------------------------------------
@@ -105,6 +107,10 @@ function SelectionScreen.new()
             love.graphics.setFont( DEFAULT_FONT );
             love.graphics.setColor( 255, 255, 255, 255 );
         end
+
+        love.graphics.setColor( 255, 255, 255, 100 );
+        love.graphics.print( VERSION_STRING, love.graphics.getWidth() - DEFAULT_FONT:getWidth( VERSION_STRING ) - 10, love.graphics.getHeight() - 20 );
+        love.graphics.setColor( 255, 255, 255, 255 );
     end
 
     function self:mousereleased( mx, my )
