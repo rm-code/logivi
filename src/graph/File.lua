@@ -1,3 +1,9 @@
+local Utility = require( 'src.Utility' );
+
+-- ------------------------------------------------
+-- Module
+-- ------------------------------------------------
+
 local File = {};
 
 -- ------------------------------------------------
@@ -36,13 +42,6 @@ function File.new( posX, posY, defaultColor, extension )
     -- ------------------------------------------------
 
     ---
-    -- Linear interpolation between a and b.
-    --
-    local function lerp( a, b, t )
-        return a + ( b - a ) * t;
-    end
-
-    ---
     -- Lerps the file from its current offset position to the target offset.
     -- This adds a nice animation effect when files are rearranged around their
     -- parent nodes.
@@ -51,8 +50,8 @@ function File.new( posX, posY, defaultColor, extension )
     -- @param tarY - The target offset on the y-axis.
     --
     local function animate( dt, tarX, tarY )
-        currentOffsetX = lerp( currentOffsetX, tarX, dt * ANIM_TIMER );
-        currentOffsetY = lerp( currentOffsetY, tarY, dt * ANIM_TIMER );
+        currentOffsetX = Utility.lerp( currentOffsetX, tarX, dt * ANIM_TIMER );
+        currentOffsetY = Utility.lerp( currentOffsetY, tarY, dt * ANIM_TIMER );
     end
 
     -- ------------------------------------------------
@@ -68,13 +67,13 @@ function File.new( posX, posY, defaultColor, extension )
         animate( dt, targetOffsetX, targetOffsetY );
 
         -- Slowly change the color from the modified color back to the default.
-        currentColor.r = lerp( currentColor.r, defaultColor.r, dt * MOD_TIMER );
-        currentColor.g = lerp( currentColor.g, defaultColor.g, dt * MOD_TIMER );
-        currentColor.b = lerp( currentColor.b, defaultColor.b, dt * MOD_TIMER );
+        currentColor.r = Utility.lerp( currentColor.r, defaultColor.r, dt * MOD_TIMER );
+        currentColor.g = Utility.lerp( currentColor.g, defaultColor.g, dt * MOD_TIMER );
+        currentColor.b = Utility.lerp( currentColor.b, defaultColor.b, dt * MOD_TIMER );
 
         -- Slowly fade out the file when it has been marked for deletion.
         if state == 'del' then
-            currentColor.a = math.max( 0, math.min( currentColor.a - FADE_TIMER, 255 ));
+            currentColor.a = Utility.clamp( 0, currentColor.a - FADE_TIMER, 255 );
             if currentColor.a == 0 then
                 state = 'dead';
             end

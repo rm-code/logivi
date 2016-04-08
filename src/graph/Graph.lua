@@ -2,6 +2,7 @@ local Node = require('src.graph.Node');
 local Resources = require('src.Resources');
 local GraphLibrary = require('lib.graphoon.Graphoon').Graph;
 local Messenger = require('src.messenger.Messenger');
+local Utility = require( 'src.Utility' );
 
 -- ------------------------------------------------
 -- Module
@@ -51,14 +52,6 @@ function Graph.new( edgeWidth, showLabels )
     -- ------------------------------------------------
 
     ---
-    -- Returns a random sign.
-    -- @return (number) Either -1 or 1.
-    --
-    local function randomSign()
-        return love.math.random( 0, 1 ) == 0 and -1 or 1;
-    end
-
-    ---
     -- Spawns a new node.
     -- @param name     (string) The node's name based on the folder's name.
     -- @param id       (string) The node's unqiue id based on the folder's full path.
@@ -68,8 +61,8 @@ function Graph.new( edgeWidth, showLabels )
     --
     local function spawnNode( name, id, parent, parentID )
         local parentX, parentY = parent:getPosition();
-        local offsetX = love.math.random( 100 ) * randomSign();
-        local offsetY = love.math.random( 100 ) * randomSign();
+        local offsetX = love.math.random( 100 ) * Utility.randomSign();
+        local offsetY = love.math.random( 100 ) * Utility.randomSign();
         return graph:addNode( id, parentX + offsetX, parentY + offsetY, false, parentID, spritebatch, name );
     end
 

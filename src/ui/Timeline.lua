@@ -1,4 +1,5 @@
 local Resources = require('src.Resources');
+local Utility = require( 'src.Utility' );
 
 -- ------------------------------------------------
 -- Module
@@ -45,13 +46,6 @@ function Timeline.new( visible, totalCommits, date )
     -- ------------------------------------------------
     -- Private Functions
     -- ------------------------------------------------
-
-    ---
-    -- Linear interpolation between a and b.
-    --
-    local function lerp( a, b, t )
-        return a + ( b - a ) * t;
-    end
 
     ---
     -- Takes a pixel coordinate and tries to map it to a commit at this position
@@ -126,8 +120,8 @@ function Timeline.new( visible, totalCommits, date )
         -- date label based on wether the mouse is hovering over the timeline
         -- or not.
         local hover = mouseOver();
-        alpha = lerp( alpha, hover and VISIBLE_ALPHA or FADED_ALPHA, dt * 4 );
-        datePosition = lerp( datePosition, hover and ( sh - TEXT_FONT:getHeight( date ) - HEIGHT - MARGIN - MARGIN ) or ( sh - HEIGHT - MARGIN - MARGIN ), dt * 4 );
+        alpha = Utility.lerp( alpha, hover and VISIBLE_ALPHA or FADED_ALPHA, dt * 4 );
+        datePosition = Utility.lerp( datePosition, hover and ( sh - TEXT_FONT:getHeight( date ) - HEIGHT - MARGIN - MARGIN ) or ( sh - HEIGHT - MARGIN - MARGIN ), dt * 4 );
 
         updateMouseCursor();
     end

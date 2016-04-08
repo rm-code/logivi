@@ -1,4 +1,5 @@
 local Resources = require( 'src.Resources' );
+local Utility = require( 'src.Utility' );
 
 -- ------------------------------------------------
 -- Constants
@@ -63,17 +64,6 @@ function Author.new( name, avatar, spritebatch, cx, cy )
     -- ------------------------------------------------
 
     ---
-    -- Clamps a value to a certain range.
-    -- @param min (number) The minimum value to clamp to.
-    -- @param val (number) The value to clamp.
-    -- @param max (number) The maximum value to clamp to.
-    -- @return    (number) The clamped value.
-    --
-    local function clamp( min, val, max )
-        return math.max( min, math.min( val, max ));
-    end
-
-    ---
     -- Resets an author's state.
     --
     local function reactivate()
@@ -109,8 +99,8 @@ function Author.new( name, avatar, spritebatch, cx, cy )
     -- @param fy (number) The force along the y-axis.
     --
     local function applyForce( fx, fy )
-        accX = clamp( -FORCE_MAX, accX + fx, FORCE_MAX );
-        accY = clamp( -FORCE_MAX, accY + fy, FORCE_MAX );
+        accX = Utility.clamp( -FORCE_MAX, accX + fx, FORCE_MAX );
+        accY = Utility.clamp( -FORCE_MAX, accY + fy, FORCE_MAX );
     end
 
     -- ------------------------------------------------
@@ -159,8 +149,8 @@ function Author.new( name, avatar, spritebatch, cx, cy )
 
             -- Fade out the author after it has been inactive for too long.
             if inactivity > INACTIVITY_TIMER then
-                avatarAlpha = clamp( 0, avatarAlpha - dt * FADE_FACTOR, 255 );
-                linkAlpha   = clamp( 0, linkAlpha   - dt * FADE_FACTOR, 255 );
+                avatarAlpha = Utility.clamp( 0, avatarAlpha - dt * FADE_FACTOR, 255 );
+                linkAlpha   = Utility.clamp( 0, linkAlpha   - dt * FADE_FACTOR, 255 );
             end
 
             -- Stop the author's movement after a short inactivity.

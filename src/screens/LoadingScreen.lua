@@ -4,6 +4,7 @@ local ConfigReader = require('src.conf.ConfigReader');
 local RepositoryHandler = require('src.conf.RepositoryHandler');
 local GraphLibrary = require('lib.graphoon.Graphoon').Graph;
 local Resources = require('src.Resources');
+local Utility = require( 'src.Utility' );
 
 -- ------------------------------------------------
 -- Constants
@@ -71,14 +72,6 @@ function LoadingScreen.new()
     -- ------------------------------------------------
 
     ---
-    -- Returns a random sign (+ or -).
-    -- @return (number) Randomly returns either -1 or 1.
-    --
-    local function randomSign()
-        return love.math.random( 0, 1 ) == 0 and -1 or 1;
-    end
-
-    ---
     -- Updates the dot-animation indicating the running loading operations.
     -- @param dt (number) Time since the last update in seconds.
     --
@@ -118,8 +111,8 @@ function LoadingScreen.new()
             love.math.random( 0, 255 ),
             love.math.random( 0, 255 )
         };
-        local spawnX = love.graphics.getWidth()  * 0.5 + randomSign() * love.math.random( 5, 15 );
-        local spawnY = love.graphics.getHeight() * 0.5 + randomSign() * love.math.random( 5, 15 );
+        local spawnX = love.graphics.getWidth()  * 0.5 + Utility.randomSign() * love.math.random( 5, 15 );
+        local spawnY = love.graphics.getHeight() * 0.5 + Utility.randomSign() * love.math.random( 5, 15 );
         graph:addNode( info, spawnX, spawnY);
         graph:connectIDs( '', info );
     end

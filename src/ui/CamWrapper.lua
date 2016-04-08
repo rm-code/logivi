@@ -1,5 +1,6 @@
 local Camera = require('lib.camera.Camera');
 local Messenger = require('src.messenger.Messenger');
+local Utility = require( 'src.Utility' );
 
 -- ------------------------------------------------
 -- Module
@@ -40,14 +41,6 @@ function CamWrapper.new()
     -- ------------------------------------------------
     -- Private Functions
     -- ------------------------------------------------
-
-    local function clamp(min, val, max)
-        return math.max(min, math.min(val, max));
-    end
-
-    local function lerp(a, b, t)
-        return a + (b - a) * t;
-    end
 
     ---
     -- Updates the position on which the camera offset builds.
@@ -112,13 +105,13 @@ function CamWrapper.new()
     --
     function self:update(dt)
         local tzoom = calculateAutoZoom(camera.rot);
-        zoom = lerp(zoom, tzoom, dt * 2);
+        zoom = Utility.lerp(zoom, tzoom, dt * 2);
 
-        camera:zoomTo(clamp(CAMERA_MAX_ZOOM, zoom + manualZoom, CAMERA_MIN_ZOOM));
+        camera:zoomTo( Utility.clamp( CAMERA_MAX_ZOOM, zoom + manualZoom, CAMERA_MIN_ZOOM ));
 
         -- Gradually move the camera to the target position.
-        cx = lerp(cx, gx + ox, dt * CAMERA_TRACKING_SPEED);
-        cy = lerp(cy, gy + oy, dt * CAMERA_TRACKING_SPEED);
+        cx = Utility.lerp(cx, gx + ox, dt * CAMERA_TRACKING_SPEED);
+        cy = Utility.lerp(cy, gy + oy, dt * CAMERA_TRACKING_SPEED);
         camera:lookAt(cx, cy);
     end
 

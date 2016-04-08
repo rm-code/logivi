@@ -1,3 +1,9 @@
+local Utility = require( 'src.Utility' );
+
+-- ------------------------------------------------
+-- Module
+-- ------------------------------------------------
+
 local FilePanel = {};
 
 -- ------------------------------------------------
@@ -104,7 +110,7 @@ function FilePanel.new( visible, x, y, w, h )
         end
 
         -- Clamp velocity to prevent too fast scrolling.
-        scrollVelocity = math.max( -MAX_VELOCITY, math.min( scrollVelocity, MAX_VELOCITY ));
+        scrollVelocity = Utility.clamp( -MAX_VELOCITY, scrollVelocity, MAX_VELOCITY );
 
         -- Update the position of the scrolled content.
         contentOffset = contentOffset + scrollVelocity;
