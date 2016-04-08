@@ -22,7 +22,7 @@ local AuthorManager = {};
 local authors;
 local aliases;
 local addresses;
-local visible;
+local showIcons;
 local showLabels;
 local spritebatch;
 
@@ -37,17 +37,17 @@ local graphCenterX, graphCenterY;
 ---
 -- Initialises the AuthorManager.
 -- @param naliases    (table)   Aliases used to replace author names.
--- @param nvisible    (boolean) Wether to hide or show the author icons.
+-- @param nShowIcons  (boolean) Wether to hide or show the author icons.
 -- @param nShowLabels (boolean) Wether to hide or show the labels below each author.
 --
-function AuthorManager.init( naliases, nvisible, nShowLabels )
+function AuthorManager.init( naliases, nShowIcons, nShowLabels )
     -- Set up the table to store all authors.
     authors = {};
 
     addresses = {};
     aliases = naliases;
 
-    visible = nvisible;
+    showIcons  = nShowIcons;
     showLabels = nShowLabels;
 
     graphCenterX, graphCenterY = 0, 0;
@@ -73,7 +73,7 @@ end
 -- @param scale    (number) The camera's current scale.
 --
 function AuthorManager.draw( rotation, scale )
-    if visible then
+    if showIcons then
         for _, author in pairs( authors ) do
             author:draw( rotation, scale, showLabels );
         end
@@ -131,18 +131,10 @@ function AuthorManager.toggleLabels()
 end
 
 ---
--- Sets the visibility of all authors.
--- @param nv (boolean) Wether or not to display authors.
+-- Toggles the visibility of author icons.
 --
-function AuthorManager.setVisible( nv )
-    visible = nv;
-end
-
----
--- Returns the visibility of all authors.
---
-function AuthorManager.isVisible()
-    return visible;
+function AuthorManager.toggleIcons()
+    showIcons = not showIcons;
 end
 
 ---

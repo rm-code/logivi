@@ -192,7 +192,7 @@ function MainScreen.new()
 
     function self:keypressed( key )
         if InputHandler.isPressed( key, toggleAuthorIcons ) then
-            AuthorManager.setVisible( not AuthorManager.isVisible() );
+            AuthorManager.toggleIcons();
         elseif InputHandler.isPressed( key, toggleFilePanel ) then
             filePanel:toggle();
         elseif InputHandler.isPressed( key, toggleFileLabels ) then
