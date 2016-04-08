@@ -49,6 +49,12 @@ function Author.new( name, avatar, spritebatch, cx, cy )
     local avatarAlpha = DEFAULT_AVATAR_ALPHA;
     local linkAlpha = DEFAULT_LINK_ALPHA;
 
+    local color = {
+        r = love.math.random( 0, 255 ),
+        g = love.math.random( 0, 255 ),
+        b = love.math.random( 0, 255 )
+    };
+
     -- Avatar's width and height.
     local aw, ah = avatar:getWidth(), avatar:getHeight();
 
@@ -167,7 +173,7 @@ function Author.new( name, avatar, spritebatch, cx, cy )
                 deactivate();
             end
 
-            spritebatch:setColor( 255, 255, 255, avatarAlpha );
+            spritebatch:setColor( color.r, color.g, color.b, avatarAlpha );
             spritebatch:add( posX, posY, -cameraRotation, AVATAR_SIZE / aw, AVATAR_SIZE / ah, aw * 0.5, ah * 0.5 );
 
             inactivity = inactivity + dt;
