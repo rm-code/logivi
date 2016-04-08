@@ -15,9 +15,10 @@ local Messenger = require( 'src.messenger.Messenger' );
 -- Controls
 -- ------------------------------------------------
 
-local toggleAuthors;
+local toggleAuthorIcons;
+local toggleAuthorLabels;
 local toggleFilePanel;
-local toggleLabels;
+local toggleFileLabels;
 local toggleTimeline;
 
 local toggleSimulation;
@@ -67,9 +68,10 @@ function MainScreen.new()
     -- local variable for faster access.
     --
     local function assignKeyBindings()
-        toggleAuthors = config.keyBindings.toggleAuthors;
+        toggleAuthorIcons = config.keyBindings.toggleAuthorIcons;
+        toggleAuthorLabels = config.keyBindings.toggleAuthorLabels;
         toggleFilePanel = config.keyBindings.toggleFileList;
-        toggleLabels = config.keyBindings.toggleLabels;
+        toggleFileLabels = config.keyBindings.toggleFileLabels;
         toggleTimeline = config.keyBindings.toggleTimeline;
 
         toggleSimulation = config.keyBindings.toggleSimulation;
@@ -132,13 +134,12 @@ function MainScreen.new()
         -- Load keybindings.
         assignKeyBindings( config );
 
-        AuthorManager.init( info.aliases, config.options.showAuthors );
-
+        AuthorManager.init( info.aliases, config.options.showAuthorIcons, config.options.showAuthorLabels );
 
         -- Load custom colors.
         FileManager.setColorTable( info.colors );
 
-        graph = Graph.new( config.options.edgeWidth, config.options.showLabels );
+        graph = Graph.new( config.options.edgeWidth, config.options.showFileLabels );
 
         -- Create the camera.
         camera = Camera.new();
@@ -190,12 +191,14 @@ function MainScreen.new()
     end
 
     function self:keypressed( key )
-        if InputHandler.isPressed( key, toggleAuthors ) then
+        if InputHandler.isPressed( key, toggleAuthorIcons ) then
             AuthorManager.setVisible( not AuthorManager.isVisible() );
         elseif InputHandler.isPressed( key, toggleFilePanel ) then
             filePanel:toggle();
-        elseif InputHandler.isPressed( key, toggleLabels ) then
+        elseif InputHandler.isPressed( key, toggleFileLabels ) then
             graph:toggleLabels();
+        elseif InputHandler.isPressed( key, toggleAuthorLabels ) then
+            AuthorManager.toggleLabels();
         elseif InputHandler.isPressed( key, toggleSimulation ) then
             LogReader.toggleSimulation();
         elseif InputHandler.isPressed( key, toggleRewind ) then

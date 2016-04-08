@@ -113,10 +113,11 @@ function Author.new( name, avatar, spritebatch, cx, cy )
 
     ---
     -- Draws the author.
-    -- @param rotation (number) The camera's rotation.
-    -- @param scale    (number) The camera's zoom factor.
+    -- @param rotation  (number)  The camera's rotation.
+    -- @param scale     (number)  The camera's zoom factor.
+    -- @param showLabel (boolean) Wether to show or hide the name label.
     --
-    function self:draw( rotation, scale )
+    function self:draw( rotation, scale, showLabel )
         if active then
             love.graphics.setLineWidth( BEAM_WIDTH );
             for i = 1, #links do
@@ -127,9 +128,13 @@ function Author.new( name, avatar, spritebatch, cx, cy )
             end
             love.graphics.setLineWidth( 1 );
             love.graphics.setColor( 255, 255, 255, avatarAlpha );
-            love.graphics.setFont( LABEL_FONT );
-            love.graphics.print( name, posX, posY, -rotation, 1 / scale, 1 / scale, LABEL_FONT:getWidth(name) * 0.5, - AVATAR_SIZE * scale );
-            love.graphics.setFont( DEFAULT_FONT );
+
+            if showLabel then
+                love.graphics.setFont( LABEL_FONT );
+                love.graphics.print( name, posX, posY, -rotation, 1 / scale, 1 / scale, LABEL_FONT:getWidth(name) * 0.5, - AVATAR_SIZE * scale );
+                love.graphics.setFont( DEFAULT_FONT );
+            end
+
             love.graphics.setColor( 255, 255, 255, 255 );
         end
     end

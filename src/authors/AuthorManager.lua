@@ -23,6 +23,7 @@ local authors;
 local aliases;
 local addresses;
 local visible;
+local showLabels;
 local spritebatch;
 
 local activeAuthor;
@@ -35,10 +36,11 @@ local graphCenterX, graphCenterY;
 
 ---
 -- Initialises the AuthorManager.
--- @param naliases (table)   Aliases used to replace author names.
--- @param nvisible (boolean) Wether to hide or show the AuthorManager.
+-- @param naliases    (table)   Aliases used to replace author names.
+-- @param nvisible    (boolean) Wether to hide or show the author icons.
+-- @param nShowLabels (boolean) Wether to hide or show the labels below each author.
 --
-function AuthorManager.init( naliases, nvisible )
+function AuthorManager.init( naliases, nvisible, nShowLabels )
     -- Set up the table to store all authors.
     authors = {};
 
@@ -46,6 +48,7 @@ function AuthorManager.init( naliases, nvisible )
     aliases = naliases;
 
     visible = nvisible;
+    showLabels = nShowLabels;
 
     graphCenterX, graphCenterY = 0, 0;
 
@@ -72,7 +75,7 @@ end
 function AuthorManager.draw( rotation, scale )
     if visible then
         for _, author in pairs( authors ) do
-            author:draw( rotation, scale );
+            author:draw( rotation, scale, showLabels );
         end
         love.graphics.draw( spritebatch );
     end
@@ -118,6 +121,13 @@ function AuthorManager.setCommitAuthor( email, name )
     end
 
     activeAuthor = authors[nickname];
+end
+
+---
+-- Toggles the visibility of name labels.
+--
+function AuthorManager.toggleLabels()
+    showLabels = not showLabels;
 end
 
 ---
