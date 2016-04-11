@@ -142,6 +142,19 @@ function Graph.new( edgeWidth, showLabels )
         end
     end
 
+    ---
+    -- Small hacky fix to make sure empty nodes still have their labels at the
+    -- correct position. This simply takes the node's radius and checks if it
+    -- is 0 (if it has at least one file) or -24 (if it is empty).
+    -- @see https://github.com/rm-code/logivi/issues/69
+    -- @param node (Node)   The node for which to generate the radius.
+    -- @return     (number) Returns the position at which the node's label should be placed.
+    --
+    local function getLabelRadius( node )
+        local radius = node:getRadius();
+        return ( radius == 0 or radius == -24 ) and 12 or radius;
+    end
+
     -- ------------------------------------------------
     -- Public Functions
     -- ------------------------------------------------
@@ -155,7 +168,7 @@ function Graph.new( edgeWidth, showLabels )
         graph:draw( function( node )
             if showLabels then
                 local x, y = node:getPosition();
-                local radius = node:getRadius();
+                local radius = getLabelRadius( node );
                 love.graphics.setFont( LABEL_FONT );
                 love.graphics.print( node:getName(), x, y, -camrot, 1 / camscale, 1 / camscale, -radius * camscale, -radius * camscale );
                 love.graphics.setFont( DEFAULT_FONT );
