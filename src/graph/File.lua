@@ -24,7 +24,15 @@ local MOD_COLOR = {
 -- Constructor
 -- ------------------------------------------------
 
-function File.new( posX, posY, defaultColor, extension )
+---
+-- Creates a new File object.
+-- @param parentX      (number) The position of the file's parent node along the x-axis.
+-- @param parentY      (number) The position of the file's parent node along the y-axis.
+-- @param defaultColor (table)  A table containing the RGB values for this file type.
+-- @param extension    (string) The file's extension.
+-- @return             (File)   A new file instance.
+--
+function File.new( parentX, parentY, defaultColor, extension )
     local self = {};
 
     local state;
@@ -45,9 +53,9 @@ function File.new( posX, posY, defaultColor, extension )
     -- Lerps the file from its current offset position to the target offset.
     -- This adds a nice animation effect when files are rearranged around their
     -- parent nodes.
-    -- @param dt - The delta time between frames.
-    -- @param tarX - The target offset on the x-axis.
-    -- @param tarY - The target offset on the y-axis.
+    -- @param dt   (number) The delta time between frames.
+    -- @param tarX (number) The target offset on the x-axis.
+    -- @param tarY (number) The target offset on the y-axis.
     --
     local function animate( dt, tarX, tarY )
         currentOffsetX = Utility.lerp( currentOffsetX, tarX, dt * ANIM_TIMER );
@@ -59,9 +67,9 @@ function File.new( posX, posY, defaultColor, extension )
     -- ------------------------------------------------
 
     ---
-    -- If the file is marked as modified the color will be lerped from
-    -- the modified color to the default file color.
-    -- @param dt
+    -- If the file is marked as modified the color will be lerped from the
+    -- modified color to the default file color.
+    -- @param dt (number) The delta time between frames.
     --
     function self:update( dt )
         animate( dt, targetOffsetX, targetOffsetY );
@@ -83,7 +91,7 @@ function File.new( posX, posY, defaultColor, extension )
     ---
     -- Sets the state of the file and changes the current color to a specific
     -- color based on the used modifier.
-    -- @param mod - The modifier used on the file.
+    -- @param mod (string) The modifier used on the file.
     --
     function self:setState( mod )
         state = mod;
@@ -101,22 +109,25 @@ function File.new( posX, posY, defaultColor, extension )
     ---
     -- Returns the real position of the node on the x-axis.
     -- This is the sum of the parent-node's position and the offset of the file.
+    -- @return (number) The position of the file along the x-axis.
     --
     function self:getX()
-        return posX + currentOffsetX;
+        return parentX + currentOffsetX;
     end
 
     ---
     -- Returns the real position of the node on the y-axis.
     -- This is the sum of the parent-node's position and the offset of the file.
+    -- @return (number) The position of the file along the y-axis.
     --
     function self:getY()
-        return posY + currentOffsetY;
+        return parentY + currentOffsetY;
     end
 
     ---
-    -- Returns the current color of the file.
-    -- The table uses rgba keys to store the color.
+    -- Returns the current color of the file. The table uses rgba keys to store
+    -- the color.
+    -- @return (table) A table containing the RGB values of the file.
     --
     function self:getColor()
         return currentColor;
@@ -124,6 +135,7 @@ function File.new( posX, posY, defaultColor, extension )
 
     ---
     -- Returns the extension of the file as a string.
+    -- @return (string) The extension of the file.
     --
     function self:getExtension()
         return extension;
@@ -131,6 +143,7 @@ function File.new( posX, posY, defaultColor, extension )
 
     ---
     -- Returns true if the file is marked as dead.
+    -- @return (boolean) True if the file is marked as dead.
     --
     function self:isDead()
         return state == 'dead';
@@ -143,8 +156,8 @@ function File.new( posX, posY, defaultColor, extension )
     ---
     -- Sets the target offset of the file from its parent node.
     -- This distance is used to plot all the files in a circle around the node.
-    -- @param ox - The offset on the x-axis.
-    -- @param oy - The offset on the y-axis.
+    -- @param ox (number) The offset from the parent along the x-axis.
+    -- @param oy (number) The offset from the parent along the y-axis.
     --
     function self:setOffset( ox, oy )
         targetOffsetX, targetOffsetY = ox, oy;
@@ -152,11 +165,11 @@ function File.new( posX, posY, defaultColor, extension )
 
     ---
     -- Sets the position of the parent node on which the file is located.
-    -- @param nx - The new position on the x-axis.
-    -- @param ny - The new position on the y-axis.
+    -- @param nx (number) The position of the parent along the x-axis.
+    -- @param ny (number) The position of the parent along the y-axis.
     --
     function self:setPosition( nx, ny )
-        posX, posY = nx, ny;
+        parentX, parentY = nx, ny;
     end
 
     return self;
