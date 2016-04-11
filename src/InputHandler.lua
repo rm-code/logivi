@@ -2,7 +2,8 @@ local InputHandler = {};
 
 ---
 -- Determines if a key constant or if any in a table of key constants are down.
--- @param constant (string) The key constant or table of constants.
+-- @param constant (string)  The key constant or table of constants.
+-- @return         (boolean) True if the key or the keys are down.
 --
 function InputHandler.isDown( constant )
     if type( constant ) == 'table' then
@@ -19,8 +20,9 @@ end
 
 ---
 -- Determines if a key constant or if any in a table of key constants was pressed.
--- @param key      (string) The key to check.
--- @param constant (string) The key constant or table of constants to check for.
+-- @param key      (string)  The key to check.
+-- @param constant (string)  The key constant or table of constants to check for.
+-- @return         (boolean) True if the key or the keys are pressed.
 --
 function InputHandler.isPressed( key, constant )
     if type( constant ) == 'table' then
