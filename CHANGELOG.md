@@ -5,12 +5,17 @@
 - Added a loading screen (Shows a nice graph animation while the repositories are loaded)
 - Added a completely new selection screen
     - Repositories can be named after being dropped on the application
+    - Mouse indicates clickable elements
+    - Added small instruction messages if LoGiVi is started for the first time  
+- Added a custom icon (Thanks to https://twitter.com/nsK_pz)
+- Added an option to hide author labels (Closes [#65](https://github.com/rm-code/logivi/issues/65))
 
 ### Fixes
 - Fixed default config not being used correctly
 - Fixed pattern matching for windows specific paths
 - Fixed camera being positioned off center when the visualisation starts
 - Fixed nodes spawning on a straight line occasionally
+- Fixed [#69](https://github.com/rm-code/logivi/issues/69) - Adjust position of folder labels if node is empty or just contains one file
 
 ### Removals
 - Removed loading of custom avatars
@@ -29,6 +34,8 @@
 - Repositories are stored in a separate file now
     - This way we can also refresh logs which have been added via the directorydropped callback
     - Repositories are only updated if they have changed since the last time they were opened
+- Improved settings template
+- Avatar icons have custom colors (Closes [#66](https://github.com/rm-code/logivi/issues/66))
 
 ---
 
