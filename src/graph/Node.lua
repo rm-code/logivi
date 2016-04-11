@@ -21,6 +21,17 @@ local MIN_ARC_SIZE = SPRITE_SIZE;
 -- Constructor
 -- ------------------------------------------------
 
+---
+-- Creates a new node object.
+-- @param id          (string)      The id to use for this node.
+-- @param x           (number)      The position at which to spawn the node along the x-axis.
+-- @param y           (number)      The position at which to spawn the node along the y-axis.
+-- @param anchor      (boolean)     Wether the node is anchored or not.
+-- @param parent      (Node)        The node's parent node.
+-- @param spritebatch (SpriteBatch) The spritebatch to use for drawing the node's files.
+-- @param name        (string)      The node's name.
+-- @return            (Node)        A new node instance.
+--
 function Node.new( id, x, y, anchor, parent, spritebatch, name )
     local self = GraphLibraryNode.new( id, x, y, anchor );
 
@@ -40,19 +51,22 @@ function Node.new( id, x, y, anchor, parent, spritebatch, name )
     -- ------------------------------------------------
 
     ---
-    -- Calculates the arc on a layer for a certain angle.
-    -- @param radius
-    -- @param angle
+    -- Calculates the arc between files on a layer for a certain angle.
+    -- @param layerRadius (number) The current layer's radius.
+    -- @param angle       (number) The angle between files on the same layer.
+    -- @return            (number) The arc at which to place a certain file around the node.
     --
     local function calcArc( layerRadius, angle )
         return math.pi * layerRadius * ( angle / 180 );
     end
 
     ---
-    -- Calculates how many layers we need and how many files
-    -- can be placed on each layer. This basically generates a
-    -- blueprint of how the files need to be arranged.
-    -- @param count - The total amount of files in this node.
+    -- Calculates how many layers we need and how many files can be placed on
+    -- each layer. This basically generates a blueprint of how the files need to
+    -- be arranged.
+    -- @param count (number) The total amount of files in this node.
+    -- @return      (table)  A table containing all layers around the node.
+    -- @return      (number) The radius of the biggest layer.
     --
     local function createOnionLayers( count )
         local fileCounter = 0;
@@ -87,9 +101,11 @@ function Node.new( id, x, y, anchor, parent, spritebatch, name )
 
     ---
     -- Calculates the new position of a file on its layer around the folder node.
-    -- @param fileNumber - The n-th file on the layer.
-    -- @param fileCount - The total amount of files on the same layer.
-    -- @param layerRadius - The radius of the layer.
+    -- @param fileNumber     (number) The n-th file on the layer.
+    -- @param layerFileCount (number) The total amount of files on the same layer.
+    -- @param layerRadius    (number) The radius of the layer.
+    -- @return               (number) The position of the file around the node along the x-axis.
+    -- @return               (number) The position of the file around the node along the y-axis.
     --
     local function calculateFilePosition( fileNumber, layerFileCount, layerRadius )
         local angle = 360 / layerFileCount;
@@ -100,8 +116,9 @@ function Node.new( id, x, y, anchor, parent, spritebatch, name )
     end
 
     ---
-    -- Distributes files nodes evenly on a circle around the parent node.
-    -- @param count - The total amount of files in this node.
+    -- Distributes files evenly on a circle around the parent node.
+    -- @param count (number) The total amount of files in this node.
+    -- @return      (number) The radius of the biggest layer around the node.
     --
     local function plotCircle( count )
         -- Sort files based on their extension before placing them.
@@ -141,6 +158,10 @@ function Node.new( id, x, y, anchor, parent, spritebatch, name )
     -- Public Functions
     -- ------------------------------------------------
 
+    ---
+    -- Updates the node.
+    -- @param dt (number) Time since the last update in seconds.
+    --
     function self:update( dt )
         self:setMass( fileCount + childCount );
         for fileName, file in pairs( files ) do
@@ -164,8 +185,9 @@ function Node.new( id, x, y, anchor, parent, spritebatch, name )
     -- requested from the FileManager and a new File object is created. After
     -- the file object has been added to the file list of this node, the layout
     -- of the files around the nodes is recalculated.
-    -- @param fileName - The name of the file to add.
-    -- @param extension - The extension of the file to add.
+    -- @param fileName  (string) The name of the file to add.
+    -- @param extension (string) The extension of the file to add.
+    -- @return          (File)   The newly added File.
     --
     function self:addFile( fileName, extension )
         -- Exit early if the file already exists.
@@ -187,7 +209,8 @@ function Node.new( id, x, y, anchor, parent, spritebatch, name )
 
     ---
     -- Sets a file's modifier to deletion.
-    -- @param name - The name of the file to modify.
+    -- @param name (string) The name of the file to modify.
+    -- @return     (File)   The File marked for deletion.
     --
     function self:markFileForDeletion( fileName )
         local file = files[fileName];
@@ -207,8 +230,9 @@ function Node.new( id, x, y, anchor, parent, spritebatch, name )
     -- FileManager that it also needs to be removed from the global file
     -- list. Once the file is removed, the layout of the files around the nodes
     -- is recalculated.
-    -- @param fileName - The name of the file to remove.
-    -- @param extension - The extension of the file to remove.
+    -- @param fileName  (string) The name of the file to remove.
+    -- @param extension (string) The extension of the file to remove.
+    -- @return          (File)   The removed File.
     --
     function self:removeFile( fileName, extension )
         local file = files[fileName];
@@ -218,8 +242,6 @@ function Node.new( id, x, y, anchor, parent, spritebatch, name )
             return;
         end
 
-        -- Store a reference to the file which can be returned
-        -- after the file has been removed from the table.
         FileManager.remove( extension );
         files[fileName] = nil;
         fileCount = fileCount - 1;
@@ -230,7 +252,8 @@ function Node.new( id, x, y, anchor, parent, spritebatch, name )
 
     ---
     -- Sets a file's modifier to "modification" and returns the file object.
-    -- @param name - The file to modify.
+    -- @param name (string) The file to modify.
+    -- @return     (File)   The modified File.
     --
     function self:modifyFile( fileName )
         local file = files[fileName]
@@ -243,10 +266,16 @@ function Node.new( id, x, y, anchor, parent, spritebatch, name )
         return file;
     end
 
+    ---
+    -- Increments the child counter.
+    --
     function self:incrementChildCount()
         childCount = childCount + 1;
     end
 
+    ---
+    -- Decrements the child counter.
+    --
     function self:decrementChildCount()
         childCount = childCount - 1;
     end
@@ -255,14 +284,27 @@ function Node.new( id, x, y, anchor, parent, spritebatch, name )
     -- Getters
     -- ------------------------------------------------
 
+    ---
+    -- Returns the node's name.
+    -- @return (string) The node's name.
+    --
     function self:getName()
         return name;
     end
 
+    ---
+    -- Returns the node's parent node.
+    -- @return (Node) The node's parent.
+    --
     function self:getParent()
         return parent;
     end
 
+    ---
+    -- Returns the node's maximum radius.
+    -- @return (number) The node's maximum radius.
+    --
+    --
     function self:getRadius()
         return radius;
     end
@@ -270,6 +312,7 @@ function Node.new( id, x, y, anchor, parent, spritebatch, name )
     ---
     -- Returns true if the node doesn't contain any files and doesn't have any
     -- children.
+    -- @return (boolean) True if the node is empty.
     --
     function self:isDead()
         return fileCount == 0 and childCount == 0;
