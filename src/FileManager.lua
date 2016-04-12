@@ -14,9 +14,8 @@ local colors;
 -- ------------------------------------------------
 
 ---
--- Takes the extensions list and creates a list
--- which is sorted by the amount of files per extension.
--- @param extensions
+-- Sorts the list of extensions and sorts them based on the amount of files
+-- which currently exist in the repository.
 --
 local function createSortedList()
     for k in pairs( sortedList ) do
@@ -37,8 +36,11 @@ end
 -- ------------------------------------------------
 
 ---
--- Adds a new file extension to the list.
--- @param ext
+-- Adds a new file belonging to a certain extension to the list. If the
+-- extension doesn't exist yet we allocate a new table for it.
+-- @param ext (string) The extension to add a new file for.
+-- @return    (table)  The table containing RGB values for this extension.
+-- @return    (string) The extension string.
 --
 function FileManager.add( ext )
     if not extensions[ext] then
@@ -60,11 +62,9 @@ function FileManager.add( ext )
 end
 
 ---
--- Reduce the amount of counted files of the
--- same extension. If there are no more files
--- of that extension, it will remove it from
--- the list.
--- @param ext
+-- Decrements the counter for a certain extension. If there are no more files
+-- of that extension, it will remove it from the table.
+-- @param ext (string) The extension to remove a file from.
 --
 function FileManager.remove( ext )
     if not extensions[ext] then
@@ -80,6 +80,9 @@ function FileManager.remove( ext )
     createSortedList( extensions );
 end
 
+---
+-- Resets the state of the FileManager.
+--
 function FileManager.reset()
     extensions = {};
     sortedList = {};
@@ -92,16 +95,26 @@ end
 -- ------------------------------------------------
 
 ---
--- @param ext
+-- Gets the color table for a certain file extension.
+-- @param ext (string) The extension to return the color for.
+-- @return    (table)  A table containing the RGB values for the extension.
 --
 function FileManager.getColor( ext )
     return extensions[ext].color;
 end
 
+---
+-- Returns the sorted list of file extensions.
+-- @return (table) The sorted list of file extensions.
+--
 function FileManager.getSortedList()
     return sortedList;
 end
 
+---
+-- Returns the total amount of files in the repository.
+-- @return (number) The total amount of files in the repository.
+--
 function FileManager.getTotalFiles()
     return totalFiles;
 end
@@ -111,7 +124,10 @@ end
 -- ------------------------------------------------
 
 ---
--- @param ncol
+-- Sets the default color table. This can be used to specify colors for
+-- certain extensions (instead of randomly creating them).
+-- @param ncol (table) The table containing RGBA values belonging to a certain
+--                      file extension.
 --
 function FileManager.setColorTable( ncol )
     colors = ncol;
