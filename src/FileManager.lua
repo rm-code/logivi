@@ -31,6 +31,22 @@ local function createSortedList()
     end);
 end
 
+---
+-- Creates a new custom color for the extension if it doesn't have one yet.
+-- @param ext (string) The extension to add a new file for.
+-- @return    (table)  A table containing the RGB values for this extension.
+--
+local function assignColor( ext )
+    if not colors[ext] then
+        colors[ext] = {
+            r = love.math.random( 0, 255 ),
+            g = love.math.random( 0, 255 ),
+            b = love.math.random( 0, 255 )
+        };
+    end
+    return colors[ext];
+end
+
 -- ------------------------------------------------
 -- Public Functions
 -- ------------------------------------------------
@@ -47,11 +63,7 @@ function FileManager.add( ext )
         extensions[ext] = {};
         extensions[ext].extension = ext;
         extensions[ext].amount = 0;
-        extensions[ext].color = colors[ext] or {
-            r = love.math.random( 0, 255 ),
-            g = love.math.random( 0, 255 ),
-            b = love.math.random( 0, 255 )
-        };
+        extensions[ext].color = assignColor( ext );
     end
     extensions[ext].amount = extensions[ext].amount + 1;
     totalFiles = totalFiles + 1;
