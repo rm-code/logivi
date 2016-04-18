@@ -47,6 +47,8 @@ function Graph.new( edgeWidth, showLabels )
     local graph = GraphLibrary.new();
     graph:addNode( ROOT_FOLDER, love.graphics.getWidth() * 0.5, love.graphics.getHeight() * 0.5, false, nil, spritebatch, ROOT_FOLDER );
 
+    local subscription;
+
     -- ------------------------------------------------
     -- Local Functions
     -- ------------------------------------------------
@@ -208,11 +210,15 @@ function Graph.new( edgeWidth, showLabels )
         showLabels = not showLabels;
     end
 
+    function self:reset()
+        Messenger.remove( subscription );
+    end
+
     -- ------------------------------------------------
     -- Observed Events
     -- ------------------------------------------------
 
-    Messenger.observe( EVENT.LOGREADER_CHANGED_FILE, function( ... )
+    subscription = Messenger.observe( EVENT.LOGREADER_CHANGED_FILE, function( ... )
         applyGitModifier( ... );
     end)
 

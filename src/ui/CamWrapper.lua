@@ -38,6 +38,8 @@ function CamWrapper.new()
     local zoom = 1;
     local manualZoom = 0;
 
+    local subscriptions = {};
+
     -- ------------------------------------------------
     -- Private Functions
     -- ------------------------------------------------
@@ -138,15 +140,21 @@ function CamWrapper.new()
         cx, cy = nx, ny;
     end
 
+    function self:reset()
+        for _, v in ipairs( subscriptions ) do
+            Messenger.remove( v );
+        end
+    end
+
     -- ------------------------------------------------
     -- Observed Events
     -- ------------------------------------------------
 
-    Messenger.observe( EVENT.GRAPH_UPDATE_CENTER, function( ... )
+    subscriptions[#subscriptions + 1] = Messenger.observe( EVENT.GRAPH_UPDATE_CENTER, function( ... )
         updateCenter( ... );
     end)
 
-    Messenger.observe( EVENT.GRAPH_UPDATE_DIMENSIONS, function( ... )
+    subscriptions[#subscriptions + 1] = Messenger.observe( EVENT.GRAPH_UPDATE_DIMENSIONS, function( ... )
         updateGraphDimensions( ... );
     end)
 

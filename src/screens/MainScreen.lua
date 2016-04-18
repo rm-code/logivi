@@ -9,7 +9,6 @@ local Graph = require('src.graph.Graph');
 local FilePanel = require('src.ui.FilePanel');
 local Timeline = require('src.ui.Timeline');
 local InputHandler = require('src.InputHandler');
-local Messenger = require( 'src.messenger.Messenger' );
 
 -- ------------------------------------------------
 -- Controls
@@ -121,8 +120,6 @@ function MainScreen.new()
     -- ------------------------------------------------
 
     function self:init( param )
-        Messenger.clear();
-
         LogLoader.init();
 
         -- Store the name of the currently displayed log.
@@ -188,6 +185,8 @@ function MainScreen.new()
 
     function self:close()
         FileManager.reset();
+        graph:reset();
+        camera:reset();
     end
 
     function self:keypressed( key )

@@ -1,9 +1,10 @@
 local Messenger = {};
 
 local subscriptions = {};
+local index = 0;
 
 function Messenger.publish( message, ... )
-    for _, subscription in ipairs( subscriptions ) do
+    for _, subscription in pairs( subscriptions ) do
         if subscription.message == message then
             subscription.callback( ... );
         end
@@ -11,11 +12,13 @@ function Messenger.publish( message, ... )
 end
 
 function Messenger.observe( message, callback )
-    subscriptions[#subscriptions + 1] = { message = message, callback = callback };
+    index = index + 1;
+    subscriptions[index] = { message = message, callback = callback };
+    return index;
 end
 
-function Messenger.clear()
-    subscriptions = {};
+function Messenger.remove( nindex )
+    subscriptions[nindex] = nil;
 end
 
 return Messenger;
