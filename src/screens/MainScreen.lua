@@ -63,8 +63,8 @@ function MainScreen.new()
     -- ------------------------------------------------
 
     ---
-    -- Assigns keybindings loaded from the config file to a
-    -- local variable for faster access.
+    -- Assigns keybindings loaded from the config file to a local variable for
+    -- faster access.
     --
     local function assignKeyBindings()
         toggleAuthorIcons = config.keyBindings.toggleAuthorIcons;
@@ -92,6 +92,10 @@ function MainScreen.new()
         cameraW = config.keyBindings.camera_w;
     end
 
+    ---
+    -- Updates the camera controls.
+    -- @param dt (number) Time since the last update in seconds.
+    --
     local function controlCamera( dt )
         if InputHandler.isDown( cameraZoomIn ) then
             camera:zoom( dt, 1 );
@@ -119,13 +123,19 @@ function MainScreen.new()
     -- Public Functions
     -- ------------------------------------------------
 
-    function self:init( param )
+    ---
+    -- Initialises the MainScreen.
+    -- @param params (table) A table containing the configuration.
+    --
+    function self:init( params )
         LogLoader.init();
 
         -- Store the name of the currently displayed log.
-        log = param.log;
+        log = params.log;
 
-        config = param.config;
+        config = params.config;
+
+        -- Load the info file belonging to the git log.
         local info = LogLoader.loadInfo( log );
 
         -- Load keybindings.
@@ -133,28 +143,34 @@ function MainScreen.new()
 
         AuthorManager.init( info.aliases, config.options.showAuthorIcons, config.options.showAuthorLabels );
 
-        -- Load custom colors.
+        -- Set custom colors.
         FileManager.setColorTable( info.colors );
 
+        -- Create the graph.
         graph = Graph.new( config.options.edgeWidth, config.options.showFileLabels );
 
         -- Create the camera.
         camera = Camera.new();
         camera:setPosition( love.graphics.getWidth() * 0.5, love.graphics.getHeight() * 0.5 );
 
+        -- Initialise the LogReader which handles the loading and "playing" of commits from a git log.
         LogReader.init( LogLoader.load( log ), config.options.commitDelay, config.options.mode, config.options.autoplay );
 
-        -- Create panel.
+        -- Create the file panel.
         filePanel = FilePanel.new( config.options.showFileList, 0, 0, 150, love.graphics.getHeight() - 40 );
 
+        -- Create the timeline.
         timeline = Timeline.new( config.options.showTimeline, LogReader.getTotalCommits(), LogReader.getCurrentDate() );
 
         -- Run one complete cycle of garbage collection.
         collectgarbage( 'collect' );
     end
 
+    ---
+    -- Draws the MainScreen.
+    --
     function self:draw()
-        camera:draw(function()
+        camera:draw( function()
             graph:draw( camera:getRotation(), camera:getScale() );
             AuthorManager.draw( camera:getRotation(), camera:getScale() );
         end);
@@ -163,6 +179,10 @@ function MainScreen.new()
         timeline:draw();
     end
 
+    ---
+    -- Updates the MainScreen.
+    -- @param dt (number) The time since the last update in seconds.
+    --
     function self:update( dt )
         LogReader.update( dt );
 
@@ -183,12 +203,19 @@ function MainScreen.new()
         camera:update( dt );
     end
 
+    ---
+    -- Called when the MainScreen closes.
+    --
     function self:close()
         FileManager.reset();
         graph:reset();
         camera:reset();
     end
 
+    ---
+    -- Handle keypressed events.
+    -- @param key (string) The pressed key.
+    --
     function self:keypressed( key )
         if InputHandler.isPressed( key, toggleAuthorIcons ) then
             AuthorManager.toggleIcons();
@@ -216,6 +243,11 @@ function MainScreen.new()
         end
     end
 
+    ---
+    -- Handles mousepressed events.
+    -- @param x (number) The position of the mouse click along the x-axis.
+    -- @param _ (number) The position of the mouse click along the y-axis (unused).
+    --
     function self:mousepressed( x, _ )
         local pos = timeline:getCommitAt( x );
         if pos then
@@ -223,12 +255,26 @@ function MainScreen.new()
         end
     end
 
+    ---
+    -- Handles mousemoved events
+    -- @param x  (number) Mouse x position.
+    -- @param y  (number) Mouse y position.
+    -- @param dx (number) The amount moved along the x-axis since the last time
+    --                     love.mousemoved was called.
+    -- @param dy (number) The amount moved along the y-axis since the last time
+    --                     love.mousemoved was called.
+    --
     function self:mousemoved( _, _, dx, dy )
         if love.mouse.isDown( 1 ) then
             camera:move( love.timer.getDelta(), dx * 0.5, dy * 0.5 );
         end
     end
 
+    ---
+    -- Handles mouse wheel events.
+    -- @param x (number) Amount of horizontal mouse wheel movement.
+    -- @param y (number) Amount of vertical mouse wheel movement.
+    --
     function self:wheelmoved( x, y )
         local mx, my = love.mouse.getPosition();
         if filePanel:intersects( mx, my ) then
@@ -238,8 +284,13 @@ function MainScreen.new()
         end
     end
 
-    function self:resize( nx, ny )
-        timeline:resize( nx, ny );
+    ---
+    -- Handles resize events called when the screen size changes.
+    -- @param w (number) The new width, in pixels.
+    -- @param h (number) The new height, in pixels.
+    --
+    function self:resize( w, h )
+        timeline:resize( w, h );
     end
 
     return self;
