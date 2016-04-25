@@ -45,6 +45,16 @@ function SelectionScreen.new()
     local timer = 0;
     local alpha = 0;
 
+    -- ------------------------------------------------
+    -- Private Functions
+    -- ------------------------------------------------
+
+    ---
+    -- Returns gradually changing values between 0 and 255 which can be used to
+    -- make elements slowly pulsate.
+    -- @param dt (number) The time since the last update in seconds.
+    -- @return   (number) A value between 0 and 255.
+    --
     local function pulsate( dt )
         timer = timer + dt;
         local sin = math.sin( timer );
@@ -55,11 +65,18 @@ function SelectionScreen.new()
         return sin * 255;
     end
 
+    ---
+    -- Switches to fullscreen and loads the MainScreen.
+    -- @param name (string) The name of the log to watch.
+    --
     local function watchLog( name )
         love.window.setFullscreen( config.options.fullscreen, config.options.fullscreenType );
         ScreenManager.switch( 'main', { log = name, config = config } );
     end
 
+    ---
+    -- Changes the icon of the mouse cursor based on the element it is above.
+    --
     local function updateMouseCursor()
         if graph:getNodeAt( love.mouse.getX(), love.mouse.getY(), 20 ) then
             love.mouse.setCursor( HAND_CURSOR );
@@ -68,12 +85,24 @@ function SelectionScreen.new()
         end
     end
 
+    -- ------------------------------------------------
+    -- Public Functions
+    -- ------------------------------------------------
+
+    ---
+    -- Initialises the SelectionScreen.
+    -- @param params (table) A table containing the configuration.
+    --
     function self:init( params )
         graph = params.graph;
         colors = params.colors;
         config = params.config;
     end
 
+    ---
+    -- Updates the SelectionScreen.
+    -- @param dt (number) The time since the last update in seconds.
+    --
     function self:update( dt )
         graph:update( dt );
         alpha = pulsate( dt );
@@ -81,6 +110,9 @@ function SelectionScreen.new()
         updateMouseCursor();
     end
 
+    ---
+    -- Draws the SelectionScreen.
+    --
     function self:draw()
         graph:draw( function( node )
             local x, y = node:getPosition();
@@ -99,6 +131,7 @@ function SelectionScreen.new()
             love.graphics.setColor( 255, 255, 255, 255 );
         end);
 
+        -- Shows info text if no repository can be found.
         if not RepositoryHandler.hasRepositories() then
             love.graphics.setFont( MESSAGE_FONT );
             love.graphics.setColor( 255, 255, 255, alpha );
@@ -113,6 +146,11 @@ function SelectionScreen.new()
         love.graphics.setColor( 255, 255, 255, 255 );
     end
 
+    ---
+    -- Handles mousereleased events.
+    -- @param x (number) Mouse x position, in pixels.
+    -- @param y (number) Mouse y position, in pixels.
+    --
     function self:mousereleased( mx, my )
         local node = graph:getNodeAt( mx, my, 30 );
         if node then
@@ -124,10 +162,19 @@ function SelectionScreen.new()
         end
     end
 
+    ---
+    -- Handles directorydropped events. When the user drags a folder on the
+    -- application window the InputPanel is loaded.
+    -- @param path (string) The path of the folder dropped on the window.
+    --
     function self:directorydropped( path )
         ScreenManager.push( 'input', path, { config = config } );
     end
 
+    ---
+    -- Handles keypressed events.
+    -- @param key (string) The pressed key.
+    --
     function self:keypressed( key )
         if key == 'escape' then
             love.event.quit();
