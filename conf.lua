@@ -1,6 +1,6 @@
 local PROJECT_TITLE = "LoGiVi";
 
-local PROJECT_VERSION = "0432";
+local PROJECT_VERSION = require( 'version' );
 
 local PROJECT_IDENTITY = "rmcode_LoGiVi";
 
