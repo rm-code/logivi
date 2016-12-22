@@ -7,6 +7,7 @@ local LogLoader = {};
 local LOG_FOLDER = 'logs';
 local LOG_FILE = 'log.txt';
 local INFO_FILE = 'info.lua';
+local COUNT_FILE = '.commits';
 
 local TAG_INFO = 'info: ';
 
@@ -182,9 +183,20 @@ function LogLoader.loadInfo( name )
     end
     return {
         name = name,
-        totalCommits = 0,
         aliases = {},
         colors = {},
+    };
+end
+
+function LogLoader.loadCountFile( name )
+    if love.filesystem.isFile( LOG_FOLDER .. '/' .. name .. '/' .. COUNT_FILE ) then
+        local successful, info = pcall( love.filesystem.load, LOG_FOLDER .. '/' .. name .. '/' .. COUNT_FILE );
+        if successful then
+            return info();
+        end
+    end
+    return {
+        totalCommits = 0
     };
 end
 

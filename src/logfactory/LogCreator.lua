@@ -11,6 +11,7 @@ local TOTAL_COMMITS_COMMAND = '" rev-list HEAD --count';
 local LOG_FOLDER = 'logs/';
 local LOG_FILE = '/log.txt';
 local INFO_FILE = '/info.lua';
+local COUNT_FILE = '/.commits';
 local VERSION_COMMAND = 'git version';
 
 -- ------------------------------------------------
@@ -58,18 +59,21 @@ function LogCreator.createInfoFile( projectname, path, force )
     if not force and love.filesystem.isFile( LOG_FOLDER .. projectname .. INFO_FILE ) then
         io.write( 'Info file for ' .. projectname .. ' already exists!\r\n' );
     else
-        local totalCommits = getTotalCommits( path );
-
         local fileContent = 'return {\r\n';
 
         fileContent = fileContent .. '    name = "' .. projectname .. '",\r\n';
         fileContent = fileContent .. '    aliases = {},\r\n';
         fileContent = fileContent .. '    colors = {},\r\n';
-        fileContent = fileContent .. '    totalCommits = ' .. totalCommits .. ',\r\n';
 
         fileContent = fileContent .. '}\r\n';
 
         love.filesystem.write( LOG_FOLDER .. projectname .. INFO_FILE, fileContent );
+
+        fileContent = 'return {\r\n';
+        fileContent = string.format( '%s    totalCommits = %s%s', fileContent, getTotalCommits( path ), '\r\n' );
+        fileContent = fileContent .. '}\r\n';
+
+        love.filesystem.write( LOG_FOLDER .. projectname .. COUNT_FILE, fileContent );
     end
 end
 
