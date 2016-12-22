@@ -9,6 +9,7 @@ local Graph = require('src.graph.Graph');
 local FilePanel = require('src.ui.FilePanel');
 local Timeline = require('src.ui.Timeline');
 local InputHandler = require('src.InputHandler');
+local RepositoryInfos = require('src.RepositoryInfos');
 
 -- ------------------------------------------------
 -- Controls
@@ -136,7 +137,7 @@ function MainScreen.new()
         config = params.config;
 
         -- Load the info file belonging to the git log.
-        local info = LogLoader.loadInfo( log );
+        local info = RepositoryInfos.loadInfo( log );
 
         -- Load keybindings.
         assignKeyBindings( config );

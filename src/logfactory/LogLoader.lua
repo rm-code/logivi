@@ -5,9 +5,7 @@ local LogLoader = {};
 -- ------------------------------------------------
 
 local LOG_FOLDER = 'logs';
-local LOG_FILE = 'log.txt';
-local INFO_FILE = 'info.lua';
-local COUNT_FILE = '.commits';
+local LOG_FILE = '.log';
 
 local TAG_INFO = 'info: ';
 
@@ -167,37 +165,6 @@ function LogLoader.load( log )
     local index = searchLog( log );
     local rawLog = parseLog( list[index].path );
     return splitCommits( rawLog );
-end
-
----
--- Loads information about a git repository.
--- @param name (string) The name of the git log to load the info file for.
--- @return     (table)  A table containing information about the git log.
---
-function LogLoader.loadInfo( name )
-    if love.filesystem.isFile( LOG_FOLDER .. '/' .. name .. '/' .. INFO_FILE ) then
-        local successful, info = pcall( love.filesystem.load, LOG_FOLDER .. '/' .. name .. '/' .. INFO_FILE );
-        if successful then
-            return info();
-        end
-    end
-    return {
-        name = name,
-        aliases = {},
-        colors = {},
-    };
-end
-
-function LogLoader.loadCountFile( name )
-    if love.filesystem.isFile( LOG_FOLDER .. '/' .. name .. '/' .. COUNT_FILE ) then
-        local successful, info = pcall( love.filesystem.load, LOG_FOLDER .. '/' .. name .. '/' .. COUNT_FILE );
-        if successful then
-            return info();
-        end
-    end
-    return {
-        totalCommits = 0
-    };
 end
 
 ---
