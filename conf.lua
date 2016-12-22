@@ -1,22 +1,26 @@
 local PROJECT_TITLE = "LoGiVi";
 
-local PROJECT_VERSION = "0432";
+local PROJECT_VERSION = require( 'version' );
 
 local PROJECT_IDENTITY = "rmcode_LoGiVi";
 
-local LOVE_VERSION = "0.10.0";
+local LOVE_VERSION = "0.10.1";
 
 ---
--- Initialise löve's config file.
--- @param t
+-- Initialise LÖVE's config file.
+-- @param t (table) The table containing LÖVE's default values.
 --
-function love.conf(t)
+function love.conf( t )
     t.identity = PROJECT_IDENTITY;
     t.version = LOVE_VERSION;
     t.console = true;
 
+    t.accelerometerjoystick = true;
+    t.externalstorage = false;
+    t.gammacorrect = false;
+
     t.window.title = PROJECT_TITLE;
-    t.window.icon = nil;
+    t.window.icon = 'res/img/icon/1024px.png';
     t.window.width = 800;
     t.window.height = 600;
     t.window.borderless = false;
@@ -26,10 +30,9 @@ function love.conf(t)
     t.window.fullscreen = false;
     t.window.fullscreentype = "exclusive";
     t.window.vsync = true;
-    t.window.fsaa = 0;
+    t.window.msaa = 0;
     t.window.display = 1;
     t.window.highdpi = false;
-    t.window.srgb = false;
     t.window.x = nil;
     t.window.y = nil;
 
@@ -45,11 +48,15 @@ function love.conf(t)
     t.modules.sound = true;
     t.modules.system = true;
     t.modules.timer = true;
+    t.modules.touch = true;
+    t.modules.video = true;
     t.modules.window = true;
+    t.modules.thread = true;
 end
 
 ---
 -- Returns the project's version.
+-- @return (string) The project's version.
 --
 function getVersion()
     if PROJECT_VERSION then
@@ -59,6 +66,7 @@ end
 
 ---
 -- Returns the project's title.
+-- @return (string) The project's title.
 --
 function getTitle()
     if PROJECT_TITLE then

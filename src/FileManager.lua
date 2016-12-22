@@ -1,13 +1,6 @@
 local FileManager = {};
 
 -- ------------------------------------------------
--- Constants
--- ------------------------------------------------
-
-local FRST_OFFSET = 10;
-local SCND_OFFSET = 50;
-
--- ------------------------------------------------
 -- Local Variables
 -- ------------------------------------------------
 
@@ -21,22 +14,37 @@ local colors;
 -- ------------------------------------------------
 
 ---
--- Takes the extensions list and creates a list
--- which is sorted by the amount of files per extension.
--- @param extensions
+-- Sorts the list of extensions and sorts them based on the amount of files
+-- which currently exist in the repository.
 --
-local function createSortedList(extensions)
-    for k in pairs(sortedList) do
+local function createSortedList()
+    for k in pairs( sortedList ) do
         sortedList[k] = nil;
     end
 
-    for ext, tbl in pairs(extensions) do
+    for _, tbl in pairs( extensions ) do
         sortedList[#sortedList + 1] = tbl;
     end
 
-    table.sort(sortedList, function(a, b)
+    table.sort( sortedList, function( a, b )
         return a.amount > b.amount;
     end);
+end
+
+---
+-- Creates a new custom color for the extension if it doesn't have one yet.
+-- @param ext (string) The extension to add a new file for.
+-- @return    (table)  A table containing the RGB values for this extension.
+--
+local function assignColor( ext )
+    if not colors[ext] then
+        colors[ext] = {
+            r = love.math.random( 0, 255 ),
+            g = love.math.random( 0, 255 ),
+            b = love.math.random( 0, 255 )
+        };
+    end
+    return colors[ext];
 end
 
 -- ------------------------------------------------
@@ -44,59 +52,35 @@ end
 -- ------------------------------------------------
 
 ---
--- Draws a counter of all files in the project and
--- a separate counter for each used file extension.
+-- Adds a new file belonging to a certain extension to the list. If the
+-- extension doesn't exist yet we allocate a new table for it.
+-- @param ext (string) The extension to add a new file for.
+-- @return    (table)  The table containing RGB values for this extension.
+-- @return    (string) The extension string.
 --
-function FileManager.draw(x, y)
-    love.graphics.print(totalFiles, x + FRST_OFFSET, y + 10);
-    love.graphics.print('Files', x + SCND_OFFSET, y + 10);
-    for i, tbl in ipairs(sortedList) do
-        love.graphics.setColor(tbl.color.r, tbl.color.g, tbl.color.b);
-        love.graphics.print(tbl.amount, x + FRST_OFFSET, y + 10 + i * 20);
-        love.graphics.print(tbl.extension, x + SCND_OFFSET, y + 10 + i * 20);
-        love.graphics.setColor(255, 255, 255);
-    end
-end
-
-function FileManager.update(dt)
-    return 0, 0, 0, 10 + (#sortedList + 1) * 20;
-end
-
----
--- Adds a new file extension to the list.
--- @param fileName
--- @param ext
---
-function FileManager.add(fileName, ext)
+function FileManager.add( ext )
     if not extensions[ext] then
         extensions[ext] = {};
         extensions[ext].extension = ext;
         extensions[ext].amount = 0;
-        extensions[ext].color = colors[ext] or {
-            r = love.math.random(0, 255),
-            g = love.math.random(0, 255),
-            b = love.math.random(0, 255)
-        };
+        extensions[ext].color = assignColor( ext );
     end
     extensions[ext].amount = extensions[ext].amount + 1;
     totalFiles = totalFiles + 1;
 
-    createSortedList(extensions);
+    createSortedList( extensions );
 
     return extensions[ext].color, ext;
 end
 
 ---
--- Reduce the amount of counted files of the
--- same extension. If there are no more files
--- of that extension, it will remove it from
--- the list.
--- @param fileName
--- @param ext
+-- Decrements the counter for a certain extension. If there are no more files
+-- of that extension, it will remove it from the table.
+-- @param ext (string) The extension to remove a file from.
 --
-function FileManager.remove(fileName, ext)
+function FileManager.remove( ext )
     if not extensions[ext] then
-        error('Tried to remove the non existing file extension "' .. ext .. '".');
+        error( 'Tried to remove the non existing file extension "' .. ext .. '".' );
     end
 
     extensions[ext].amount = extensions[ext].amount - 1;
@@ -105,9 +89,12 @@ function FileManager.remove(fileName, ext)
         extensions[ext] = nil;
     end
 
-    createSortedList(extensions);
+    createSortedList( extensions );
 end
 
+---
+-- Resets the state of the FileManager.
+--
 function FileManager.reset()
     extensions = {};
     sortedList = {};
@@ -120,10 +107,28 @@ end
 -- ------------------------------------------------
 
 ---
--- @param ext
+-- Gets the color table for a certain file extension.
+-- @param ext (string) The extension to return the color for.
+-- @return    (table)  A table containing the RGB values for the extension.
 --
-function FileManager.getColor(ext)
+function FileManager.getColor( ext )
     return extensions[ext].color;
+end
+
+---
+-- Returns the sorted list of file extensions.
+-- @return (table) The sorted list of file extensions.
+--
+function FileManager.getSortedList()
+    return sortedList;
+end
+
+---
+-- Returns the total amount of files in the repository.
+-- @return (number) The total amount of files in the repository.
+--
+function FileManager.getTotalFiles()
+    return totalFiles;
 end
 
 -- ------------------------------------------------
@@ -131,9 +136,12 @@ end
 -- ------------------------------------------------
 
 ---
--- @param ncol
+-- Sets the default color table. This can be used to specify colors for
+-- certain extensions (instead of randomly creating them).
+-- @param ncol (table) The table containing RGBA values belonging to a certain
+--                      file extension.
 --
-function FileManager.setColorTable(ncol)
+function FileManager.setColorTable( ncol )
     colors = ncol;
 end
 

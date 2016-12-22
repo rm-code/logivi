@@ -1,17 +1,29 @@
 local ScreenManager = require('lib.screenmanager.ScreenManager');
 local Screen = require('lib.screenmanager.Screen');
-local LogCreator = require('src.logfactory.LogCreator');
-local LogLoader = require('src.logfactory.LogLoader');
-local ButtonList = require('src.ui.ButtonList');
-local Button = require('src.ui.components.Button');
-local Header = require('src.ui.components.Header');
-local StaticPanel = require('src.ui.components.StaticPanel');
-local ConfigReader = require('src.conf.ConfigReader');
-local InputHandler = require('src.InputHandler');
-local OpenFolderCommand = require('src.ui.commands.OpenFolderCommand');
-local RefreshLogCommand = require('src.ui.commands.RefreshLogCommand');
-local WatchCommand = require('src.ui.commands.WatchCommand');
 local Resources = require('src.Resources');
+local RepositoryHandler = require('src.conf.RepositoryHandler');
+
+-- ------------------------------------------------
+-- Constants
+-- ------------------------------------------------
+
+local EDGE_COLOR = { 60, 60, 60, 255 };
+
+local SPRITE_SIZE = 24;
+local SPRITE_SCALE_FACTOR = SPRITE_SIZE / 256;
+local SPRITE_OFFSET = 128;
+
+local LABEL_FONT   = Resources.loadFont( 'SourceCodePro-Medium.otf', 20 );
+local DEFAULT_FONT = Resources.loadFont( 'default', 12 );
+local FILE_SPRITE  = Resources.loadImage( 'file.png' );
+
+local MESSAGE_FONT = Resources.loadFont( 'SourceCodePro-Medium.otf', 15 );
+local NO_REPO_MESSAGE = "Add a repository by dragging its folder on this window!";
+local CONFIG_FOLDER_MESSAGE = "Click on the node above to open the config folder!";
+
+local HAND_CURSOR = love.mouse.getSystemCursor( 'hand' );
+
+local VERSION_STRING = string.format( 'Version %s', getVersion() );
 
 -- ------------------------------------------------
 -- Module
@@ -20,96 +32,56 @@ local Resources = require('src.Resources');
 local SelectionScreen = {};
 
 -- ------------------------------------------------
--- Constants
--- ------------------------------------------------
-
-local TEXT_FONT    = Resources.loadFont('SourceCodePro-Medium.otf', 15);
-local DEFAULT_FONT = Resources.loadFont('default', 12);
-
-local BUTTON_OK = 'Ok';
-local BUTTON_HELP = 'Help (online)';
-
-local URL_INSTRUCTIONS = 'https://github.com/rm-code/logivi#generating-git-logs-automatically';
-
-local WARNING_TITLE_NO_GIT   = 'Git is not available';
-local WARNING_MESSAGE_NO_GIT = 'LoGiVi can\'t find git in your PATH. This means LoGiVi won\'t be able to create git logs automatically, but can still be used to view pre-generated logs.';
-
-local WARNING_TITLE_NO_REPO   = 'Not a valid git repository';
-local WARNING_MESSAGE_NO_REPO = 'The path "%s" does not point to a valid git repository. Make sure you have specified the full path in the settings file.';
-
-local UI_ELEMENT_PADDING = 20;
-local UI_ELEMENT_MARGIN  =  5;
-
--- ------------------------------------------------
 -- Constructor
 -- ------------------------------------------------
 
 function SelectionScreen.new()
     local self = Screen.new();
 
+    local graph;
+    local colors;
     local config;
-    local logList;
 
-    local buttonList;
-    local buttons;
-    local header;
-    local panel;
-
-    local info = {};
+    local timer = 0;
+    local alpha = 0;
 
     -- ------------------------------------------------
     -- Private Functions
     -- ------------------------------------------------
 
     ---
-    -- Checks if git is available and attempts to create git logs based on the
-    -- list of repositories read from the user's config file.
-    -- @param options
+    -- Returns gradually changing values between 0 and 255 which can be used to
+    -- make elements slowly pulsate.
+    -- @param dt (number) The time since the last update in seconds.
+    -- @return   (number) A value between 0 and 255.
     --
-    local function createGitLogs(config)
-        -- Exit early if git isn't available.
-        if not LogCreator.isGitAvailable() then
-            -- Show a warning to the user.
-            local pressedbutton = love.window.showMessageBox(WARNING_TITLE_NO_GIT, WARNING_MESSAGE_NO_GIT, { BUTTON_OK, BUTTON_HELP, enterbutton = 1, escapebutton = 1 }, 'warning', false);
-            if pressedbutton == 2 then
-                love.system.openURL(URL_INSTRUCTIONS);
-            end
-            return;
+    local function pulsate( dt )
+        timer = timer + dt;
+        local sin = math.sin( timer );
+        if sin < 0 then
+            timer = 0;
+            sin = 0;
         end
-
-        for name, path in pairs(config.repositories) do
-            -- Check if the path points to a valid git repository before attempting
-            -- to create a git log and the info file for it.
-            if LogCreator.isGitRepository(path) then
-                LogCreator.createGitLog(name, path);
-                LogCreator.createInfoFile(name, path);
-            else
-                love.window.showMessageBox(WARNING_TITLE_NO_REPO, string.format(WARNING_MESSAGE_NO_REPO, path), 'warning', false);
-            end
-        end
+        return sin * 255;
     end
 
     ---
-    -- Updates the project's window settings based on the config file.
-    -- @param options
+    -- Switches to fullscreen and loads the MainScreen.
+    -- @param name (string) The name of the log to watch.
     --
-    local function setWindowMode(options)
-        local _, _, flags = love.window.getMode();
+    local function watchLog( name )
+        love.window.setFullscreen( config.options.fullscreen, config.options.fullscreenType );
+        ScreenManager.switch( 'main', { log = name, config = config } );
+    end
 
-        -- Only update the window when the values are different from the ones set in the config file.
-        if flags.fullscreen ~= options.fullscreen or flags.fullscreentype ~= options.fullscreenType or
-                flags.vsync ~= options.vsync or flags.msaa ~= options.msaa or flags.display ~= options.display then
-
-            flags.fullscreen = options.fullscreen;
-            flags.fullscreentype = options.fullscreenType;
-            flags.vsync = options.vsync;
-            flags.msaa = options.msaa;
-            flags.display = options.display;
-
-            love.window.setMode(options.screenWidth, options.screenHeight, flags);
-
-            local sw, sh = love.window.getDesktopDimensions();
-            love.window.setPosition(sw * 0.5 - love.graphics.getWidth() * 0.5, sh * 0.5 - love.graphics.getHeight() * 0.5);
+    ---
+    -- Changes the icon of the mouse cursor based on the element it is above.
+    --
+    local function updateMouseCursor()
+        if graph:getNodeAt( love.mouse.getX(), love.mouse.getY(), 20 ) then
+            love.mouse.setCursor( HAND_CURSOR );
+        else
+            love.mouse.setCursor();
         end
     end
 
@@ -117,136 +89,95 @@ function SelectionScreen.new()
     -- Public Functions
     -- ------------------------------------------------
 
-    function self:init(param)
-        config = ConfigReader.init();
-
-        -- Set the background color based on the option in the config file.
-        love.graphics.setBackgroundColor(config.options.backgroundColor);
-        setWindowMode(config.options);
-
-        -- Create git logs for repositories specified in the config file.
-        createGitLogs(config);
-
-        -- Intitialise LogLoader.
-        logList = LogLoader.init();
-
-        -- A scrollable list of buttons which can be used to select a certain log.
-        buttonList = ButtonList.new(UI_ELEMENT_PADDING, UI_ELEMENT_PADDING, UI_ELEMENT_MARGIN);
-        buttonList:init(self, logList);
-
-        -- Load info about currently selected log.
-        info = LogLoader.loadInfo(param and param.log or logList[1].name);
-
-        local sw, sh = love.graphics.getDimensions();
-        buttons = {
-            Button.new(OpenFolderCommand.new(love.filesystem.getSaveDirectory()), 'Open', UI_ELEMENT_PADDING + (2 * UI_ELEMENT_MARGIN) + 220, sh - UI_ELEMENT_PADDING - 10 - UI_ELEMENT_PADDING - 40, 100, 40);
-            Button.new(WatchCommand.new(self), 'Watch', sw - UI_ELEMENT_PADDING - 10 - 100, sh - UI_ELEMENT_PADDING - 10 - UI_ELEMENT_PADDING - 40, 100, 40);
-            Button.new(RefreshLogCommand.new(self), 'Refresh', sw - UI_ELEMENT_PADDING - 20 - 200, sh - UI_ELEMENT_PADDING - 10 - UI_ELEMENT_PADDING - 40, 100, 40);
-        };
-
-        header = Header.new(info.name, UI_ELEMENT_PADDING + (2 * UI_ELEMENT_MARGIN) + 200 + 25, UI_ELEMENT_PADDING + 25);
-        panel = StaticPanel.new(UI_ELEMENT_PADDING + (2 * UI_ELEMENT_MARGIN) + buttonList:getButtonWidth(), UI_ELEMENT_PADDING, sw - (UI_ELEMENT_PADDING + (2 * UI_ELEMENT_MARGIN) + 200) - 20, sh - UI_ELEMENT_PADDING - 40);
+    ---
+    -- Initialises the SelectionScreen.
+    -- @param params (table) A table containing the configuration.
+    --
+    function self:init( params )
+        graph = params.graph;
+        colors = params.colors;
+        config = params.config;
     end
 
-    function self:update(dt)
-        buttonList:update(dt);
-        for i = 1, #buttons do
-            buttons[i]:update(dt);
-        end
+    ---
+    -- Updates the SelectionScreen.
+    -- @param dt (number) The time since the last update in seconds.
+    --
+    function self:update( dt )
+        graph:update( dt );
+        alpha = pulsate( dt );
+
+        updateMouseCursor();
     end
 
-    function self:resize(nw, nh)
-        panel:setDimensions(nw - (UI_ELEMENT_PADDING + (2 * UI_ELEMENT_MARGIN) + 200) - 20, nh - UI_ELEMENT_PADDING - 40)
-        buttons[1]:setPosition(UI_ELEMENT_PADDING + (2 * UI_ELEMENT_MARGIN) + 210, nh - UI_ELEMENT_PADDING - 10 - UI_ELEMENT_PADDING - 40);
-        buttons[2]:setPosition(nw - UI_ELEMENT_PADDING - 10 - 100, nh - UI_ELEMENT_PADDING - 10 - UI_ELEMENT_PADDING - 40);
-        buttons[3]:setPosition(nw - UI_ELEMENT_PADDING - 20 - 200, nh - UI_ELEMENT_PADDING - 10 - UI_ELEMENT_PADDING - 40);
-    end
-
+    ---
+    -- Draws the SelectionScreen.
+    --
     function self:draw()
-        buttonList:draw();
+        graph:draw( function( node )
+            local x, y = node:getPosition();
+            love.graphics.setColor( colors[node:getID()] );
+            love.graphics.draw( FILE_SPRITE, x, y, 0, SPRITE_SCALE_FACTOR, SPRITE_SCALE_FACTOR, SPRITE_OFFSET, SPRITE_OFFSET );
+            love.graphics.setColor( 255, 255, 255 );
+            love.graphics.setFont( LABEL_FONT );
+            love.graphics.print( node:getID(), x, y, 0, 1, 1, -16, -16 );
+            love.graphics.setFont( DEFAULT_FONT );
+        end,
+        function( edge )
+            love.graphics.setColor( EDGE_COLOR );
+            love.graphics.setLineWidth( 5 );
+            love.graphics.line( edge.origin:getX(), edge.origin:getY(), edge.target:getX(), edge.target:getY() );
+            love.graphics.setLineWidth( 1 );
+            love.graphics.setColor( 255, 255, 255, 255 );
+        end);
 
-        local x = UI_ELEMENT_PADDING + (2 * UI_ELEMENT_MARGIN) + buttonList:getButtonWidth();
-        local y = UI_ELEMENT_PADDING;
-
-        panel:draw();
-        header:draw();
-
-        love.graphics.setFont(TEXT_FONT);
-        love.graphics.print('First commit:  ' .. info.firstCommit, x + 25, y + 100);
-        love.graphics.print('Latest commit: ' .. info.latestCommit, x + 25, y + 125);
-        love.graphics.print('Total commits: ' .. info.totalCommits, x + 25, y + 150);
-
-        for i = 1, #buttons do
-            buttons[i]:draw();
+        -- Shows info text if no repository can be found.
+        if not RepositoryHandler.hasRepositories() then
+            love.graphics.setFont( MESSAGE_FONT );
+            love.graphics.setColor( 255, 255, 255, alpha );
+            love.graphics.print( NO_REPO_MESSAGE, love.graphics.getWidth() * 0.5 - MESSAGE_FONT:getWidth( NO_REPO_MESSAGE ) * 0.5, love.graphics.getHeight() * 0.5 - 60 );
+            love.graphics.print( CONFIG_FOLDER_MESSAGE, love.graphics.getWidth() * 0.5 - MESSAGE_FONT:getWidth( CONFIG_FOLDER_MESSAGE ) * 0.5, love.graphics.getHeight() * 0.5 + 60 - MESSAGE_FONT:getHeight( CONFIG_FOLDER_MESSAGE ) );
+            love.graphics.setFont( DEFAULT_FONT );
+            love.graphics.setColor( 255, 255, 255, 255 );
         end
 
-        love.graphics.setFont(DEFAULT_FONT);
-        love.graphics.print('Work in Progress (v' .. getVersion() .. ')', love.graphics.getWidth() - 180, love.graphics.getHeight() - UI_ELEMENT_PADDING);
+        love.graphics.setColor( 255, 255, 255, 100 );
+        love.graphics.print( VERSION_STRING, love.graphics.getWidth() - DEFAULT_FONT:getWidth( VERSION_STRING ) - 10, love.graphics.getHeight() - 20 );
+        love.graphics.setColor( 255, 255, 255, 255 );
     end
 
-    function self:watchLog()
-        ScreenManager.switch('main', { log = info.name });
-    end
-
-    function self:refreshLog()
-        if info.name and LogCreator.isGitAvailable() and config.repositories[info.name] then
-            local forceOverwrite = true;
-            LogCreator.createGitLog(info.name, config.repositories[info.name], forceOverwrite);
-            LogCreator.createInfoFile(info.name, config.repositories[info.name], forceOverwrite);
-            info = LogLoader.loadInfo(info.name);
-        end
-    end
-
-    function self:selectLog(name)
-        info = LogLoader.loadInfo(name);
-        header = Header.new(info.name, UI_ELEMENT_PADDING + (2 * UI_ELEMENT_MARGIN) + 200 + 25, UI_ELEMENT_PADDING + 25);
-    end
-
-    function self:mousepressed(x, y, b)
-        for i = 1, #buttons do
-            buttons[i]:mousepressed(x, y, b);
-        end
-        buttonList:mousepressed(x, y, b);
-    end
-
-    function self:mousereleased(x, y, b)
-        for i = 1, #buttons do
-            buttons[i]:mousereleased(x, y, b);
+    ---
+    -- Handles mousereleased events.
+    -- @param x (number) Mouse x position, in pixels.
+    -- @param y (number) Mouse y position, in pixels.
+    --
+    function self:mousereleased( mx, my )
+        local node = graph:getNodeAt( mx, my, 30 );
+        if node then
+            if node:getID() == '' then
+                love.system.openURL( 'file://' .. love.filesystem.getSaveDirectory() );
+            else
+                watchLog( node:getID() );
+            end
         end
     end
 
-    function self:wheelmoved(x, y)
-        buttonList:wheelmoved(x, y);
+    ---
+    -- Handles directorydropped events. When the user drags a folder on the
+    -- application window the InputPanel is loaded.
+    -- @param path (string) The path of the folder dropped on the window.
+    --
+    function self:directorydropped( path )
+        ScreenManager.push( 'input', path, { config = config } );
     end
 
-    function self:keypressed(key)
-        if InputHandler.isPressed(key, config.keyBindings.exit) then
+    ---
+    -- Handles keypressed events.
+    -- @param key (string) The pressed key.
+    --
+    function self:keypressed( key )
+        if key == 'escape' then
             love.event.quit();
-        elseif InputHandler.isPressed(key, config.keyBindings.toggleFullscreen) then
-            love.window.setFullscreen(not love.window.getFullscreen());
-        end
-    end
-
-    function self:directorydropped(path)
-        local temporaryConfig = {};
-        local name = path:match("/?([^/]+)$"); -- Use the folder's name to store the repo.
-        temporaryConfig.repositories = {
-            [name] = path
-        };
-
-        createGitLogs(temporaryConfig);
-
-        -- Intitialise LogLoader.
-        logList = LogLoader.init();
-
-        -- A scrollable list of buttons which can be used to select a certain log.
-        buttonList = ButtonList.new(UI_ELEMENT_PADDING, UI_ELEMENT_PADDING, UI_ELEMENT_MARGIN);
-        buttonList:init(self, logList);
-    end
-
-    function self:quit()
-        if ConfigReader.getConfig('options').removeTmpFiles then
-            ConfigReader.removeTmpFiles();
         end
     end
 
