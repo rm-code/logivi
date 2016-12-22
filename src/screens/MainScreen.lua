@@ -46,6 +46,12 @@ local cameraW;
 local MainScreen = {};
 
 -- ------------------------------------------------
+-- Constants
+-- ------------------------------------------------
+
+local FIXED_TIMESTEP = 0.016;
+
+-- ------------------------------------------------
 -- Constructor
 -- ------------------------------------------------
 
@@ -187,9 +193,9 @@ function MainScreen.new()
     function self:update( dt )
         LogReader.update( dt );
 
-        graph:update( dt );
+        graph:update( FIXED_TIMESTEP );
 
-        AuthorManager.update( dt, camera:getRotation() );
+        AuthorManager.update( FIXED_TIMESTEP, camera:getRotation() );
 
         filePanel:setTotalFiles( FileManager.getTotalFiles() );
         filePanel:setSortedList( FileManager.getSortedList() );
