@@ -1,4 +1,4 @@
-# WIP
+# Version 1.0.0.572 - 2016-12-23
 
 ### Additions
 - Added [Graphoon](https://github.com/rm-code/Graphoon) library
@@ -16,6 +16,7 @@
 - Fixed camera being positioned off center when the visualisation starts
 - Fixed nodes spawning on a straight line occasionally
 - Fixed [#69](https://github.com/rm-code/logivi/issues/69) - Adjust position of folder labels if node is empty or just contains one file
+- Fixed [#70](https://github.com/rm-code/logivi/issues/70) - Faulty creation of file colors
 
 ### Removals
 - Removed loading of custom avatars
@@ -36,6 +37,7 @@
     - Repositories are only updated if they have changed since the last time they were opened
 - Improved settings template
 - Avatar icons have custom colors (Closes [#66](https://github.com/rm-code/logivi/issues/66))
+- Updated the sprites used for avatar icons (Closes [#67](https://github.com/rm-code/logivi/issues/67))
 
 ---
 
