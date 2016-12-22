@@ -1,3 +1,5 @@
+local Serpent = require( 'lib.serpent.Serpent' );
+
 local RepositoryInfos = {};
 
 local INFO_FILE  = 'logs/%s/info.lua';
@@ -19,15 +21,12 @@ end
 -- @param projectname (string)  The name under which to store the info file.
 --
 function RepositoryInfos.createInfoFile( projectname )
-    local fileContent = 'return {\r\n';
-
-    fileContent = fileContent .. '    name = "' .. projectname .. '",\r\n';
-    fileContent = fileContent .. '    aliases = {},\r\n';
-    fileContent = fileContent .. '    colors = {},\r\n';
-
-    fileContent = fileContent .. '}\r\n';
-
-    love.filesystem.write( string.format( INFO_FILE, projectname ), fileContent );
+    local output = {
+        name = projectname,
+        aliases = {},
+        colors = {}
+    };
+    love.filesystem.write( string.format( INFO_FILE, projectname ), Serpent.block( output, { comment = false }));
 end
 
 ---
@@ -37,13 +36,10 @@ end
 -- @param commits     (number) The count of commits to write to the file.
 --
 function RepositoryInfos.createCommitCountFile( projectname, commits )
-    local count = commits or 0;
-
-    local fileContent = 'return {\r\n';
-    fileContent = fileContent .. '    commits = ' .. count .. '\r\n';
-    fileContent = fileContent .. '}\r\n';
-
-    love.filesystem.write( string.format( COUNT_FILE, projectname ), fileContent );
+    local output = {
+        commits = commits or 0
+    }
+    love.filesystem.write( string.format( COUNT_FILE, projectname ), Serpent.block( output, { comment = false }));
 end
 
 ---
@@ -52,17 +48,17 @@ end
 -- @return     (table)  A table containing information about the git log.
 --
 function RepositoryInfos.loadInfo( name )
-    local successful, info = pcall( love.filesystem.load, string.format( INFO_FILE, name ));
-    if successful then
-        return info();
-    end
+    local content = love.filesystem.read( string.format( INFO_FILE, name ));
+    local ok, tbl = Serpent.load( content );
+    assert( ok, "Couldn't read info file for " .. name );
+    return tbl;
 end
 
 function RepositoryInfos.loadCommitCount( name )
-    local successful, count = pcall( love.filesystem.load, string.format( COUNT_FILE, name ));
-    if successful then
-        return count();
-    end
+    local content = love.filesystem.read( string.format( COUNT_FILE, name ));
+    local ok, tbl = Serpent.load( content );
+    assert( ok, "Couldn't read count file for " .. name );
+    return tbl;
 end
 
 return RepositoryInfos;
