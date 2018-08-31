@@ -12,8 +12,8 @@ local AVATAR_SIZE = 48;
 local INACTIVITY_TIMER = 2;
 local MOVEMENT_TIMER = 0.5;
 local FADE_FACTOR = 125;
-local DEFAULT_AVATAR_ALPHA = 255;
-local DEFAULT_LINK_ALPHA = 100;
+local DEFAULT_AVATAR_ALPHA = 255/255;
+local DEFAULT_LINK_ALPHA = 100/255;
 local DAMPING_FACTOR = 0.90;
 local FORCE_MAX = 2;
 local FORCE_SPRING = -0.5;
@@ -21,9 +21,9 @@ local BEAM_WIDTH = 3;
 local MOVEMENT_SPEED = 32;
 
 local LINK_COLOR = {
-    A = { r =   0, g = 255, b = 0 },
-    D = { r = 255, g =   0, b = 0 },
-    M = { r = 254, g = 140, b = 0 },
+    A = { r =   0, g = 1, b = 0 },
+    D = { r = 1, g =   0, b = 0 },
+    M = { r = 254/255, g = 140/255, b = 0 },
 };
 
 -- ------------------------------------------------
@@ -51,9 +51,9 @@ function Author.new( name, avatar, spritebatch, cx, cy )
     local linkAlpha = DEFAULT_LINK_ALPHA;
 
     local color = {
-        r = love.math.random( 0, 255 ),
-        g = love.math.random( 0, 255 ),
-        b = love.math.random( 0, 255 )
+        r = love.math.random( 0, 255 )/255,
+        g = love.math.random( 0, 255 )/255,
+        b = love.math.random( 0, 255 )/255
     };
 
     -- Avatar's width and height.
@@ -123,7 +123,7 @@ function Author.new( name, avatar, spritebatch, cx, cy )
                 love.graphics.line( posX, posY, link.file:getX(), link.file:getY() );
             end
             love.graphics.setLineWidth( 1 );
-            love.graphics.setColor( 255, 255, 255, avatarAlpha );
+            love.graphics.setColor( 1, 1, 1, avatarAlpha );
 
             if showLabel then
                 love.graphics.setFont( LABEL_FONT );
@@ -131,7 +131,7 @@ function Author.new( name, avatar, spritebatch, cx, cy )
                 love.graphics.setFont( DEFAULT_FONT );
             end
 
-            love.graphics.setColor( 255, 255, 255, 255 );
+            love.graphics.setColor( 1, 1, 1, 1 );
         end
     end
 
@@ -149,8 +149,8 @@ function Author.new( name, avatar, spritebatch, cx, cy )
 
             -- Fade out the author after it has been inactive for too long.
             if inactivity > INACTIVITY_TIMER then
-                avatarAlpha = Utility.clamp( 0, avatarAlpha - dt * FADE_FACTOR, 255 );
-                linkAlpha   = Utility.clamp( 0, linkAlpha   - dt * FADE_FACTOR, 255 );
+                avatarAlpha = Utility.clamp( 0, avatarAlpha - dt * FADE_FACTOR, 1 );
+                linkAlpha   = Utility.clamp( 0, linkAlpha   - dt * FADE_FACTOR, 1 );
             end
 
             -- Stop the author's movement after a short inactivity.

@@ -39,9 +39,9 @@ end
 local function assignColor( ext )
     if not colors[ext] then
         colors[ext] = {
-            r = love.math.random( 0, 255 ),
-            g = love.math.random( 0, 255 ),
-            b = love.math.random( 0, 255 )
+            r = love.math.random( 0, 255 )/255,
+            g = love.math.random( 0, 255 )/255,
+            b = love.math.random( 0, 255 )/255
         };
     end
     return colors[ext];

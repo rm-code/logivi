@@ -7,7 +7,7 @@ local RepositoryHandler = require('src.conf.RepositoryHandler');
 -- Constants
 -- ------------------------------------------------
 
-local EDGE_COLOR = { 60, 60, 60, 255 };
+local EDGE_COLOR = { 60/255, 60/255, 60/255, 1 };
 
 local SPRITE_SIZE = 24;
 local SPRITE_SCALE_FACTOR = SPRITE_SIZE / 256;
@@ -118,7 +118,7 @@ function SelectionScreen.new()
             local x, y = node:getPosition();
             love.graphics.setColor( colors[node:getID()] );
             love.graphics.draw( FILE_SPRITE, x, y, 0, SPRITE_SCALE_FACTOR, SPRITE_SCALE_FACTOR, SPRITE_OFFSET, SPRITE_OFFSET );
-            love.graphics.setColor( 255, 255, 255 );
+            love.graphics.setColor( 1, 1, 1 );
             love.graphics.setFont( LABEL_FONT );
             love.graphics.print( node:getID(), x, y, 0, 1, 1, -16, -16 );
             love.graphics.setFont( DEFAULT_FONT );
@@ -128,22 +128,22 @@ function SelectionScreen.new()
             love.graphics.setLineWidth( 5 );
             love.graphics.line( edge.origin:getX(), edge.origin:getY(), edge.target:getX(), edge.target:getY() );
             love.graphics.setLineWidth( 1 );
-            love.graphics.setColor( 255, 255, 255, 255 );
+            love.graphics.setColor( 1, 1, 1, 1 );
         end);
 
         -- Shows info text if no repository can be found.
         if not RepositoryHandler.hasRepositories() then
             love.graphics.setFont( MESSAGE_FONT );
-            love.graphics.setColor( 255, 255, 255, alpha );
+            love.graphics.setColor( 1, 1, 1, alpha/255 );
             love.graphics.print( NO_REPO_MESSAGE, love.graphics.getWidth() * 0.5 - MESSAGE_FONT:getWidth( NO_REPO_MESSAGE ) * 0.5, love.graphics.getHeight() * 0.5 - 60 );
             love.graphics.print( CONFIG_FOLDER_MESSAGE, love.graphics.getWidth() * 0.5 - MESSAGE_FONT:getWidth( CONFIG_FOLDER_MESSAGE ) * 0.5, love.graphics.getHeight() * 0.5 + 60 - MESSAGE_FONT:getHeight( CONFIG_FOLDER_MESSAGE ) );
             love.graphics.setFont( DEFAULT_FONT );
-            love.graphics.setColor( 255, 255, 255, 255 );
+            love.graphics.setColor( 1, 1, 1, 1 );
         end
 
-        love.graphics.setColor( 255, 255, 255, 100 );
+        love.graphics.setColor( 1, 1, 1, 100/255 );
         love.graphics.print( VERSION_STRING, love.graphics.getWidth() - DEFAULT_FONT:getWidth( VERSION_STRING ) - 10, love.graphics.getHeight() - 20 );
-        love.graphics.setColor( 255, 255, 255, 255 );
+        love.graphics.setColor( 1, 1, 1, 1 );
     end
 
     ---

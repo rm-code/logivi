@@ -40,7 +40,7 @@ local LOADING_DOTS = {
 }
 local LOADING_DOT_TIME = 0.15;
 
-local EDGE_COLOR = { 60, 60, 60, 255 };
+local EDGE_COLOR = { 60/255, 60/255, 60/255, 1 };
 
 -- ------------------------------------------------
 -- Module
@@ -107,9 +107,9 @@ function LoadingScreen.new()
     --
     local function addNewNode( info )
         colors[info] = {
-            love.math.random( 0, 255 ),
-            love.math.random( 0, 255 ),
-            love.math.random( 0, 255 )
+            love.math.random( 0, 255 )/255,
+            love.math.random( 0, 255 )/255,
+            love.math.random( 0, 255 )/255
         };
         local spawnX = love.graphics.getWidth()  * 0.5 + Utility.randomSign() * love.math.random( 5, 15 );
         local spawnY = love.graphics.getHeight() * 0.5 + Utility.randomSign() * love.math.random( 5, 15 );
@@ -146,7 +146,7 @@ function LoadingScreen.new()
         loadingTimer = 0;
 
         colors = {
-            [''] = { 255, 255, 255 }
+            [''] = { 1, 1, 1 }
         };
     end
 
@@ -189,7 +189,7 @@ function LoadingScreen.new()
             local x, y = node:getPosition();
             love.graphics.setColor( colors[node:getID()] );
             love.graphics.draw( FILE_SPRITE, x, y, 0, SPRITE_SCALE_FACTOR, SPRITE_SCALE_FACTOR, SPRITE_OFFSET, SPRITE_OFFSET );
-            love.graphics.setColor( 255, 255, 255 );
+            love.graphics.setColor( 1, 1, 1 );
             love.graphics.setFont( LABEL_FONT );
             love.graphics.print( node:getID(), x, y, 0, 1, 1, -16, -16 );
             love.graphics.setFont( DEFAULT_FONT );
@@ -199,7 +199,7 @@ function LoadingScreen.new()
             love.graphics.setLineWidth( 5 );
             love.graphics.line( edge.origin:getX(), edge.origin:getY(), edge.target:getX(), edge.target:getY() );
             love.graphics.setLineWidth( 1 );
-            love.graphics.setColor( 255, 255, 255, 255 );
+            love.graphics.setColor( 1, 1, 1, 1 );
         end);
 
         love.graphics.print( LOADING_STRING, 10, love.graphics.getHeight() - 20 );

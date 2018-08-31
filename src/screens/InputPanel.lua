@@ -14,7 +14,7 @@ local PANEL_WIDTH  = 280;
 local PANEL_HEIGHT =  60;
 local MAX_LENGTH   =  30;
 
-local BG_COLOR = { 60, 60, 60 };
+local BG_COLOR = { 60/255, 60/255, 60/255 };
 
 local INPUT_MESSAGE = "Please enter a name for the repository:";
 

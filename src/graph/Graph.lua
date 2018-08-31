@@ -25,7 +25,7 @@ local LABEL_FONT   = Resources.loadFont( 'SourceCodePro-Medium.otf', 20 );
 local DEFAULT_FONT = Resources.loadFont( 'default', 12 );
 local FILE_SPRITE  = Resources.loadImage( 'file.png' );
 
-local EDGE_COLOR = { 60, 60, 60, 255 };
+local EDGE_COLOR = { 60/255, 60/255, 60/255, 1 };
 
 -- ------------------------------------------------
 -- Constructor
@@ -181,7 +181,7 @@ function Graph.new( edgeWidth, showLabels )
             love.graphics.setLineWidth( edgeWidth );
             love.graphics.line( edge.origin:getX(), edge.origin:getY(), edge.target:getX(), edge.target:getY() );
             love.graphics.setLineWidth( 1 );
-            love.graphics.setColor( 255, 255, 255, 255 );
+            love.graphics.setColor( 1, 1, 1, 1 );
         end);
         love.graphics.draw( spritebatch );
     end
