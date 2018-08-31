@@ -172,7 +172,7 @@ function Node.new( id, x, y, anchor, parent, spritebatch, name )
             file:setPosition( self:getPosition() );
 
             local color = file:getColor();
-            spritebatch:setColor( color.r, color.g, color.b, color.a );
+            spritebatch:setColor( color.r , color.g, color.b, color.a );
 
             spritebatch:add( file:getX(), file:getY(), 0, SPRITE_SCALE_FACTOR, SPRITE_SCALE_FACTOR, SPRITE_OFFSET, SPRITE_OFFSET );
         end
