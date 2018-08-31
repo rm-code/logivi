@@ -4,7 +4,7 @@ local PROJECT_VERSION = require( 'version' );
 
 local PROJECT_IDENTITY = "rmcode_LoGiVi";
 
-local LOVE_VERSION = "0.10.1";
+local LOVE_VERSION = "11.0";
 
 ---
 -- Initialise LÖVE's config file.
